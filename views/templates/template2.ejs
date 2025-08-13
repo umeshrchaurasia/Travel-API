@@ -1,0 +1,2680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reliance Travel Insurance - Certificate</title>
+
+    <style>
+        @page {
+            margin: 5px 6px 5px 5px;
+            /* top, right, bottom, left */
+        }
+
+        /* Footer positioning */
+        .footer {
+            position: absolute;
+            bottom: 5px;
+            left: 2px;
+            right: 2px;
+            font-size: 9px;
+            line-height: 1.4;
+            padding: 2px;
+            color: #000;
+            width: calc(100% - 4px);
+            text-align: left;
+        }
+
+        .withfooter {
+            position: relative;
+            page-break-after: always;
+            min-height: 100vh;
+        }
+
+        /* Page container for relative positioning */
+        .page-container {
+            position: relative;
+            min-height: calc(100vh - 120px);
+            /* Reserve space for footer */
+            padding-bottom: 120px;
+            /* Ensure content doesn't overlap footer */
+        }
+
+        .content-wrapper {
+            max-height: calc(100vh - 150px);
+            /* Limit content height */
+            overflow: hidden;
+            /* Prevent content overflow */
+        }
+
+        table {
+            page-break-inside: avoid;
+        }
+
+        /* Prevent breaking of form sections */
+        .form-section {
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body
+    style="font-family: 'Arial', Helvetica,sans-serif; color: #050000; background-color: #fdfdfd; font-size: 12px; line-height: 1.4;">
+
+    <!-- Page 1: Welcome Letter (NO FOOTER) -->
+
+    <div class="1 div1-page" style="font-family: Arial, sans-serif; font-size: 12px; color: #000;">
+        <div style="text-align: center;">
+            <img src="<%= policy.logotravelimageBase64 %>" alt="Company Logo"
+                style="max-width: 100px;max-height: 60px;">
+        </div>
+
+        <h5 style="font-size: 13px; font-weight: bold; text-align: center; margin: 0 0 20px 0; padding: 0;">WELCOME
+            LETTER</h5>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="width: 60%;">
+                <% const addressLines=policy.fullAddress.length> 60
+                    ? policy.fullAddress.match(/(.{1,60})(?:,|$)/g) // split by 70 chars at commas
+                    : [policy.fullAddress];
+                    %>
+                    <p><strong>Dear</strong>
+                        <%= policy.fullName %>,<br>
+                            <% addressLines.forEach(line=> { %><%= line.trim() %><br>
+                                    <% }) %>
+                                        <%= policy.EmailID %>
+                    </p>
+            </div>
+            <div style="width: 40%; text-align: right;">
+                <p><strong>Date:</strong>
+                    <%= policy.formattedCreateDate %>
+                </p>
+            </div>
+        </div>
+
+        <p>Welcome and Thank You for Choosing <strong>Interstellar Services Private Limited</strong> (“Company”)!</p>
+        <p>We are pleased to welcome you and introduce you to a unique offering curated by the Company — a bundled
+            overseas travel support package that includes access to global travel assistance services along with a
+            travel insurance policy, underwritten by a leading insurance company in India.</p>
+        <p>This value-added offering has been thoughtfully designed to enhance your travel experience and provide peace
+            of mind during your journey. While the Company has facilitated and marketed this bundled product for your
+            convenience, please note that the travel insurance and travel assistance services are independently provided
+            by third-party service providers with whom you are directly connected through this arrangement.
+            The Company does not underwrite, issue, or service the insurance policy, nor does it provide travel
+            assistance services. Our role is limited to facilitating access to this bundled solution and assisting you
+            in connecting with the respective service providers.</p>
+        <p>The terms, conditions, coverage details, claims process, and servicing of the travel insurance policy are
+            governed by the issuing insurance company. Similarly, the travel assistance services will be rendered by the
+            respective travel assistance company as per their own terms of engagement.</p>
+        <p>We strongly encourage you to carefully read and understand the insurance policy wordings and the service
+            terms provided by the respective service providers to fully understand the scope of coverage and assistance
+            available to you.</p>
+        <p>What you can expect from this bundled offering:</p>
+        <ul style="margin-top: 0;">
+            <li>24x7 overseas travel assistance from a reputed service provider.</li>
+            <li>Travel insurance cover (please read the policy wordings before you travel. Brief details as below).</li>
+            <li>Ongoing support from the Company in helping you navigate and access these services.</li>
+        </ul>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px; text-align: left;">Date of Departure (from India)</th>
+                <td style="border: 1px solid #000; padding: 5px; text-align: left;">
+                    <%= policy.formattedStartDate %>
+                </td>
+            </tr>
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px; text-align: left;">Date of Arrival (in India)</th>
+                <td style="border: 1px solid #000; padding: 5px; text-align: left;">
+                    <%= policy.formattedEndDate %>
+                </td>
+            </tr>
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px; text-align: left;">Duration of Travel</th>
+                <td style="border: 1px solid #000; padding: 5px; text-align: left;">
+                    <%= policy.day_of_difference %>
+                </td>
+            </tr>
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px; text-align: left;">Insurance Policy/Certificate Number
+                </th>
+                <td style="border: 1px solid #000; padding: 5px; text-align: left;">
+                    <%= policy.Policy_No %>
+                </td>
+            </tr>
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px; text-align: left;">Travel Assistance Number</th>
+                <td style="border: 1px solid #000; padding: 5px; text-align: left;">
+                    <%= policy.Asnumber %>
+                </td>
+            </tr>
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px; text-align: left;">Travel Assistance Charges (Incl. of
+                    GST)</th>
+                <td style="border: 1px solid #000; padding: 5px; text-align: left;">
+                    ₹ <%= policy.Actual_PremiumAmount %>
+                </td>
+            </tr>
+        </table>
+
+
+        <p>To Know more about Travel Assistance, <a href="http://inv.policyboss.com/travel-api/assist.html"
+                style="color: #0066cc; text-decoration: underline; font-weight: bold;">Click here</a>.</p>
+        <p>We appreciate your trust in the Company and will use our best efforts in supporting you in every way possible
+            during your overseas journey.
+            Wishing you safe, smooth, and memorable travels.</p>
+
+        <div style="margin-bottom: 5px;">
+            <p>Warm regards,<br>For, <strong>Interstellar Services Private Limited</strong></p>
+
+            <div style="text-align: left;">
+                <img src="<%= policy.travel_signImageBase64 %>" alt="Company Logo"
+                    style="max-width: 100px;max-height: 50px;margin-left: 40px;">
+            </div>
+        </div>
+
+        <p>Customer Services Support Team<br>Email: <%= policy.SupportEmail %> | Contact No: <%= policy.SupportcontactNo
+                    %>
+        </p>
+
+        <p style="font-size: 8px;"><strong>Disclaimer:</strong> Interstellar Services Private Limited (“Company”) acts
+            solely as a facilitator in offering and marketing a bundled product that includes travel assistance services
+            and a travel insurance policy underwritten by a licensed insurance company in India. The Company is not an
+            insurance company, insurance intermediary, or travel assistance service provider and does not assume any
+            responsibility or liability for the underwriting, issuance, servicing, or fulfillment of the travel
+            insurance policy or the provision of travel assistance services. All claims, disputes, and service-related
+            matters are to be addressed directly with the respective service providers, whose terms and conditions shall
+            govern such interactions. Customers are advised to carefully review the insurance policy documents/insurance
+            certificate and service terms issued by the respective third parties prior to availing the services. The
+            Company shall not be held liable for any act, omission, delay, denial, or deficiency in service by the
+            third-party service providers. The Company shall extend all necessary assistance to its
+            customers/members/clients.</p>
+
+    </div>
+
+    <div style="page-break-before: always;"></div>
+
+
+    <!-- Page 2: Insurance Certificate Page 1 (WITH FOOTER) -->
+
+    <div class="2 div2-page">
+
+        <div class="page-container">
+
+            <!-- Page 1 -->
+            <div id="div1" style="background-image: url('<%= policy.watermarkBase64 %>'); 
+               margin: 0 auto; 
+               padding: 0px 2px 0px 2px; 
+               max-width: 800px; 
+               -webkit-print-color-adjust: exact; 
+               print-color-adjust: exact; 
+               background-repeat: repeat; 
+               background-position: center; 
+               background-size: auto; 
+               opacity: 1;">
+
+                <table style="width: 100%; border-collapse: collapse;" cellspacing="0" cellpadding="5">
+                    <tr>
+                        <td style="padding:  0px 10px; text-align: left; vertical-align: top;">
+                            <img src="<%= policy.logoBase64 %>" alt="Logo"
+                                style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                        </td>
+                        <td style="padding: 0px 10px; text-align: left; vertical-align: top;">
+
+                            <% if (policy.qrCodeBase64) { %>
+                                <img src="<%= policy.qrCodeBase64 %>" alt="Policy QR Code"
+                                    style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                                <% } else if (policy.qrCodeUrl) { %>
+                                    <img src="<%= policy.qrCodeUrl %>" alt="Policy QR Code"
+                                        style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                                    <% } else { %>
+
+                                        <% } %>
+                        </td>
+                        <td
+                            style="padding:  0px 10px; text-align: left; vertical-align: top; font-size: 12px; max-width: 200px; word-wrap: break-word; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                            <p
+                                style="font-size: 12px ; background-color: #ffffff; font-size: 10px; line-height: 15px; margin: 0; padding:  0px 10px;;">
+                                Digitally Signed by <br>
+                                Reliance General Insurance <br>
+                                Company Limited Date: <br>
+                                <%= policy.currentDate%>
+                            </p>
+                        </td>
+                        <td
+                            style="padding:  0px 10px; text-align: left; vertical-align: top; max-width: 200px; text-align: right;">
+                            <img src="<%= policy.contactBase64 %>" alt="Contact Details"
+                                style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;  border-collapse: collapse;" cellspacing="0" cellpadding="5">
+
+                    <tbody style="vertical-align: top;">
+                        <tr>
+                            <td style="border: 0; padding: 0;" colspan="4">
+                                <table style="width: 100%; border-collapse: collapse; margin: 10px 0; " cellspacing="0"
+                                    cellpadding="5">
+                                    <tr>
+                                        <td colspan="11"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;">
+                                            <p
+                                                style="font-size: 12px ; margin: 0; line-height: 1.2; text-align: center;">
+                                                <strong><u>Reliance Corporate Flexi Travel Care Insurance
+                                                        Policy</u></strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p
+                                                style="font-size: 12px ; margin: 0; line-height: 1.2; margin-bottom: 10px;">
+                                                <strong>Policy
+                                                    Issuing Office:</strong>
+                                            </p>
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Reliance General
+                                                Insurance Company
+                                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi
+                                                Garden City, Off Western Express Highway, Goregaon (East), Mumbai - 400
+                                                063.<br>Branch Contact No. : 022-33031000</p>
+                                        </td>
+                                        <td colspan="6" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p
+                                                style="font-size: 12px ; margin: 0; line-height: 1.2; margin-bottom: 10px;">
+                                                <strong>Policy
+                                                    Servicing Office Name & Address-</strong>
+                                            </p>
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Reliance General
+                                                Insurance Company
+                                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi
+                                                Garden City, Off Western Express Highway, Goregaon (East), Mumbai - 400
+                                                063
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Certificate
+                                                    No. -</strong>
+                                                <%= policy.Policy_No %>
+                                            </p>
+                                        </td>
+                                        <td colspan="6" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Master
+                                                    Policy
+                                                    No. –</strong>
+                                                920292428320000628
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Br.
+                                                    Code-</strong>
+                                                <%= policy.IntermediatoryBranchCode %>
+                                            </p>
+                                        </td>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>PSO No.
+                                                    -</strong>
+                                                <%= policy.PSONumber %>
+                                            </p>
+                                        </td>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Dept.
+                                                    -</strong>
+                                                <%= policy.IntermediatoryDepartmentName %>
+                                            </p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Intermediary
+                                                    Code -</strong>
+                                                <%= policy.IntermediaryCode || 'DIR' %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Tax
+                                                    Invoice No
+                                                    & Date :</strong>
+                                                <%= policy.NOPSONumber %> &amp; <%= policy.formattedCreateDate
+                                                        || '26-04-2025' %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Details of
+                                                    the
+                                                    Insured</strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Name of the Policy
+                                                Holder</p>
+                                        </td>
+                                        <td colspan="9" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">INTERSTELLAR
+                                                SERVICES
+                                                PRIVATE LIMITED</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Address of the
+                                                policy
+                                                holder</p>
+                                        </td>
+                                        <td colspan="9" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">634 , GALA EMPIRE
+                                                ,
+                                                OPP TV TOWER , DRIVE IN ROAD , AHMEDABAD , AHMEDABAD GUJARAT , 380052
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Details of
+                                                    the
+                                                    Insured
+                                                    Person</strong></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; width: 17%; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Name of
+                                                    the Insured Person</strong></p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; width: 8%; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Passport
+                                                    No.</strong></p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;width:7%; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Gender</strong>
+                                            </p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;width: 16%; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Nominee
+                                                    Name</strong></p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 8px;border: 1px solid #ddd; text-align: left; vertical-align: top; width: 16%;">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Relationship
+                                                    of the Nominee with
+                                                    the Insured Person</strong>
+                                            </p>
+                                        </td>
+
+                                        <td valign="top"
+                                            style="padding:  0px 8px;border: 1px solid #ddd; text-align: left; vertical-align: top;width: 7%; white-space: nowrap; min-width: 100px; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Date of Birth</strong>
+                                            </p>
+                                        </td>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;width: 12%; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>ABHA ID or
+                                                    ABHA address</strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>
+                                                    <%= policy.fullName %>
+                                                </strong>
+                                            </p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <%= policy.PassportNo %>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>
+                                                    <%= policy.Gender %>
+                                                </strong>
+                                            </p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.NomineeName %>
+                                            </p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.RelationshipOfTheNomineeWithInsured %>
+                                            </p>
+                                        </td>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; white-space: nowrap;">
+                                            <%= policy.formattedDateOfBirth || '' %>
+                                        </td>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <%= policy.ABHA_ID || 'N/A' %>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Communication
+                                                    Address & Place of
+                                                    Supply</strong>
+                                            </p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.fullAddress %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>E mail
+                                                    id</strong></p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.EmailID %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Telephone
+                                                    Number</strong></p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.LandLineNumber %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>GSTIN /
+                                                    UIN Of
+                                                    Insured :- <%= policy.Cust_GSTINNO %></strong></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Geographical
+                                                    Coverage</strong>
+                                            </p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.Geographical %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Country
+                                                    Visiting</strong></p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <%= policy.CountryVisiting %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Policy
+                                                    Period</strong></p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>
+                                                    <%= policy.formattedStartDate %> to <%= policy.formattedEndDate %>
+                                                            time 00:00 <%= policy.day_of_difference %>
+                                                                days
+                                                </strong></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Name of
+                                                    the
+                                                    Plan opted</strong>
+                                            </p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>
+                                                    <%= policy.NameofPlan %>
+                                                </strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Any Pre
+                                                    existing
+                                                    disease</strong></p>
+                                        </td>
+                                        <td colspan="7" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <% if (policy.SufferingFromAnyPreExistingDisease==1) { %>
+                                                    <%= policy.NameOfDiseases %>
+                                                        <% } else { %>
+                                                            No
+                                                            <% } %>
+
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+                <table style="width: 100%; border-collapse: collapse;" cellspacing="0" cellpadding="5">
+                    <thead>
+                        <tr>
+                            <th
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;  background-color: #f8f9fa; font-weight: bold; width: 45%;">
+                                Policy Coverage</th>
+                            <th
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;  background-color: #f8f9fa; font-weight: bold; width: 35%;">
+                                Sum Insured (in INR)</th>
+                            <th
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top;  background-color: #f8f9fa; font-weight: bold; width: 20%;">
+                                Deductible (in INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Medical Expenses Including Transportation, Evacuation & Repatriation of
+                                Mortal remains</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.MedicalExpenses %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                100</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Dental Treatment</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.DentalTreatment %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                100</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Loss of Passport</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.LossOfPassport %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                50</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Total Loss of Checked in baggage</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.TotalLossOfCheckedBaggage %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Delay of Checked in Baggage</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.DelayOfCheckedBaggage %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                6 Hours</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Personal Liability</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.PersonalLiability %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Daily Allowance in case of Hospitalisation</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.DailyAllowance %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                2 days</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Hijack Distress Allowance</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.Hijack %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                12 Hours</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Trip Delay</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.TripDelay %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                12 Hours</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Trip Cancellation & Interruption</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.TripCancellation %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Missed Connection</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.Missed %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Compassionate visit</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Return Fare for any one accompanying person - spouse / child / family doctor
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+
+            </div>
+
+            <!-- FOOTER FOR PAGE 2 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div style="page-break-before: always;"></div>
+
+    <!-- Page 2 -->
+
+    <div class="2 div2-page">
+
+        <div class="page-container">
+            <div
+                style="background-image: url('<%= policy.watermarkBase64 %>');max-width: 800px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background-repeat: repeat; background-position: center; background-size: auto; opacity: 1;">
+
+                <table style="width: 100%; border-collapse: collapse;" cellspacing="0" cellpadding="5">
+                    <tbody>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Home Burglary Insurance (Amount in Indian Rs)</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.HomeBurglary %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Personal Accident</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.PersonalAccident %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Accidental Death-Common Carrier</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.AccidentalDeath %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Any one illness applicable for 71 to 80 years age</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.AnyOneIllness %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                Any one Accident applicable for 71 to 80 years age</td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <%= policy.AnyOneAccident %>
+                            </td>
+                            <td
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                NIL</td>
+                        </tr>
+                        <tr>
+                            <td colspan="11" valign="top"
+                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Consolidated Stamp
+                                    duty Paid vide
+                                    Letter of Authorisation &ldquo;NO LOA/ENF-1/CSD/70/2024-25/(Validity
+                                    Period Dt. 01/11/2024 to Dt. 01/12/2025)/5162 Date 30-10-2024&rdquo; at
+                                    General Stamp Office, Mumbai.<br>&nbsp; ** Not Applicable for the State
+                                    of Jammu &amp; Kashmir</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table style="width: 100%;  border-collapse: collapse; ">
+                    <tbody style="vertical-align: top;">
+                        <tr>
+                            <td style="border: 0; padding: 0;">
+                                <table style="width: 100%; border-collapse: collapse; margin: 10px 0; " cellspacing="0"
+                                    cellpadding="5">
+                                    <tbody>
+
+                                        <tr>
+                                            <td colspan="11" valign="top"
+                                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                    <strong>Specific
+                                                        Condition</strong>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="11" valign="top"
+                                                style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                                <ol style="padding-left: 20px; margin-top: 20px;">
+                                                    <li style="margin: 0; line-height: 1.2;">This policy is applicable
+                                                        for
+                                                        registered customers who have successfully booked for travel
+                                                        assistance services from Interstellar Services Private Ltd.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Warranted that every
+                                                        customer
+                                                        shall have a unique membership ID issued by Interstellar
+                                                        Services
+                                                        Private Ltd.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">The policy will not cover
+                                                        insured/insured person who is less than 03 months and more than
+                                                        80
+                                                        years of age (as on completed birthday).</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Warranted that insured is a
+                                                        citizen of India and has a permanent place of residence in India
+                                                        and
+                                                        is not an NRI or OCI or foreign national and was within the
+                                                        territory of India at the time of issuance of the policy and
+                                                        before
+                                                        the commencement of the trip.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Warranted that purpose of
+                                                        visit
+                                                        will be either leisure or personal business only.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Warranted that declaration
+                                                        of
+                                                        any pre-existing condition, using words/terms which mean any
+                                                        disease/illness similar to - Cancer / Leukemia / Malignant
+                                                        Tumor,
+                                                        Cardiac ailments, COPD, HIV/AIDS, Insulin Dependent Diabetes,
+                                                        Kidney
+                                                        Ailment, Liver Disease, Neurological Disorder / Stroke /
+                                                        Paralysis,
+                                                        Thalassemia will render this policy null and void-ab-initio and
+                                                        the
+                                                        company shall have no liability under the policy – clean health
+                                                        history required.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Any expenses related to
+                                                        pre-existing illness/disability/diseases and its related
+                                                        complications/consequences are not payable under the policy
+                                                        except
+                                                        for life-saving unforeseen emergency measures provided to the
+                                                        Insured/Insured Person by the Physician for hospitalization
+                                                        arising
+                                                        out of a pre-existing disease. The treatment for these emergency
+                                                        measures would be paid until the Insured/Insured Person becomes
+                                                        medically stable up to the sum insured opted. All further
+                                                        medical
+                                                        costs to maintain medically stable or to prevent the onset of
+                                                        acute
+                                                        pain would be borne by the Insured/Insured Person.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Repatriation of Mortal
+                                                        Remains:
+                                                        USD 7,500.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Warranted that the maximum
+                                                        amount payable per checked-in baggage in case more than one bag
+                                                        has
+                                                        been checked in is 50% (100% for only one checked-in baggage) of
+                                                        the
+                                                        applicable Sum Insured, and per item in baggage, the max is 10%.
+                                                    </li>
+                                                    <li style="margin: 0; line-height: 1.2;">Insurance cover shall
+                                                        become
+                                                        voidable at the option of the Company in the event of any untrue
+                                                        or
+                                                        incorrect statement, misrepresentation, non-description, or
+                                                        non-disclosure of any material particular in the proposal
+                                                        form/personal statement, declaration, and connected documents,
+                                                        or
+                                                        any material information has been withheld by the beneficiary or
+                                                        anyone acting on behalf of the beneficiary to obtain insurance
+                                                        benefit.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Any claim arising out of
+                                                        sporting activities insofar as they involve the training or
+                                                        participation in competitions of professional or
+                                                        semi-professional
+                                                        sports persons is excluded.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Medical/Hospitalization
+                                                        expenses due to COVID-19 infection are covered if contracted
+                                                        during
+                                                        travel as per policy terms and conditions.</li>
+
+                                                </ol>
+                                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Exclusions:
+                                                </p>
+
+                                                <ol style="padding-left: 20px; margin-top: 5px;">
+                                                    <li style="margin: 0; line-height: 1.2;">Any pre-existing medical
+                                                        conditions
+                                                        and their related complications/consequences.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Travelling against the
+                                                        advice
+                                                        of a
+                                                        physician.</li>
+
+                                                    <li style="margin: 0; line-height: 1.2;">Receiving or being on a
+                                                        waiting
+                                                        list for a specified medical treatment.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Travelling to receive
+                                                        treatment.
+                                                    </li>
+                                                    <li style="margin: 0; line-height: 1.2;">Being under a terminal
+                                                        prognosis
+                                                        for a medical condition.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Partial loss of checked
+                                                        baggage
+                                                        –
+                                                        only the loss of your entire baggage is covered, not partial
+                                                        loss.
+                                                    </li>
+                                                    <li style="margin: 0; line-height: 1.2;">War or nuclear perils in
+                                                        the
+                                                        country you’re visiting.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Treatment which could
+                                                        reasonably be
+                                                        delayed until the insured/insured person’s return to the
+                                                        Republic of
+                                                        India.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Any Travel to Declined
+                                                        countries:
+                                                        -Afghanistan, Myanmar (Burma), Democratic Republic of Congo,
+                                                        East
+                                                        Timor,
+                                                        Eritrea, Iran, Iraq, Liberia, Libya, North Korea, Rwanda, Sierra
+                                                        Leone,
+                                                        Somalia, Sudan, Syria, Yemen, Congo, Republic of (Brazzaville),
+                                                        Timor-Leste (East Timor), Zaire, Ukraine, Pakistan. The list of
+                                                        declined
+                                                        countries may undergo change from time to time depending on the
+                                                        geo-political situation in the respective country.</li>
+                                                    <li style="margin: 0; line-height: 1.2;">Any claim relating to
+                                                        events
+                                                        occurring before the commencement of the cover or outside the
+                                                        period
+                                                        of
+                                                        insurance.</li>
+                                                </ol>
+
+                                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">For complete
+                                                    list
+                                                    of exclusions, terms
+                                                    and conditions kindly refer policy wordings.</p>
+
+                                                <p style="font-size: 7px ;margin-top: 10px; line-height: 1.2;">* Total
+                                                    Premium of Rs <%= policy.Reliance_PremiumAmount %> inclusive
+                                                        of 18% GST has been paid to RGIC.</p>
+
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+            <!-- FOOTER FOR PAGE 2 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div style="page-break-before: always;"></div>
+
+
+    <!-- Page 3 -->
+    <div class="2 div2-page">
+        <div class="page-container">
+            <div
+                style="background-image: url('<%= policy.watermarkBase64 %>');max-width: 800px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background-repeat: repeat; background-position: center; background-size: auto; opacity: 1;">
+
+
+
+                <table style="width: 100%;  border-collapse: collapse; ">
+                    <tbody style="vertical-align: top;">
+                        <tr>
+                            <td style="border: 0; padding: 0;">
+                                <table style="width: 100%; border-collapse: collapse; margin: 10px 0; " cellspacing="0"
+                                    cellpadding="5">
+                                    <tr>
+                                        <td colspan="11" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">In witness whereof
+                                                this policy has been
+                                                signed at Mumbai on :<strong>
+                                                    <%= policy.formattedCreateDate %>
+                                                </strong><br>
+                                                <strong>GSTIN :</strong> 27AABCR6747B1ZG&nbsp;&nbsp;&nbsp;&nbsp; SAC :
+                                                997142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description of Services
+                                                :
+                                                Accident and Health Reinsurance Service<br>
+                                                As per the GST regulations, the amount of GST will not be refunded if
+                                                the
+                                                policy / endorsement is cancelled after 30th September of the next
+                                                financial
+                                                year.<br>
+                                                "In case of a renewal, the benefits provided under the policy and/or
+                                                terms
+                                                and conditions of the policy including premium rate may be subject to
+                                                change".
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Grievance Clause:-</strong><br><br>
+                                            <p>For resolution of any query or grievance, Insured may contact the
+                                                respective
+                                                branch office of the Company or may call at 02248903009 or may write an
+                                                email at <a
+                                                    href="mailto:rgicl.services@relianceada.com">rgicl.services@relianceada.com.</a>
+                                                In case the insured is not satisfied with the response of the office,
+                                                insured may contact the Nodal Grievance Officer of the Company at <a
+                                                    href="mailto:rgicl.grievances@relianceada.com">rgicl.grievances@relianceada.com.</a>
+                                                In the event of unsatisfactory response from the Nodal Grievance
+                                                Officer,
+                                                insured may email to Head Grievance Officer at <a
+                                                    href="mailto:rgicl.headgrievances@relianceada.com">rgicl.headgrievances@relianceada.com.</a>
+                                                In the event of unsatisfactory response from the Head Grievance Officer,
+                                                he/she may, subject to vested jurisdiction, approach the Insurance
+                                                Ombudsman
+                                                for the redressal of grievance. Details of the offices of the Insurance
+                                                Ombudsman are available at IRDAI website <a
+                                                    href="http://www.irda.gov.in/">www.irda.gov.in</a> or on company
+                                                website
+                                                <a
+                                                    href="http://www.reliancegeneral.co.in/">www.reliancegeneral.co.in</a>
+                                                or
+                                                on <a href="http://www.gbic.co.in/">www.gbic.co.in.</a> The insured may
+                                                also
+                                                contact the following office of the Insurance Ombudsman within whose
+                                                territorial jurisdiction the branch or office of the Company is located.
+                                                Office of the Insurance Ombudsman,3rd Floor,Jeevan Seva Annexe,S. V.
+                                                Road,Santacruz (W), Mumbai - 400 054. Tel.: 022 - 26106552 / 26106960
+                                                Fax:
+                                                022 - 26106052 Email: <a
+                                                    href="mailto:bimalokpal.mumbai@gbic.co.in">bimalokpal.mumbai@gbic.co.in</a>
+                                                | Shri. A. K. Sahoo Office of the Insurance Ombudsman,Jeevan Darshan
+                                                Bldg.,3rd Floor,C.T.S. No.s. 195 to 198,N.C. Kelkar Road,Narayan Peth,
+                                                Pune
+                                                – 411 030. Tel.: 020-41312555 Email: <a
+                                                    href="mailto:bimalokpal.pune@gbic.co.in">bimalokpal.pune@gbic.co.in</a>
+                                            </p>
+                                            <br>
+                                            <br> <strong>Category-General Insurance Business Service 00440005</strong>
+                                            </p>
+                                            <div
+                                                style="margin-right: 20px; display: flex; flex-wrap: wrap; flex-direction: column; align-items: end; ">
+                                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">For and on
+                                                    behalf
+                                                    of Reliance
+                                                    General Insurance Company Limited.</p>
+                                                <img height="87" src="<%= policy.signBase64 %>"
+                                                    alt="Authorized Signatory"
+                                                    onerror="this.onerror=null; this.style.display='none';">
+
+                                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">Authorized
+                                                    Signatory</p>
+                                            </div>
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2; margin-top: 30px;">
+                                                Note: The policy
+                                                wording with detailed terms, conditions and exclusions are available on
+                                                our
+                                                website <a href="http://www.reliancegeneral.co.in/"
+                                                    style="color: #050000; text-decoration: none;">www.reliancegeneral.co.in</a><br>
+                                                The policy has been issued based on the information provided by you/your
+                                                health of the life to be insured / proposer after the proposal has been
+                                                submitted but before communication of the risk acceptance by the
+                                                Company.
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <div style="display: flex;">
+                                                <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                    Europ Assistance India Pvt Ltd.<br> 7th Floor, Star Hub, Bldg No. 2,
+                                                    Near ITC Maratha Hotel, Sahar, Andheri East, Mumbai – 400 059.<br>
+                                                    Please provide immediate intimation of any claim / requirement for
+                                                    emergency assistance while abroad to ensure that the Claim is not
+                                                    prejudiced. Please contact the International Toll Free Helpline
+                                                    numbers
+                                                    given below.
+                                                </p>
+                                                <img height="67" src="<%= policy.europBase64 %>" alt="Europ Assistance"
+                                                    onerror="this.onerror=null; this.style.display='none';">
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>In case of
+                                                    any
+                                                    requirement for
+                                                    emergency assistance whilst abroad, please contact the toll free
+                                                    helpline numbers given below:</strong></p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">This document
+                                                shall be
+                                                treated as a Tax
+                                                Invoice as per Rule 46 of the Central Goods and Services Tax Rules
+                                                2017<br>
+                                                International Toll Free line: Singapore and Thailand — 001-80099441111,
+                                                Hong
+                                                Kong — 001-80099441111 and 006-80099441111, USA — 18337426673, Canada —
+                                                011-80099441111, Australia — 0011-80099441111, Japan —
+                                                001-010-80099441111
+                                                and 010-80099441111, Israel — 00-80099441111 and 014-80099441111, Greece
+                                                —
+                                                86002038017, Argentina, Austria, Belgium, China, Czech Republic,
+                                                Denmark,
+                                                France, Germany, Hungary, Italy, Malaysia, Netherlands, New Zealand,
+                                                Norway,
+                                                Philippines, Poland, Portugal, South Africa, Spain, Sweden, Switzerland,
+                                                Taiwan &amp; United Kingdom — 00-80099441111</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Note:</strong>
+                                                Kindly refer our
+                                                website for updated new toll free numbers with effect from 1st October
+                                                2017
+                                                onwards.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Dedicated
+                                                    National Toll Free
+                                                    Help Line: 1800 209 5522</strong></p>
+                                        </td>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Land Line:
+                                                    +91
+                                                    22 67347843 &amp;
+                                                    +91 22 67347844</strong></p>
+                                        </td>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Fax
+                                                    Number:
+                                                    +91 22
+                                                    67347888</strong></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Email: </strong>
+                                                <a
+                                                    href="mailto:reliance@europ-assistance.in"><strong>reliance@europ-assistance.in</strong></a>
+                                            </p>
+                                        </td>
+                                        <td colspan="2" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;"><strong>Website:
+                                                </strong><a href="http://www.europ-assistance.com/"
+                                                    style="color: #050000; text-decoration: none;">www.europ-assistance.com</a>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" valign="top"
+                                            style="padding:  0px 10px;border: 1px solid #ddd; text-align: left; vertical-align: top; ">
+                                            <p style="font-size: 12px ; margin: 0; line-height: 1.2;">
+                                                <strong>Intermediary
+                                                    Code/Name:
+                                                    Direct</strong>
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+            <!-- FOOTER FOR PAGE 2 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div style="page-break-before: always;"></div>
+
+    <!-- Page 5 -->
+    <div class="2 div2-page">
+        <div class="page-container">
+            <div
+                style="background-image: url('<%= policy.watermarkBase64 %>');max-width: 800px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background-repeat: repeat; background-position: center; background-size: auto; opacity: 1; max-height: calc(100vh - 150px); overflow: hidden;">
+
+                <table style="width: 100%; border-collapse: collapse; margin: 5px 0;">
+                    <tr>
+                        <td style=" padding:  0px 10px;"><img src="<%= policy.logoBase64 %>" alt="Logo"
+                                style="max-height: 80px; max-width: 150px; object-fit: contain;"></td>
+                        <td style=" padding:  0px 10px;text-align: right;"><img src="<%= policy.contactBase64 %>"
+                                alt="Contact Details" style="max-height: 80px; max-width: 150px; object-fit: contain;">
+                        </td>
+                    </tr>
+                </table>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <tbody>
+                        <tr>
+                            <td style="border: none; padding:  0px 10px;">
+                                <h4 style="color: red; margin: 0; font-size: 14px; font-weight: bold;"><strong>Reliance
+                                        Travel Care Insurance Policy - Online Proposal Form</strong></h4>
+                                <p style="font-size: 12px ; text-align: right; margin-bottom: 10px; font-size: 12px;">
+                                    Proposal Form No.: <%= policy.NOPSONumber %>
+                                </p>
+
+                                <h3 style="font-size: 14px; font-weight: bold; margin-top: 15px; background-color: #4168b3;
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                                padding: 5px;
+                                color: #fff;">Proposer/Insured Details</h3>
+
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">1. Name of the
+                                            Proposer/Insured
+                                            (Mr./Mrs./Ms.)</td>
+                                        <td colspan="5" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.fullName %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">2. Address</p>
+                                        </td>
+                                        <td colspan="5" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.fullAddress %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Residence Number</p>
+                                        </td>
+                                        <td colspan="2" style="border: 1px solid #ddd; padding:  0px 10px;"></td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;"></td>
+                                        <td colspan="2" style="border: 1px solid #ddd; padding:  0px 10px;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Gender</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.Gender %>
+                                            </p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Passport No.</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.PassportNo %>
+                                            </p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Mobile No.</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.MobileNumber %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">PAN No.</p>
+                                        </td>
+                                        <td colspan="2" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;"></p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">UID Aadhar No.</p>
+                                        </td>
+                                        <td colspan="2" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Email Id</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;"><a
+                                                    href="mailto:<%= policy.EmailID %>"
+                                                    style="color: #050000; text-decoration: none;">
+                                                    <%= policy.EmailID %>
+                                                </a></p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Nationality</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Indian</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">DOB</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.formattedDateOfBirth %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 5px;">
+                                    <tr>
+                                        <td
+                                            style="border: 1px solid #ddd; padding:  0px 10px;text-align: center; background-color: #f8f9fa; font-weight: bold;">
+                                            Name of Nominee</td>
+                                        <td
+                                            style="border: 1px solid #ddd; padding:  0px 10px;text-align: center; background-color: #f8f9fa; font-weight: bold;">
+                                            DOB</td>
+                                        <td
+                                            style="border: 1px solid #ddd; padding:  0px 10px;text-align: center; background-color: #f8f9fa; font-weight: bold;">
+                                            Relationship with Proposer</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;text-align: center;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.NomineeName %>
+                                            </p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;"> </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;text-align: center;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.RelationshipOfTheNomineeWithInsured %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <h3 style="font-size: 14px; font-weight: bold; margin-top: 15px;  background-color: #4168b3;
+               -webkit-print-color-adjust: exact;
+               print-color-adjust: exact;
+               padding: 5px;
+               color: #fff;">Details of Pre-existing Condition</h3>
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 5px;">
+                                    <tr>
+                                        <td
+                                            style="border: 1px solid #ddd; padding:  0px 10px;background-color: #f8f9fa; font-weight: bold;">
+                                            Pre-existing illness / Injury / Condition if any</td>
+                                        <td
+                                            style="border: 1px solid #ddd; padding:  0px 10px;background-color: #f8f9fa; font-weight: bold;">
+                                            Suffering Since</td>
+                                        <td
+                                            style="border: 1px solid #ddd; padding:  0px 10px;background-color: #f8f9fa; font-weight: bold;">
+                                            Under Medication</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <% if (policy.SufferingFromAnyPreExistingDisease==1) { %>
+                                                    <%= policy.NameOfDiseases %>
+                                                        <% } else { %>
+                                                            No
+                                                            <% } %>
+                                            </p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;"></td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: none; padding:  0px 10px;">
+                                <h3 style="font-size: 14px; font-weight: bold; margin-top: 15px;  background-color: #4168b3;
+               -webkit-print-color-adjust: exact;
+               print-color-adjust: exact;
+               padding: 5px;
+               color: #fff;">Trip Details</h3>
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">1. Master Policy No.</p>
+                                        </td>
+                                        <td colspan="3" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">920292428320000628</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">2. Name of Master Policy Holder</p>
+                                        </td>
+                                        <td colspan="3" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.fullName %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">3. Sum Insured Opted</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.PremiumAmount %>
+                                            </p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">4. Geographical Scope</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <%= policy.Geographical %>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">5. Name of the Plan Opted</p>
+                                        </td>
+                                        <td colspan="3" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.NameofPlan %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">6. Date of Journey</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.formattedStartDate %>
+                                            </p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">Date of Return</p>
+                                        </td>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.formattedEndDate %>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">7. Does the plan trip involve any
+                                                kind
+                                                of sporting activity</p>
+                                        </td>
+                                        <td colspan="3" style="border: 1px solid #ddd; padding:  0px 10px;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">8. Countries that you are visiting
+                                            </p>
+                                        </td>
+                                        <td colspan="3" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <%= policy.CountryVisiting %>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">9. Trip Duration</p>
+                                        </td>
+                                        <td colspan="3" style="border: 1px solid #ddd; padding:  0px 10px;">
+                                            <p style="font-size: 12px ; margin: 0;">
+                                                <%= policy.day_of_difference %> days
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FOOTER FOR PAGE 5 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div style="page-break-before: always;"></div>
+
+    <!-- Page 6 -->
+    <div class="2 div2-page">
+        <div class="page-container">
+            <div
+                style="background-image: url('<%= policy.watermarkBase64 %>');max-width: 800px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background-repeat: repeat; background-position: center; background-size: auto; opacity: 1;">
+
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tbody>
+
+
+                        <tr>
+                            <td style="border: none; padding:  0px 10px;">
+                                <p style="font-size: 12px ; margin: 0;">Policy has been issued basis Insured Person(s)
+                                </p>
+                                <br>
+                                <p style="font-size: 12px ; margin: 0;">Please go through the details as furnished above
+                                    and
+                                    also as provided in the Policy Schedule and confirm that they are in order. Should
+                                    you
+                                    feel that there are any discrepancies / variations, you are requested to write back
+                                    to
+                                    us immediately at <a href="mailto:rgicl.services@relianceada.com"
+                                        style="color: #050000; text-decoration: none;">rgicl.services@relianceada.com</a>
+                                    for necessary changes / rectification. In the absence of any written communication
+                                    from
+                                    you within 7 days or commencement of Policy Period whichever is earlier, it is
+                                    hereby
+                                    agreed and understood that the above statements, answers and particulars are
+                                    complete,
+                                    correct and true in all respects and are the basis on which this Policy is being
+                                    granted
+                                    and that if, after insurance is effected, it is found that the above statements,
+                                    answers
+                                    or particulars are incorrect or untrue in any respect, the policy will be considered
+                                    Null and Void-ab-initio and the Company shall have no liability under the policy.
+                                </p>
+                                <h3 style="font-size: 14px; font-weight: bold; margin-top: 40px;  background-color: #4168b3;
+               -webkit-print-color-adjust: exact;
+               print-color-adjust: exact;
+               padding: 5px;
+               color: #fff;">Declaration & Warranty by the Proposer</h3>
+                                <ol style="padding-left: 20px; margin-top: 0;" type="i">
+                                    <li>
+                                        <ol style="padding-left: 20px; margin-top: 0;">
+                                            <li style="margin: 5px 0;">Is/are not travelling against advice of medical
+                                                practitioner</li>
+                                            <li style="margin: 5px 0;">Is/are not on waiting list for any medical
+                                                treatment
+                                            </li>
+                                            <li style="margin: 5px 0;">Is/are not travelling for the purpose of
+                                                obtaining
+                                                medical treatment</li>
+                                            <li style="margin: 5px 0;">Have not received a terminal prognosis for a
+                                                medical
+                                                condition before journey</li>
+                                            <li style="margin: 5px 0;">Being in India before taking cover & commencement
+                                                of
+                                                trip.</li>
+                                            <li style="margin: 5px 0;">Being resident Indian.</li>
+                                        </ol>
+                                    </li>
+                                    <li style="margin: 5px 0;">Declared of any Pre existing Condition, using words /
+                                        terms
+                                        which mean any disease/illness which are same or similar to - Cancer / Leukemia
+                                        /
+                                        Malignant Tumor, Cardiac ailments, COPD, HIV /AIDS, Insulin Dependent Diabetes,
+                                        Kidney Ailment, Liver Disease, Neurological Disorder / Stroke / Paralysis,
+                                        Thalassemia will render this policy null and Void-ab-initio and the Company
+                                        shall
+                                        have no liability under the policy (Applicable if declared PED).</li>
+                                    <li style="margin: 5px 0;">Purpose of visit either Leisure or Business</li>
+                                    <li style="margin: 5px 0;">I have read and understood the brochure, prospectus,
+                                        sales
+                                        literature & Policy wordings and confirm to abide by the same.</li>
+                                    <li style="margin: 5px 0;">I understand that the information provided by me will
+                                        form
+                                        the basis of the insurance policy, is subject to the Board approved underwriting
+                                        policy of the insurance company and that the policy will come into force only
+                                        after
+                                        full receipt of the premium chargeable.</li>
+                                    <li style="margin: 5px 0;">I/We further declare that I/We will notify in writing any
+                                        change occurring in the occupation or general health of the life to be insured /
+                                        proposer after the proposal has been submitted but before communication of the
+                                        risk
+                                        acceptance by the Company.</li>
+                                    <li style="margin: 5px 0;">I/We declare and consent to the Company seeking medical
+                                        information from any Doctor or from a hospital who at anytime has attended on
+                                        the
+                                        life to be insured / proposer or from any past or present employer concerning
+                                        anything which affects the physical or mental health of the life to be assured /
+                                        proposer and seeking information from any insurance company to which an
+                                        application
+                                        for insurance on the life to be assured / proposer has been made for the purpose
+                                        of
+                                        underwriting the proposal and / or claim settlement.</li>
+                                    <li style="margin: 5px 0;">I/We authorize the company to share information
+                                        pertaining to
+                                        my proposal including the medical records for the sole purpose of proposal
+                                        underwriting and/or claims settlement and with any Governmental and / or
+                                        Regulatory
+                                        Authority.</li>
+                                    <li style="margin: 5px 0;">Receipt of the Proposal form by the Company shall not be
+                                        construed as acceptance of proposal. I hereby agree that the insurance coverage
+                                        shall commence only on realization of full premium and on receipt of complete
+                                        medical reports (wherever applicable) and subject to individual underwriting by
+                                        the
+                                        Company. The Company at its sole discretion reserves the right to accept or
+                                        reject
+                                        or load any proposal without assigning any reason thereof.</li>
+                                    <li style="margin: 5px 0;">I understand that the Policy shall become void at the
+                                        Company's option, in the event of any untrue or incorrect statement,
+                                        misrepresentation, non-description or nondisclosure of any material fact in the
+                                        Proposal form/personal statement, declaration and connected documents or any
+                                        material information having been withheld by me or anyone acting on my behalf.
+                                    </li>
+                                    <li style="margin: 5px 0;">I hereby declare that the person(s) proposed to be
+                                        insured
+                                        would submit to medical examinations, before the nominated doctors of the
+                                        Company,
+                                        or undergo diagnostic or other medical tests, as suggested by the Company for
+                                        its
+                                        underwriting.</li>
+
+
+                                </ol>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+
+            </div>
+            <!-- FOOTER FOR PAGE 2 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div style="page-break-before: always;"></div>
+
+    <!-- Page 8 -->
+    <div class="2 div2-page">
+        <div class="page-container">
+
+            <div
+                style="background-image: url('<%= policy.watermarkBase64 %>');max-width: 800px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background-repeat: repeat; background-position: center; background-size: auto; opacity: 1;">
+
+
+                <table style="width: 100%; border-collapse: collapse;">
+
+
+
+
+                    <tr>
+                        <td style="border: none; padding:  0px 10px;">
+
+                            <ol start="12" type="i">
+                                <li style="margin: 5px 0;">I consent to provide a valid age proof and identity proof at
+                                    the time of claims or any other time when required by the Company.</li>
+                                <li style="margin: 5px 0;">I/We consent to receive information from the Company through
+                                    physical, electronic or telecommunication means from time to time.</li>
+                                <li style="margin: 5px 0;">I hereby declare on my behalf & on behalf of all persons
+                                    proposed to be insured that the above statements, answers and/or particulars given
+                                    by me in this proposal form are true and complete in all respects to the best of my
+                                    knowledge and that I/We am/are authorized to propose on behalf of these other
+                                    persons.</li>
+                                <li style="margin: 5px 0;">I/We here by state that the above mentioned address shall be
+                                    taken as address on record for the purpose of GST.</li>
+                                <li style="margin: 5px 0;">I/We hereby confirm that the contents of the proposal form
+                                    and connected documents have been fully explained to me/us and I/We have fully
+                                    understood the significance of the proposed contract.</li>
+                            </ol>
+                            <div style="display: flex; justify-content: space-between; margin: 50px 0 30px;">
+                                <p style="font-size: 12px ; margin: 0;">Place: CORPORATE GROUP - MUMBAI</p>
+                                <p style="font-size: 12px ; margin: 0;">Date: <%= policy.formattedMonth_createdate %>
+                                </p>
+                                <p style="font-size: 12px ; margin: 0;">Signature:</p>
+                            </div>
+                            <h3 style="font-size: 14px; font-weight: bold; margin-top: 40px; background-color: #4168b3;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            padding: 5px;
+            color: #fff;">AML Guidelines</h3>
+                            <ol style="padding-left: 20px; margin-top: 20px;">
+                                <li style="margin: 5px 0;">I/We hereby confirm that all premiums have been/will be paid
+                                    from bonafide sources and no premiums have been /will be paid out of proceeds of
+                                    crime related to any of the offense listed in Prevention of Money Laundering Act,
+                                    2002.</li>
+                                <li style="margin: 5px 0;">I understand that the Company has the right to call for
+                                    document to established sources of funds.</li>
+                                <li style="margin: 5px 0;">The Insurance Company has right to cancel the insurance
+                                    contract in case I am/have been found guilty by competent court of law under any of
+                                    the statutes, directly or indirectly governing the prevention of money laundering in
+                                    India.</li>
+                            </ol>
+                            <div style="display: flex; justify-content: space-between; margin: 50px 0 30px;">
+                                <p style="font-size: 12px ; margin: 0;">Signature:</p>
+                                <p style="font-size: 12px ; margin: 0;">Date: <%= policy.formattedMonth_createdate %>
+                                </p>
+                                <p style="font-size: 12px ; margin: 0;">Place: CORPORATE GROUP - MUMBAI</p>
+                            </div>
+                            <div style="margin-bottom: 30px;">
+                                <p style="font-size: 12px ; margin: 0;">Vernacular Declaration stating that the contents
+                                    of this proposal form have been read over & fully explained to me in [Language]. I
+                                    further confirm & declare that contents read over & explained to me have been
+                                    understood by me. [Explanation]</p>
+                                <br>
+                                <p style="font-size: 12px ; margin: 0;">Signature/Thumb Impression of the
+                                    Proposer<br>Identified by Name & Signature:</p>
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <p style="font-size: 12px ; margin: 0;">Date: <%= policy.formattedMonth_createdate
+                                            %>
+                                    </p>
+                                    <p style="font-size: 12px ; margin: 0;">Place: CORPORATE GROUP - MUMBAI</p>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+
+
+                </table>
+
+
+            </div>
+
+            <!-- FOOTER FOR PAGE 2 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div style="page-break-before: always;"></div>
+
+
+
+    <!-- Page 9 -->
+    <div class="2 div2-page">
+        <div class="page-container">
+            <div
+                style="background-image: url('<%= policy.watermarkBase64 %>');max-width: 800px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background-repeat: repeat; background-position: center; background-size: auto; opacity: 1;">
+
+
+                <table style="width: 100%; border-collapse: collapse;">
+
+
+
+
+                    <tr>
+                        <td style="border: none; padding:  0px 10px;">
+
+                            <h4 style="color: red; margin: 0; font-size: 14px; font-weight: bold;  background-color: #4168b3;
+                         -webkit-print-color-adjust: exact;
+                         print-color-adjust: exact;
+                         padding: 5px;
+                         color: #fff;">Prohibition of Rebates - Section 41 of the Insurance Act, 1938 as amended by
+                                Insurance Laws (Amendment) Act, 2015.</h4>
+                            <ol style="padding-left: 20px; margin-top: 20px;">
+                                <li style="margin: 5px 0;">No person shall allow or offer to allow, either directly or
+                                    indirectly, as an inducement to any person to take out or renew or continue an
+                                    insurance in respect of any kind of risk relating to lives or property in India, any
+                                    rebate of the whole or part of the commission payable or any rebate of the premium
+                                    shown on the policy, nor shall any person taking out or renewing or continuing a
+                                    policy accept any rebate, except such rebate as may be allowed in accordance with
+                                    the published prospectuses or tables of the insurer.</li>
+                                <li style="margin: 5px 0;">Any person making default in complying with the provisions of
+                                    this section shall be liable for a penalty which may extend to ten lakh rupees.</li>
+                            </ol>
+                            <p style="font-size: 12px ; margin: 30px 0 30px;"><strong>Note:</strong> The Policy copy and
+                                all related documents shall be sent to the email ID provided above. If you wish to
+                                receive the Policy copy and related documents in physical form to the aforesaid
+                                communication address, please drop us an email at <a
+                                    href="mailto:rgicl.services@relianceada.com"
+                                    style="color: #050000; text-decoration: none;">rgicl.services@relianceada.com</a>
+                            </p>
+                        </td>
+                    </tr>
+
+
+                </table>
+
+            </div>
+
+            <!-- FOOTER FOR PAGE 2 -->
+            <div class="footer">
+                <table
+                    style="opacity: 0.5; background-color: transparent; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <tr>
+                        <td style="border: 0; padding: 0; padding: 10px 0; font-size: 12px; color: #000000;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Reliance General
+                                        Insurance Company Limited.</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>IRDAI Registration No.
+                                        103</strong></p>
+                                <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>An ISO 9001:2015
+                                        Certified Company</strong></p>
+                            </div>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2; margin: 10px 0 5px;">
+                                <strong>Registered & Corporate Office:</strong> Reliance General Insurance Company
+                                Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off
+                                Western Express Highway, Goregaon (East), Mumbai – 400 063.
+                            </p>
+                            <p style="font-size: 10px; margin: 0; line-height: 1.2;"><strong>Corporate Identity
+                                    No.</strong>
+                                U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs
+                                to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance
+                                Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div style="page-break-before: always;"></div>
+
+    <!-- Page 10 -->
+    <div>
+        <div style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                    <td style="padding:  0px 10px; text-align: left; vertical-align: top;">
+                        <img src="<%= policy.logoBase64 %>" alt="Logo"
+                            style="max-height: 80px; max-width: 150px; object-fit: contain;">
+
+                    </td>
+                    <td align="right"><img
+                            src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/logo-tech.png"
+                            alt="" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-left:150px;padding-right:150px;">
+                        <div
+                            style="background:#3763af;border:solid 3px #fff; border-radius: 50px; font-size:12px; padding:5px; vertical-align: middle; color:#fff; text-align:center; font-weight: bold;">
+                            CUSTOMER INFORMATION SHEET/KNOW YOUR POLICY</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <hr>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;"><b>This
+                            document provides key information about your policy. You are also advised to go through your
+                            policy document.</b></td>
+                </tr>
+            </table>
+        </div>
+        <div style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; border-left:solid 1px #000;border-top:solid 1px #000;">
+                <tr>
+                    <td width="3%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        SR.<br>NO.</td>
+                    <td width="20%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        Title</td>
+                    <td width="62%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        Description<br><span style="font-weight: normal;">(Please refer to applicable Policy Clause
+                            Number in next column)</span></td>
+                    <td width="15%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        Policy Clause<br>Number</td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        1</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Name of Insurance Product/Policy</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        RELIANCE CORPORATE FLEXI TRAVEL CARE INSURANCE POLICY</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        2</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Policy number</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        xxxxxxxxxxx</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        3</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Type of Insurance Product/Policy</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Payment on Indemnity and Benefit Basis (As per plan coverage opted)</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        4</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Sum Insured (Basis) (Along with amount)</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Individual Sum Insured USD - xxxxxxx</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        5</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Policy Coverage (What<br>the policy covers?)<br><br>(Policy clause Number/s)</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        xxxxxxxx</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        Section 4</td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        6</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Exclusions<br><br>(What the policy does<br>not covers)</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Following is a partial list of the policy exclusions. Please refer to the policy document
+                            for the complete details of exclusions:</p>
+                        <ol style="margin-block-start:0px; margin-block-end:0px;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Any claim relating to events occurring before the commencement of the cover or otherwise
+                                outside of the period of insurance.</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Any pre-existing disease or complications thereof</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Treatment abroad if that is the sole reason or one of the reasons for the Insured
+                                /Insured Person's temporary stay abroad.</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Any claim if the Insured / Insured Person –
+                                <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-alpha;">
+                                    <li
+                                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                        is travelling against the advice of a physician</li>
+                                    <li
+                                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                        is receiving, or is on a waiting list to receive, specified medical treatment
+                                        declared in the physician's report or certificate;</li>
+                                    <li
+                                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                        has received terminal prognosis for a medical condition;</li>
+                                    <li
+                                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                        is taking part in a naval, military or air force operation.</li>
+                                </ol>
+                            </li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Deductibles as specified in the Schedule.</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Any claim arising out of illnesses or accidents that the Insured / Insured Person has
+                                caused intentionally or by committing a crime or as a result of drunkenness or addiction
+                                (drugs, alcohol).</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Any claim arising out of mental disorder, anxiety, stress, depression, venereal disease
+                                or any loss, directly or indirectly, attributable to HIV (Human Immuno Deficiency Virus)
+                                and / or any HIV related illness including AIDS (Acquired Immuno Deficiency Syndrome)
+                                and / or any mutant derivative or variations thereof howsoever caused.</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                War and warlike occurrence or invasion, acts of foreign enemies, hostilities, civil war,
+                                rebellion, insurrection, civil commotion assuming the proportions of or amounting to an
+                                uprising, military or usurped power, active participation in riots, confiscation or
+                                nationalisation or requisition of or destruction of or damage to property by or under
+                                the order of any government or local authority.</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Any claim arising out of sporting activities in so far as they involve the training or
+                                participation in competitions of professional or semiprofessional sports persons.</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        Section 5</td>
+                </tr>
+            </table>
+        </div>
+        <div style="background: #e1e8f3; border-bottom:solid 5px #3763af; margin-top: 20px; padding:0px;">
+            <div
+                style="font-family: Arial, Helvetica, sans-serif; background:#3763af;border:solid 3px #fff; padding:5px; border-radius: 50px; position: relative; top:-15px; font-size:15px; vertical-align: middle; color:#fff; text-align:center; font-weight: bold;">
+                <table align="center" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td style="vertical-align: middle;"><img
+                                src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/ico-arrow.png"
+                                alt="reliancegeneral.co.in"></td>
+                        <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-size:15px;">
+                            &nbsp;reliancegeneral.co.in</td>
+                        <td style="vertical-align: middle; padding-left:20px;"><img
+                                src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/ico-phone.png"
+                                alt="022 4890 3009 (Paid)"></td>
+                        <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-size:15px;">
+                            &nbsp;022 4890 3009 (Paid)</td>
+                        <td style="vertical-align: middle; padding-left:20px;"><img
+                                src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/ico-whatsup.png"
+                                alt="whatsup"></td>
+                        <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-size:15px;">
+                            &nbsp;74004 22200 (WhatsApp)</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="padding:10px; position: relative;bottom:15px;">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                        <td style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;">IRDAI
+                            Registration No. 103. Reliance General Insurance Company Limited.</td>
+                        <td style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;"
+                            align="right">An ISO 9001:2015 Certified Company</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;">For
+                            complete details on the benefits, coverage, terms & conditions and exclusions, do read the
+                            sales brochure, prospectus and policy wordings carefully before concluding sale. Registered
+                            & Corporate Office: 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden
+                            City, Off. Western Express Highway, Goregaon (E), Mumbai-400063. Corporate Identity Number:
+                            U66603MH2000PLC128300. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures
+                            Private Limited and used by Reliance General Insurance Company Limited under License.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;">
+                            <b>RELIANCE CORPORATE FLEXI TRAVEL CARE INSURANCE POLICY. UIN No.: RELTIOP07004V010607.
+                                RGI/UW/CO/2832/PS/VER. 1.0/310118</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div style="page-break-before: always;"></div>
+
+    <!-- Page 11 -->
+    <div>
+        <div style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                    <td style="padding:  0px 10px; text-align: left; vertical-align: top;">
+                        <img src="<%= policy.logoBase64 %>" alt="Logo"
+                            style="max-height: 80px; max-width: 150px; object-fit: contain;">
+
+                    </td>
+                    <td align="right"><img
+                            src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/logo-tech.png"
+                            alt="" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-left:150px;padding-right:150px;">
+                        <div
+                            style="background:#3763af;border:solid 3px #fff; border-radius: 50px; font-size:12px; padding:5px; vertical-align: middle; color:#fff; text-align:center; font-weight: bold;">
+                            CUSTOMER INFORMATION SHEET/KNOW YOUR POLICY</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <hr>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;"><b>This
+                            document provides key information about your policy. You are also advised to go through your
+                            policy document.</b></td>
+                </tr>
+            </table>
+        </div>
+        <div style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; border-left:solid 1px #000;border-top:solid 1px #000;">
+                <tr>
+                    <td width="3%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        SR.<br>NO.</td>
+                    <td width="20%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        Title</td>
+                    <td width="62%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        Description<br><span style="font-weight: normal;">(Please refer to applicable Policy Clause
+                            Number in next column)</span></td>
+                    <td width="15%"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center; font-weight: bold;">
+                        Policy Clause<br>Number</td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        7</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Waiting period<br><br>Time period during which specified diseases/treatments are not covered It
+                        is counted from the beginning of the policy coverage.</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Delay of Checked in Baggage – 6 hours</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Daily Allowance in case of Hospitalisation - 2 Days</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Trip Delay – 12 hours</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Hijack Distress Allowance – 12 hours</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="4"
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        8</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Financial limits of coverage<br>
+                        <ol
+                            style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Sub-limit (It is a pre-defined limit and the insurance company will not pay any amount
+                                in excess of this limit)</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol
+                            style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Sub Limit - Please refer point no. 5 Ii.e Policy Coverage section) for sum insured/
+                                sub-limit against coverages</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;"
+                            start="2">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Co-payment (It is a specified amount / percentage of the admissible claim amount to be
+                                paid by policyholder / insured).</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;"
+                            start="2">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Co-payment – Not applicable</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;"
+                            start="3">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Deductible (It is a specified amount:<br>-up to which an insurance company will not pay
+                                any claim, and<br>-which will be deducted from total claim amount (if claim amount is
+                                more than the specified amount)</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;"
+                            start="3">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Deductible – Please refer point no. 5 Ii.e Policy Coverage section) for deductible
+                                against coverages</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;"
+                            start="4">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Any other limit (as applicable)</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman; padding-left:15px;"
+                            start="4">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Any other limit - Not applicable</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        9</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Claims/Claims Procedure</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Details of procedure to be followed for cashless service as well as for reimbursement of
+                            claim including pre and post hospitalization.</p>
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Turn Around Time (TAT) for claims settlements</p>
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                TAT for preauthorization of cashless facility – 6 hours from receipt of complete
+                                documents.</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                TAT for cashless final bill authorization – 1 hour from receipt of complete documents
+                            </li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                For reimbursement claims - The Company shall settle the claim within 30 days from the
+                                date of receipt of last necessary document. However, where the circumstances of a claim
+                                warrant an investigation, Company shall settle the claim within 45 days from the date of
+                                receipt of last necessary document.</li>
+                        </ol>
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Please find below the details /link - </p>
+                        <ol style="margin-block-start:0px; margin-block-end:0px; list-style-type: lower-roman;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                Network Hospital details -
+                                https://www.reliancegeneral.co.in/Insurance/Self-Help/Cashless-Garages-and-Hospitals.aspx?network=Hospitals
+                            </li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Helpline number- 022-4890 3009</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Hospitals which are blacklisted or from where no claims will be accepted by insurer-
+                                www.reliancegeneral.co.in</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Downloading/getting claim form- www.reliancegeneral.co.in</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        Section 6.12</td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        10</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Policy Servicing</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Any issues related with respect to policy, kindly E-mail us at
+                            rgicl.services@relianceada.com and for correspondence contact us Reliance General Insurance
+                            Company Limited</p>
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Correspondence Address – Reliance General Insurance., Winway Building 2nd & 3rd Floor, 11/12
+                            Block No-4, Old no-67, South Tukoganj, Indore (M.P) - 452001 Contact No.- 022- 41112600</p>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                    </td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        11</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        Grievances/Complaints</td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px;">
+                        <p
+                            style="margin-block-start:0px; margin-block-end:0px; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                            Details of Grievance redressal officer refer the link (https://www.reliancegeneral.co.in/
+                            Insurance/About-Us/Grievance Redressal.aspx</p>
+                        <ol style="list-style-type: upper-alpha; margin-block-start:0px; margin-block-end:0px;">
+                            <li style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;">
+                                IRDAI Integrated Grievance Management System-https://igms.irda.gov.in/</li>
+                            <li
+                                style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px; padding-top:5px;">
+                                Insurance Ombudsman - The contact details of the Insurance Ombudsman offices have been
+                                provided as Annexure-B of Policy document</li>
+                        </ol>
+                    </td>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height: 15px;border-right:solid 1px #000;border-bottom:solid 1px #000; padding:5px; text-align: center;">
+                        Section 7 – Point 28</td>
+                </tr>
+            </table>
+        </div>
+        <div style="background: #e1e8f3; border-bottom:solid 5px #3763af; margin-top: 20px; padding:0px;">
+            <div
+                style="font-family: Arial, Helvetica, sans-serif; background:#3763af;border:solid 3px #fff; padding:5px; border-radius: 50px; position: relative; top:-15px; font-size:15px; vertical-align: middle; color:#fff; text-align:center; font-weight: bold;">
+                <table align="center" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td style="vertical-align: middle;"><img
+                                src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/ico-arrow.png"
+                                alt="reliancegeneral.co.in"></td>
+                        <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-size:15px;">
+                            &nbsp;reliancegeneral.co.in</td>
+                        <td style="vertical-align: middle; padding-left:20px;"><img
+                                src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/ico-phone.png"
+                                alt="022 4890 3009 (Paid)"></td>
+                        <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-size:15px;">
+                            &nbsp;022 4890 3009 (Paid)</td>
+                        <td style="vertical-align: middle; padding-left:20px;"><img
+                                src="http://zextratravelassist.interstellar.co.in/travel-api/images/policy_img/ico-whatsup.png"
+                                alt="whatsup"></td>
+                        <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; font-size:15px;">
+                            &nbsp;74004 22200 (WhatsApp)</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="padding:10px; position: relative;bottom:15px;">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                        <td style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;">IRDAI
+                            Registration No. 103. Reliance General Insurance Company Limited.</td>
+                        <td style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;"
+                            align="right">An ISO 9001:2015 Certified Company</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;">For
+                            complete details on the benefits, coverage, terms & conditions and exclusions, do read the
+                            sales brochure, prospectus and policy wordings carefully before concluding sale. Registered
+                            & Corporate Office: 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden
+                            City, Off. Western Express Highway, Goregaon (E), Mumbai-400063. Corporate Identity Number:
+                            U66603MH2000PLC128300. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures
+                            Private Limited and used by Reliance General Insurance Company Limited under License.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="font-family: Arial, Helvetica, sans-serif; font-size:9px; line-height: 14px;">
+                            <b>RELIANCE CORPORATE FLEXI TRAVEL CARE INSURANCE POLICY. UIN No.: RELTIOP07004V010607.
+                                RGI/UW/CO/2832/PS/VER. 1.0/310118</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

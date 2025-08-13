@@ -1,5 +1,7 @@
-require('newrelic');
+//require('newrelic');
+
 var express = require('express');
+
 var path = require('path');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
@@ -8,33 +10,31 @@ var lessMiddleware = require('less-middleware');
 var web = require('./routes/web');
 var users = require('./routes/users');
 var api = require('./routes/api');
-var app = express();
+
 var base=require('./controller/baseController');
 var logger=require('./bin/Logger');
-var app=express();
+var wrapper = require('./controller/wrapper');
+
 var cors=require("cors")
+require('dotenv').config(); 
+
+
+var app = express();
+
 app.use(cors());
+
 var con=require('./bin/dbconnection.js');
 
-
-// view engine setup
-// var phpExpress = require('php-express')({
-//   binPath: 'php'
-// });
  
 // set view engine to php-express
 app.set('views', './views');
-// app.engine('php', phpExpress.engine);
-app.set('view engine', 'jade');
- 
-// routing all .php file to php-express
-//app.all(/.+\.php$/, phpExpress.router);
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public/images/icon', '1.png')));
-//app.use(logger('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({limit: "5mb",extended: false}));
+app.use(bodyParser.json({ limit: '5mb' }));
+
 app.use(cookieParser());
 app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -42,14 +42,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 var requestAccess = function (req, res, next) {
   token=req.header("token") ;
 
-  var reqlog = [];
-  reqlog.push(req.url);
-  reqlog.push(JSON.stringify(req.body));
-  reqlog.push(token);
-  reqlog.push("API Called");
-  con.execute_proc('call InsertLog(?,?,?,?)',reqlog,function(data) {
-  });
-  
   //console.log(user + " "+pwd);
   if(token==="1234567890"){
       next();
@@ -86,5 +78,9 @@ app.use(function(err, req, res, next) {
   res.send({Message: "Fatal error !!! " + err.status + ": "+err.message, Status: "Failure", StatusNo: 1, MasterData: null});
 });
 
+
+
+// Make uploads directory public (add this after your middleware setup but before routes)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 module.exports = app;

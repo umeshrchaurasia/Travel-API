@@ -1,0 +1,1298 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reliance Travel Insurance - Certificate</title>
+    <style>
+    /* Global reset */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        color: #050000;
+        background-color: #fdfdfd;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 10mm;
+    }
+
+    a {
+        color: #050000;
+        text-decoration: none;
+    }
+
+    h1 {
+        font-size: 22px;
+        color: #3670a1;
+        margin-bottom: 10px;
+    }
+
+    h1, h2, h3, h4 {
+        margin-bottom: 5px;
+        page-break-after: avoid;
+    }
+
+    /* Header */
+    header {
+        height: 100px;
+        padding: 10px 20px;
+        border-bottom: 1px solid #ccc;
+        background-color: #ffffff;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .logo img, .scanner img, .contact-details img {
+        max-height: 80px;
+        max-width: 150px;
+        object-fit: contain;
+    }
+
+    .signed {
+        background-color: #ffe1e6;
+        padding: 8px;
+        font-size: 12px;
+        max-width: 200px;
+        word-wrap: break-word;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .signed p {
+        background-color: #ffffff;
+        font-size: 10px;
+        line-height: 15px;
+        margin: 0;
+        padding: 2px;
+    }
+
+    .contact-details {
+        max-width: 200px;
+        text-align: right;
+    }
+
+    /* Content and Page */
+    .content {
+        position: relative;
+        z-index: 1;
+        padding: 0;
+    }
+
+    .page {
+        min-height: 1123px; /* A4 height at 96dpi */
+        padding: 20px; /* Default padding for subsequent pages */
+        margin: 0;
+        background: #fff;
+        position: relative;
+        page-break-after: always;
+        page-break-inside: avoid;
+        overflow: visible;
+        /* Add watermark styles */
+        background-image: url('watermark.jpg');
+        background-repeat: repeat;
+        background-position: center;
+        background-size: auto;
+        opacity: 1; /* Keep the page content fully opaque */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .page:first-child {
+        padding-top: 120px; /* Extra padding for header on first page */
+    }
+
+    .page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: inherit;
+        background-repeat: inherit;
+        background-position: inherit;
+        background-size: inherit;
+        opacity: 0.2; /* Watermark opacity */
+        z-index: -1;
+    }
+
+    .page-table {
+        width: 100%;
+        min-height: 1056px; /* A4 height minus margins */
+        border-collapse: collapse;
+        page-break-inside: auto;
+    }
+
+    .page-table tbody {
+        vertical-align: top;
+    }
+
+    .page-table tfoot {
+        height: 80px;
+        border-top: 1px solid #ccc;
+        background-color: transparent;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .page-table tfoot td {
+        padding: 10px 0;
+        font-size: 12px;
+        color: #000000;
+    }
+
+    .footer-list {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        page-break-inside: auto;
+        overflow: visible;
+    }
+
+    th, td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+        vertical-align: top;
+        page-break-inside: avoid;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .info {
+        margin: 5px 0;
+        page-break-inside: avoid;
+    }
+
+    .no-print {
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .sign-div {
+        margin-right: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: end;
+        page-break-inside: avoid;
+    }
+
+    .aml-sec {
+        page-break-inside: avoid;
+        background-color: blue;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        padding: 10px 5px;
+        color: #fff;
+    }
+
+    .declaration-div {
+        border: 2px solid #000;
+        padding: 30px 20px;
+    }
+
+    table p {
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    ol {
+        padding-left: 20px;
+        margin-top: 20px;
+    }
+
+    .no-border {
+        border: 0;
+        padding: 0;
+    }
+
+    /* Print-specific styles */
+    @media print {
+        @page {
+            size: A4;
+            margin: 15mm 10mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            min-height: 1056px;
+            padding: 20px;
+            margin: 0;
+            page-break-after: always;
+            page-break-inside: avoid;
+            position: relative;
+            width: 100%;
+            overflow: visible;
+        }
+
+        .page:first-child {
+            padding-top: 120px; /* Extra padding for header */
+        }
+
+        .page-table {
+            min-height: 1000px;
+            width: 100%;
+            border: 0;
+        }
+
+        .page-table tfoot {
+            display: table-footer-group; /* Ensure footer repeats */
+            height: 80px;
+            background: transparent;
+        }
+
+        #print-button, .no-print {
+            display: none !important;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            page-break-inside: auto;
+            overflow: visible;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+            page-break-inside: avoid;
+        }
+
+        * {
+            overflow: visible !important;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <button id="print-button" class="no-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        
+        <!-- Page 1 -->
+        <div class="page">
+            <header>
+                <div class="logo">
+                    <img src="logo.png" alt="">
+                </div>
+                <div class="scanner">
+                    <img src="scanner.png" alt="">
+                </div>
+                <div class="signed">
+                    <p>
+                        Digitally Signed by <br>
+                        Reliance General Insurance <br>
+                        Company Limited Date : <br>
+                        2024.10.15 12:39:02 IST
+                    </p>
+                </div>
+                <div class="contact-details">
+                    <img src="contect.jpg" alt="">
+                </div>
+            </header>
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p align="center"><strong><u>Reliance Corporate Flexi Travel Care Insurance Policy</u></strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" valign="top">
+                                        <p style="margin-bottom: 10px;"><strong>Policy Issuing Office:</strong></p>
+                                        <p>Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai - 400 063.<br>Branch Contact No. : 022-33031000</p>
+                                    </td>
+                                    <td colspan="6" valign="top">
+                                        <p style="margin-bottom: 10px;"><strong>Policy Servicing Office Name &amp; Address-</strong></p>
+                                        <p>Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai - 400 063</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" valign="top">
+                                        <p><strong>Certificate No. -</strong> XXXXX</p>
+                                    </td>
+                                    <td colspan="6" valign="top">
+                                        <p><strong>Master Policy No. –</strong> xxxxxx</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Br. Code-</strong> XXXXX-xxxxx-xxxx</p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>PSO No. -</strong> 2846234</p>
+                                    </td>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Dept. -</strong> XXXXX</p>
+                                    </td>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Intermediary Code -</strong> XXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>Tax Invoice No &amp; Date :</strong> XXXX &amp; dd-mm-yyyy</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>Details of the Insured</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" valign="top">
+                                        <p>Name of the Policy Holder</p>
+                                    </td>
+                                    <td colspan="9" valign="top">
+                                        <p>XXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" valign="top">
+                                        <p>Address of the policy holder</p>
+                                    </td>
+                                    <td colspan="9" valign="top">
+                                        <p>XXXXXXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>Details of the Insured Person</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p><strong>Name of the Insured Person</strong></p>
+                                    </td>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Passport No.</strong></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>Gender</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><strong>Nominee Name</strong></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>Relationship of the Nominee with the Insured Person</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><strong>ABHA ID or ABHA address</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p><strong>XXX</strong></p>
+                                    </td>
+                                    <td colspan="2" valign="top"></td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>XXXX</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>ASD</p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p>XXX</p>
+                                    </td>
+                                    <td valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Communication Address &amp; Place of Supply</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p>xxxxxxx</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>E mail id</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Telephone Number</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p>022-XXXXXXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>GSTIN / UIN Of Insured : EUROP ASSISTANCE GST No.</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Geographical Coverage</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p>xxxx</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Country Visiting</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong ngx-extract>Policy Period</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><strong>XXXX to XXX time 00:00 XX days</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Name of the Plan opted</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><strong>XXX</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Any Pre existing disease</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p>NO</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 2 (Split Coverage Table) -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <table cellspacing="0" cellpadding="5">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 60%;">Policy  Coverage</th>
+                                        <th style="width: 20%;">Sum Insured (in INR)</th>
+                                        <th style="width: 20%;">Deductible (in INR)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Medical Expenses Including Transportation, Evacuation & Repatriation of Mortal remains</td>
+                                        <td>60,000</td>
+                                        <td>100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dental Treatment</td>
+                                        <td>500</td>
+                                        <td>100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Loss of Passport</td>
+                                        <td>300</td>
+                                        <td>50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Loss of Checked in baggage</td>
+                                        <td>1,000</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delay of Checked in Baggage</td>
+                                        <td>100</td>
+                                        <td>6 Hours</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Personal Liability</td>
+                                        <td>25,000</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Daily Allowance in case of Hospitalisation</td>
+                                        <td>25 per day (5 days max)</td>
+                                        <td>2 days</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hijack Distress Allowance</td>
+                                        <td>50 per day (7 days max)</td>
+                                        <td>12 Hours</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Trip Delay</td>
+                                        <td>150</td>
+                                        <td>12 Hours</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Trip Cancellation & Interruption</td>
+                                        <td>600</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Missed Connection</td>
+                                        <td>200</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Compassionate visit</td>
+                                        <td>Return Fare for any one accompanying person - spouse / child / family doctor</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Home Burglary Insurance (Amount in Indian Rs)</td>
+                                        <td>1,00,000</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Personal Accident</td>
+                                        <td>20,000</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Accidental Death-Common Carrier</td>
+                                        <td>2,500</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Any one illness</td>
+                                        <td>15,000</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Any one Accident</td>
+                                        <td>22,500</td>
+                                        <td>NIL</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 3 -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <table cellspacing="0" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="11" valign="top">
+                                            <p>Consolidated Stamp duty Paid vide Letter of Authorisation &ldquo;NO LOA/ENF-1/CSD/70/2024-25/(Validity Period Dt. 01/11/2024 to Dt. 01/12/2025)/5162 Date 30-10-2024&rdquo; at General Stamp Office, Mumbai.<br>&nbsp; ** Not Applicable for the State of Jammu &amp; Kashmir</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" valign="top">
+                                            <p><strong>Specific Condition</strong></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" valign="top">
+                                            <ol>
+                                                <li>This policy is applicable for registered customers who have successfully booked for travel assistance services from Interstellar Services Private Ltd.</li>
+                                                <li>Warranted that every customer shall have a unique membership ID issued by Interstellar Services Private Ltd.</li>
+                                                <li>The policy will not cover insured/insured person who is less than 03 months and more than 80 years of age (as on completed birthday).</li>
+                                                <li>Warranted that insured is a citizen of India and has a permanent place of residence in India and is not an NRI or OCI or foreign national and was within the territory of India at the time of issuance of the policy and before the commencement of the trip.</li>
+                                                <li>Warranted that purpose of visit will be either leisure or personal business only.</li>
+                                                <li>Warranted that declaration of any pre-existing condition, using words/terms which mean any disease/illness similar to - Cancer / Leukemia / Malignant Tumor, Cardiac ailments, COPD, HIV/AIDS, Insulin Dependent Diabetes, Kidney Ailment, Liver Disease, Neurological Disorder / Stroke / Paralysis, Thalassemia will render this policy null and void-ab-initio and the company shall have no liability under the policy – clean health history required.</li>
+                                                <li>Any expenses related to pre-existing illness/disability/diseases and its related complications/consequences are not payable under the policy except for life-saving unforeseen emergency measures provided to the Insured/Insured Person by the Physician for hospitalization arising out of a pre-existing disease. The treatment for these emergency measures would be paid until the Insured/Insured Person becomes medically stable up to the sum insured opted. All further medical costs to maintain medically stable or to prevent the onset of acute pain would be borne by the Insured/Insured Person.</li>
+                                                <li>Repatriation of Mortal Remains: USD 7,500.</li>
+                                                <li>Warranted that the maximum amount payable per checked-in baggage in case more than one bag has been checked in is 50% (100% for only one checked-in baggage) of the applicable Sum Insured, and per item in baggage, the max is 10%.</li>
+                                                <li>Insurance cover shall become voidable at the option of the Company in the event of any untrue or incorrect statement, misrepresentation, non-description, or non-disclosure of any material particular in the proposal form/personal statement, declaration, and connected documents, or any material information has been withheld by the beneficiary or anyone acting on behalf of the beneficiary to obtain insurance benefit.</li>
+                                                <li>Any claim arising out of sporting activities insofar as they involve the training or participation in competitions of professional or semi-professional sports persons is excluded.</li>
+                                                <li>Medical/Hospitalization expenses due to COVID-19 infection are covered if contracted during travel as per policy terms and conditions.</li>
+                                                <li>Total Premium of Rs inclusive of 18% GST has been paid to RGIC.</li>
+                                            </ol>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 4 -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p>Exclusions:</p>
+                                        <ol>
+                                            <li>Any pre-existing medical conditions and their related complications/consequences.</li>
+                                            <li>Travelling against the advice of a physician.</li>
+                                            <li>Receiving or being on a waiting list for a specified medical treatment.</li>
+                                            <li>Travelling to receive treatment.</li>
+                                            <li>Being under a terminal prognosis for a medical condition.</li>
+                                            <li>Partial loss of checked baggage – only the loss of your entire baggage is covered, not partial loss.</li>
+                                            <li>War or nuclear perils in the country you’re visiting.</li>
+                                            <li>Treatment which could reasonably be delayed until the insured/insured person’s return to the Republic of India.</li>
+                                            <li>Any Travel to Declined countries: -Afghanistan, Myanmar (Burma), Democratic Republic of Congo, East Timor, Eritrea, Iran, Iraq, Liberia, Libya, North Korea, Rwanda, Sierra Leone, Somalia, Sudan, Syria, Yemen, Congo, Republic of (Brazzaville), Timor-Leste (East Timor), Zaire, Ukraine, Pakistan. The list of declined countries may undergo change from time to time depending on the geo-political situation in the respective country.</li>
+                                            <li>Any claim relating to events occurring before the commencement of the cover or outside the period of insurance.</li>
+                                        </ol>
+                                        <p>For complete list of exclusions, terms and conditions kindly refer policy wordings.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p>&nbsp;</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p>In witness whereof this policy has been signed at Mumbai on :<strong>-DD-MM-YYYY</strong><br>
+                                            <strong>GSTIN :</strong> 27AABCR6747B1ZG&nbsp;&nbsp;&nbsp;&nbsp; SAC : 997142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description of Services : Accident and Health Reinsurance Service<br>
+                                            As per the GST regulations, the amount of GST will not be refunded if the policy / endorsement is cancelled after 30th September of the next financial year.<br>
+                                            "In case of a renewal, the benefits provided under the policy and/or terms and conditions of the policy including premium rate may be subject to change".
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 5 -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td colspan="3" valign="top">
+                                        <p>
+                                            <strong>Grievance Clause:-</strong><br><br>
+                                            For resolution of any query or grievance, Insured may  contact the respective branch office of the Company or may call at 02248903009  or may write an email at <a href="mailto:rgicl.services@relianceada.com">rgicl.services@relianceada.com.</a> In case the insured is not satisfied with the response of the office, insured may contact the Nodal Grievance Officer of the Company at <a href="mailto:rgicl.grievances@relianceada.com">rgicl.grievances@relianceada.com.</a> In the event of unsatisfactory response from the Nodal Grievance Officer, insured may email to Head Grievance Officer at <a href="mailto:rgicl.headgrievances@relianceada.com">rgicl.headgrievances@relianceada.com.</a> In the event of unsatisfactory response from the Head  Grievance Officer, he/she may, subject to vested jurisdiction, approach the  Insurance Ombudsman for the redressal of grievance. Details of the offices of  the Insurance Ombudsman are available at IRDAI website <a href="http://www.irda.gov.in/">www.irda.gov.in</a> or on company website <a href="http://www.reliancegeneral.co.in/">www.reliancegeneral.co.in</a> or on <a href="http://www.gbic.co.in/">www.gbic.co.in.</a> The insured may also contact the following office of the Insurance Ombudsman within whose  territorial jurisdiction the branch or office of the Company is located. Office of the Insurance Ombudsman,3rd Floor,Jeevan Seva Annexe,S. V. Road,Santacruz (W), Mumbai - 400 054. Tel.: 022 - 26106552 / 26106960 Fax: 022 - 26106052 Email: <a href="mailto:bimalokpal.mumbai@gbic.co.in">bimalokpal.mumbai@gbic.co.in</a> | Shri. A. K. Sahoo Office of the Insurance  Ombudsman,Jeevan Darshan Bldg.,3rd Floor,C.T.S. No.s. 195 to 198,N.C. Kelkar Road,Narayan Peth, Pune – 411 030. Tel.: 020-41312555 Email: <a href="mailto:bimalokpal.pune@gbic.co.in">bimalokpal.pune@gbic.co.in</a>
+                                            <br>
+                                           <br> <strong>Category-General Insurance Business Service 00440005</strong>
+                                        </p>
+                                        <div class="sign-div">
+                                            <p>For and on behalf of Reliance General Insurance Company Limited.</p>
+                                            <img height="87" src="sign.jpg">
+                                            <p>Authorized Signatory</p>
+                                        </div>
+                                        <p style="margin-top: 30px;">Note: The policy wording with detailed terms, conditions and exclusions are available on our website <a href="http://www.reliancegeneral.co.in/">www.reliancegeneral.co.in</a><br>
+                                            The policy has been issued based on the information provided by you/your representative and the policy is not valid if any of the information provided is incorrect. In case of non-receipt of the policy terms and conditions, please ensure to obtain the same from the Agent / Our nearest Office / from our Website <a href="http://www.reliancegeneral.co.in/">http://www.reliancegeneral.co.in</a><br>
+                                            <strong>Medical Assistance &amp; Emergency Services are provided by our Service Provider, Europ Assistance who are at your Service 24*7 during trip duration</strong>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" valign="top">
+                                        <div style="display: flex;">
+                                            <p>
+                                                Europ Assistance India Pvt Ltd.<br> 7th Floor, Star Hub, Bldg No. 2, Near ITC Maratha Hotel, Sahar, Andheri East, Mumbai – 400 059.<br>
+                                                Please provide immediate intimation of any claim / requirement for emergency assistance while abroad to ensure that the Claim is not prejudiced. Please contact the International Toll Free Helpline numbers given below.
+                                            </p>
+                                            <img height="67" src="europ.jpg">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>In case of any requirement for emergency assistance whilst abroad, please contact the toll free helpline numbers given below:</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" valign="top">
+                                        <p>This document shall be treated as a Tax Invoice as per Rule 46 of the Central Goods and Services Tax Rules 2017<br>
+                                            International Toll Free line: Singapore and Thailand — 001-80099441111, Hong Kong — 001-80099441111 and 006-80099441111, USA — 18337426673, Canada — 011-80099441111, Australia — 0011-80099441111, Japan — 001-010-80099441111 and 010-80099441111, Israel — 00-80099441111 and 014-80099441111, Greece — 86002038017, Argentina, Austria, Belgium, China, Czech Republic, Denmark, France, Germany, Hungary, Italy, Malaysia, Netherlands, New Zealand, Norway, Philippines, Poland, Portugal, South Africa, Spain, Sweden, Switzerland, Taiwan &amp; United Kingdom — 00-80099441111</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>Note:</strong> Kindly refer our website for updated new toll free numbers with effect from 1st October 2017 onwards.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p><strong>Dedicated National Toll Free Help Line: 1800 209 5522</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><strong>Land Line: +91 22 67347843 &amp; +91 22 67347844</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><strong>Fax Number: +91 22 67347888</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>
+                                            <strong>Email: </strong>
+                                            <a href="mailto:reliance@europ-assistance.in"><strong>reliance@europ-assistance.in</strong></a>
+                                        </p>
+                                    </td>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Website: </strong><a href="http://www.europ-assistance.com/">www.europ-assistance.com</a></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>Intermediary Code/Name: Direct</strong></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 6 -->
+        <div class="page">
+            <header>
+                <div class="logo">
+                    <img src="logo.png" alt="">
+                </div>
+                <div class="contact-details">
+                    <img src="contect.jpg" alt="">
+                </div>
+            </header>
+            <table class="page-table" style="margin-top: 30px;">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <h4 style="color: red;"><strong>Reliance Travel Care Insurance Policy - Online Proposal Form</strong></h4>
+                            <p align="right" style="margin-bottom: 10px; font-size: 12px;">Proposal Form No.: Y07252300028</p>
+                            <h3 class="aml-sec">Proposer/Insured Details</h3>
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td valign="top">1.Name of the Proposer/Insured (Mr./Mrs./Ms.)</td>
+                                    <td colspan="5" valign="top">
+                                        <p>XXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>2.Address</p>
+                                    </td>
+                                    <td colspan="5" valign="top">
+                                        <p>XXXXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>Residence Number</p>
+                                    </td>
+                                    <td colspan="2" valign="top"></td>
+                                    <td valign="top"></td>
+                                    <td colspan="2" valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>Gender</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>XXXXXX</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Passport No.</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Mobile No.</p>
+                                    </td>
+                                    <td valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>PAN No.</p>
+                                    </td>
+                                    <td colspan="2" valign="top"></td>
+                                    <td valign="top">
+                                        <p>UID Aadhar No.</p>
+                                    </td>
+                                    <td colspan="2" valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>Email Id</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><a href="mailto:ASDASD@GMAIL.COM">ASDASD@GMAIL.COM</a></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Nationality</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Indian</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>DOB</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>DD-MM-YYY</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td valign="top">
+                                        <p align="center">Name of Nominee</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p align="center">DOB</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p align="center">Relationship with Proposer</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p align="center">xxxx</p>
+                                    </td>
+                                    <td valign="top"></td>
+                                    <td valign="top">
+                                        <p align="center">xxxxxx</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <h3 class="aml-sec" style="margin-top: 40px;">Details of Pre-existing Condition</h3>
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td valign="top">
+                                        <p>Pre-existing illness / Injury / Condition if any</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Suffering Since</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Under Medication</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>No</p>
+                                    </td>
+                                    <td valign="top"></td>
+                                    <td valign="top"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 7 -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <h3 class="aml-sec" style="margin-top: 40px;">Trip Details</h3>
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td valign="top">
+                                        <p>1. Master Policy No. -</p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p>XXXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>2. Name of Master Policy Holder</p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p>XXXXXXX</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>3. Sum Insured Opted</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>0</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>4. Geographical Scope</p>
+                                    </td>
+                                    <td valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>5. Name of the Plan opted</p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p>xxxxxxx</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>6. Date of Journey</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>DD-MM-YYY</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>Date of Return</p>
+                                    </td>
+                                    <td valign="top">
+                                        <p>DD-MM-YYY</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>7. Does the plan trip involve any kind of sporting activity</p>
+                                    </td>
+                                    <td colspan="3" valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>8. Countries that you are visiting</p>
+                                    </td>
+                                    <td colspan="3" valign="top"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p>9. Trip Duration</p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p>Xxxx days</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>
+                            <p>Policy has been issued basis Insured Person(s)</p>
+                            <br>
+                            <p>Please go through the details as furnished above and also as provided in the Policy Schedule and confirm that
+                                 they are in order. Should you feel that there are any discrepancies / variations, you are requested to write back to 
+                                 us immediately at 
+                                 <a href="mailto:rgicl.services@relianceada.com.in">rgicl.services@relianceada.com.in</a> 
+                                    for necessary changes / rectification. In the absence of any written communication from you within 7 days or commencement 
+                                    of Policy Period whichever is earlier, it is hereby agreed and understood that the above statements, answers and 
+                                    particulars are complete, correct and true in all respects and are the basis on which this Policy is being granted
+                                     and that if, after insurance is effected, it is found that the above statements, answers or particulars are incorrect 
+                                     or untrue in any respect, the policy will be considered Null and Void-ab-initio and the Company shall have no liability
+                                      under the policy.</p>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 8 -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <h3 class="aml-sec" style="margin-top: 40px;">Declaration & Warranty by the Proposer</h3>
+                            <ol style="margin-top: 0;" type="i">
+                                <li>
+                                    <ol style="margin-top: 0;">
+                                        <li>Is/are not travelling against advice of medical practitioner</li>
+                                        <li>Is/are not on waiting list for any medical treatment</li>
+                                        <li>Is/are not travelling for the purpose of obtaining medical treatment</li>
+                                        <li>Have not received a terminal prognosis for a medical condition before journey</li>
+                                        <li>Being in India before taking cover &amp; commencement of trip.</li>
+                                        <li>Being resident Indian.</li>
+                                    </ol>
+                                </li>
+                                <li>Declared of any Pre existing Condition, using words / terms which mean any disease/illness which are same or similar to - Cancer / Leukemia / Malignant Tumor, Cardiac ailments, COPD, HIV /AIDS, Insulin Dependent Diabetes, Kidney Ailment, Liver Disease, Neurological Disorder / Stroke / Paralysis, Thalassemia will render this policy null and Void-ab-initio and the Company shall have no liability under the policy (Applicable if declared PED).</li>
+                                <li>Purpose of visit either Leisure or Business</li>
+                                <li>I have read and understood the brochure, prospectus, sales literature &amp; Policy wordings and confirm to abide by the same.</li>
+                                <li>I understand that the information provided by me will form the basis of the insurance policy, is subject to the Board approved underwriting policy of the insurance company and that the policy will come into force only after full receipt of the premium chargeable.</li>
+                                <li>I/We further declare that I/We will notify in writing any change occurring in the occupation or general health of the life to be insured / proposer after the proposal has been submitted but before communication of the risk acceptance by the Company.</li>
+                                <li>I/We declare and consent to the Company seeking medical information from any Doctor or from a hospital who at anytime has attended on the life to be insured / proposer or from any past or present employer concerning anything which affects the physical or mental health of the life to be assured / proposer and seeking information from any insurance company to which an application for insurance on the life to be assured / proposer has been made for the purpose of underwriting the proposal and / or claim settlement.</li>
+                                <li>I/We authorize the company to share information pertaining to my proposal including the medical records for the sole purpose of proposal underwriting and/or claims settlement and with any Governmental and / or Regulatory Authority.</li>
+                                <li>Receipt of the Proposal form by the Company shall not be construed as acceptance of proposal. I hereby agree that the insurance coverage shall commence only on realization of full premium and on receipt of complete medical reports (wherever applicable) and subject to individual underwriting by the Company. The Company at its sole discretion reserves the right to accept or reject or load any proposal without assigning any reason thereof.</li>
+                                <li>I understand that the Policy shall become void at the Company's option, in the event of any untrue or incorrect statement, misrepresentation, non-description or nondisclosure of any material fact in the Proposal form/personal statement, declaration and connected documents or any material information having been withheld by me or anyone acting on my behalf.</li>
+                                <li>I hereby declare that the person(s) proposed to be insured would submit to medical examinations, before the nominated doctors of the Company, or undergo diagnostic or other medical tests, as suggested by the Company for its underwriting.</li>
+                                <li>I consent to provide a valid age proof and identity proof at the time of claims or any other time when required by the Company.</li>
+                                <li>I/We consent to receive information from the Company through physical, electronic or telecommunication means from time to time.</li>
+                                <li>I hereby declare on my behalf &amp; on behalf of all persons proposed to be insured that the above statements, answers and/or particulars given by me in this proposal form are true and complete in all respects to the best of my knowledge and that I/We am/are authorized to propose on behalf of these other persons.</li>
+                                <li>I/We here by state that the above mentioned address shall be taken as address on record for the purpose of GST.</li>
+                                <li>I/We hereby confirm that the contents of the proposal form and connected documents have been fully explained to me/us and I/We have fully understood the significance of the proposed contact.</li>
+                            </ol>
+                            <div style="display: flex; justify-content: space-between;margin:50px 0 30px ;">
+                                <p>Place: CORPORATE GROUP - MUMBAI</p>
+                                <p>Date: mm-yyyy</p>
+                                <p>Signature:</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Page 9 -->
+        <div class="page">
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <h3 class="aml-sec">AML Guidelines</h3>
+                            <ol>
+                                <li>I/We hereby confirm that all premiums have been/will be paid from bonafide sources and no premiums have been /will be paid out of proceeds of crime related to any of the offense listed in Prevention of Money Laundering Act, 2002.</li>
+                                <li>I understand that the Company has the right to call for document to established sources of funds.</li>
+                                <li>The Insurance Company has right to cancel the insurance contract in case I am/have been found guilty by competent court of law under any of the statutes, directly or indirectly governing the prevention of money laundering in India.</li>
+                            </ol>
+                            <div style="display: flex; justify-content: space-between; margin: 50px 0 30px;">
+                                <p>Signature:</p>
+                                <p>Date: mm-yyyy</p>
+                                <p>Place: CORPORATE GROUP - MUMBAI</p>
+                               
+                            </div>
+                            <div class="declaration-div" style="margin-bottom: 30px;">
+                                <p>Vernacular Declaration stating that the contents of this proposal form have been read over & fully explained to me_____________________________________________ in language. I further confirm & declare that contents read over & explained to me have been understood by me. ______________________________________________________________________________________________________ ______________________________________________________________________________________________________ ______________________________________________________________________________________________________</p>
+                                <br>
+                                <p>Signature/Thumb Impression of the Proposer<br>Identified by Name & Signature :</p>
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <p>Date: mm-yyyy</p>
+                                    <p>Place: CORPORATE GROUP - MUMBAI</p>
+                                </div>
+                            </div>
+                            <h4 class="aml-sec">Prohibition of Rebates - Section 41 of the Insurance Act, 1938 as amended by Insurance Laws (Amendment) Act, 2015.</h4>
+                            <ol>
+                                <li>No person shall allow or offer to allow, either directly or indirectly, as an inducement to any person to take out or renew or continue an insurance in respect of any kind of risk relating to lives or property in India, any rebate of the whole or part of the commission payable or any rebate of the premium shown on the policy, nor shall any person taking out or renewing or continuing a policy accept any rebate, except such rebate as may be allowed in accordance with the published prospectuses or tables of the insurer.</li>
+                                <li>Any person making default in complying with the provisions of this section shall be liable for a penalty which may extend to ten lakh rupees.</li>
+                            </ol>
+                            <p style="margin: 30px 0 30px;"><strong>Note :- </strong>The Policy copy and all related documents shall be sent to the email ID provided above.
+                                 If you wish to receive the Policy copy and related documents in physical form to the aforesaid communication address, please drop us an 
+                                 email at <a href="mailto:rgicl.services@relianceada.com">rgicl.services@relianceada.com</a></p>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+            return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+            if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+                try {
+                    var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                    var firstSheetName = workbook.SheetNames[0];
+                    var worksheet = workbook.Sheets[firstSheetName];
+                    var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                    var filteredData = jsonData.filter(row => row.some(filledCell));
+                    var headerRowIndex = filteredData.findIndex((row, index) =>
+                        row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                    );
+                    if (headerRowIndex === -1 || headerRowIndex > 25) {
+                        headerRowIndex = 0;
+                    }
+                    var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                    csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                    return csv;
+                } catch (e) {
+                    console.error(e);
+                    return "";
+                }
+            }
+            return gk_fileData[filename] || "";
+        }
+    </script>
+</body>
+</html>

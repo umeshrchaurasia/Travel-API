@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+/*var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var mongo_conn=require('../bin/mongo_conn.js');
 mongoose.connect(mongo_conn, { autoIndex: false });
@@ -13,7 +13,7 @@ var docSchema = new mongoose.Schema({
   size: Number,
   created_at: Date,
   updated_at: Date
-});
-var Doc = mongoose.model('Docs', docSchema);
+});*/
+var Doc = "";//mongoose.model('Docs', docSchema);
 
 module.exports = Doc;

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reliance Travel Insurance - Certificate</title>
+    <style>
+    /* Global reset */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        color: #050000;
+        background-color: #fdfdfd;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 10mm;
+    }
+
+    a {
+        color: #050000;
+        text-decoration: none;
+    }
+
+    h1 {
+        font-size: 22px;
+        color: #3670a1;
+        margin-bottom: 10px;
+    }
+
+    h1, h2, h3, h4 {
+        margin-bottom: 5px;
+        page-break-after: avoid;
+    }
+
+    /* Header */
+    header {
+        height: 100px;
+        padding: 10px 20px;
+        border-bottom: 1px solid #ccc;
+        background-color: #ffffff;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .logo img, .scanner img, .contact-details img {
+        max-height: 80px;
+        max-width: 150px;
+        object-fit: contain;
+    }
+
+    .signed {
+        background-color: #ffe1e6;
+        padding: 8px;
+        font-size: 12px;
+        max-width: 200px;
+        word-wrap: break-word;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .signed p {
+        background-color: #ffffff;
+        font-size: 10px;
+        line-height: 15px;
+        margin: 0;
+        padding: 2px;
+    }
+
+    .contact-details {
+        max-width: 200px;
+        text-align: right;
+    }
+
+    /* Content and Page */
+    .content {
+        position: relative;
+        z-index: 1;
+        padding: 0;
+    }
+
+    .page {
+        min-height: 1123px; /* A4 height at 96dpi */
+        padding: 20px; /* Default padding for subsequent pages */
+        margin: 0;
+        background: #fff;
+        position: relative;
+        page-break-after: always;
+        page-break-inside: avoid;
+        overflow: visible;
+        /* Add watermark styles */
+        background-image: url('http://inv.policyboss.com/travel-api/images/watermark.jpg');
+        background-repeat: repeat;
+        background-position: center;
+        background-size: auto;
+        opacity: 1; /* Keep the page content fully opaque */
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .page:first-child {
+        padding-top: 120px; /* Extra padding for header on first page */
+    }
+
+    .page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: inherit;
+        background-repeat: inherit;
+        background-position: inherit;
+        background-size: inherit;
+        opacity: 0.2; /* Watermark opacity */
+        z-index: -1;
+    }
+
+    .page-table {
+        width: 100%;
+        min-height: 1056px; /* A4 height minus margins */
+        border-collapse: collapse;
+        page-break-inside: auto;
+    }
+
+    .page-table tbody {
+        vertical-align: top;
+    }
+
+    .page-table tfoot {
+        height: 80px;
+        border-top: 1px solid #ccc;
+        background-color: transparent;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .page-table tfoot td {
+        padding: 10px 0;
+        font-size: 12px;
+        color: #000000;
+    }
+
+    .footer-list {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        page-break-inside: auto;
+        overflow: visible;
+    }
+
+    th, td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+        vertical-align: top;
+        page-break-inside: avoid;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .info {
+        margin: 5px 0;
+        page-break-inside: avoid;
+    }
+
+    .no-print {
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .sign-div {
+        margin-right: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: end;
+        page-break-inside: avoid;
+    }
+
+    .aml-sec {
+        page-break-inside: avoid;
+        background-color: blue;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        padding: 10px 5px;
+        color: #fff;
+    }
+
+    .declaration-div {
+        border: 2px solid #000;
+        padding: 30px 20px;
+    }
+
+    table p {
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    ol {
+        padding-left: 20px;
+        margin-top: 20px;
+    }
+
+    .no-border {
+        border: 0;
+        padding: 0;
+    }
+
+    /* Print-specific styles */
+    @media print {
+        @page {
+            size: A4;
+            margin: 15mm 10mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            min-height: 1056px;
+            padding: 20px;
+            margin: 0;
+            page-break-after: always;
+            page-break-inside: avoid;
+            position: relative;
+            width: 100%;
+            overflow: visible;
+        }
+
+        .page:first-child {
+            padding-top: 120px; /* Extra padding for header */
+        }
+
+        .page-table {
+            min-height: 1000px;
+            width: 100%;
+            border: 0;
+        }
+
+        .page-table tfoot {
+            display: table-footer-group; /* Ensure footer repeats */
+            height: 80px;
+            background: transparent;
+        }
+
+        #print-button, .no-print {
+            display: none !important;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            page-break-inside: auto;
+            overflow: visible;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+            page-break-inside: avoid;
+        }
+
+        * {
+            overflow: visible !important;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <button id="print-button" class="no-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        
+        <!-- Page 1 -->
+        <div class="page">
+            <header>
+                <div class="logo">
+                    <img src="http://inv.policyboss.com/travel-api/images/logo.png" alt="">
+                </div>
+                <div class="scanner">
+                    <img src="http://inv.policyboss.com/travel-api/images/scanner.png" alt="">
+                </div>
+                <div class="signed">
+                    <p>
+                        Digitally Signed by <br>
+                        Reliance General Insurance <br>
+                        Company Limited Date : <br>
+                        <%= policy.signDate %>
+                    </p>
+                </div>
+                <div class="contact-details">
+                    <img src="http://inv.policyboss.com/travel-api/images/contect.jpg" alt="">
+                </div>
+            </header>
+            <table class="page-table">
+                <tbody>
+                    <tr>
+                        <td class="no-border">
+                            <table cellspacing="0" cellpadding="5">
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p align="center"><strong><u>Reliance Corporate Flexi Travel Care Insurance Policy</u></strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" valign="top">
+                                        <p style="margin-bottom: 10px;"><strong>Policy Issuing Office:</strong></p>
+                                        <p>Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai - 400 063.<br>Branch Contact No. : 022-33031000</p>
+                                    </td>
+                                    <td colspan="6" valign="top">
+                                        <p style="margin-bottom: 10px;"><strong>Policy Servicing Office Name &amp; Address-</strong></p>
+                                        <p>Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai - 400 063</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" valign="top">
+                                        <p><strong>Certificate No. -</strong> <%= policy.Policy_No %></p>
+                                    </td>
+                                    <td colspan="6" valign="top">
+                                        <p><strong>Master Policy No. –</strong> <%= policy.MasterPolicyNo %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Br. Code-</strong> <%= policy.BranchCode %></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>PSO No. -</strong> <%= policy.PSONo %></p>
+                                    </td>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Dept. -</strong> <%= policy.Department %></p>
+                                    </td>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Intermediary Code -</strong> <%= policy.IntermediaryCode %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>Tax Invoice No &amp; Date :</strong> <%= policy.Policy_No %> &amp; <%= policy.invoiceDate %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>Details of the Insured</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" valign="top">
+                                        <p>Name of the Policy Holder</p>
+                                    </td>
+                                    <td colspan="9" valign="top">
+                                        <p><%= policy.CompanyName %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" valign="top">
+                                        <p>Address of the policy holder</p>
+                                    </td>
+                                    <td colspan="9" valign="top">
+                                        <p><%= policy.address %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>Details of the Insured Person</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p><strong>Name of the Insured Person</strong></p>
+                                    </td>
+                                    <td colspan="2" valign="top">
+                                        <p><strong>Passport No.</strong></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>Gender</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><strong>Nominee Name</strong></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong>Relationship of the Nominee with the Insured Person</strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><strong>ABHA ID or ABHA address</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <p><strong><%= policy.fullName %></strong></p>
+                                    </td>
+                                    <td colspan="2" valign="top">
+                                        <p><%= policy.PassportNo %></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><strong><%= policy.Gender %></strong></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><%= policy.NomineeName %></p>
+                                    </td>
+                                    <td colspan="3" valign="top">
+                                        <p><%= policy.RelationshipOfTheNomineeWithInsured %></p>
+                                    </td>
+                                    <td valign="top">
+                                        <p><%= policy.ABHA_ID %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Communication Address &amp; Place of Supply</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><%= policy.address %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>E mail id</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><%= policy.EmailID %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Telephone Number</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><%= policy.MobileNumber %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="11" valign="top">
+                                        <p><strong>GSTIN / UIN Of Insured : <%= policy.GSTIN %></strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Geographical Coverage</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><%= policy.GeographicalCoverage %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Country Visiting</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><%= policy.VisitingCountry %></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Policy Period</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><strong><%= policy.startDate %> to <%= policy.endDate %> time 00:00 <%= policy.tripDuration %></strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Name of the Plan opted</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><strong><%= policy.PlanName %></strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" valign="top">
+                                        <p><strong>Any Pre existing disease</strong></p>
+                                    </td>
+                                    <td colspan="7" valign="top">
+                                        <p><%= policy.PreExistingDisease %></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="no-border">
+                            <div class="footer-list">
+                                <p><strong>Reliance General Insurance Company Limited.</strong></p>
+                                <p><strong>IRDAI Registration No. 103</strong></p>
+                                <p><strong>An ISO 9001:2015 Certified Company</strong></p>
+                            </div>
+                            <p style="margin: 10px 0 5px;"><strong>Registered & Corporate Office:</strong> Reliance General Insurance Company Limited 6th Floor, Oberoi Commerz, International Business Park, Oberoi Garden City, Off Western Express Highway, Goregaon (East), Mumbai – 400 063.</p>
+                            <p><strong>Corporate Identity No.</strong> U66603MH2000PLC128300. UIN No. RELTIOP07004V010607. Trade Logo displayed above belongs to Anil Dhirubhai Ambani Ventures Private Limited and used by Reliance General Insurance Company Limited under License. RGI/UW/CO/2822/PS/1.0/010218.</p>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

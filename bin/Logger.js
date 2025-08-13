@@ -1,21 +1,23 @@
-var winston = require('winston');
-const { createLogger, format,transports } = winston;
-const { combine, timestamp, label, prettyPrint } = format;
-// Enable exception handling when you create your logger.
+// bin/Logger.js
+
+const winston = require('winston');
+
 const logger = winston.createLogger({
-   format: combine(
-    timestamp(),
-    prettyPrint()
-  ),
-  transports: [
-    new transports.File({ filename: './log/error.log',json: true ,timestamp:true,maxFiles: 10, maxsize: 1000000,tailable: true}) 
-  ],
-  exceptionHandlers: [
-    new transports.File({ filename: './log/exceptions.log',json: true ,timestamp:true,maxFiles: 10, maxsize: 1000000,tailable: true })
-  ],
-  uncaughtException :[
-       new transports.File({ filename: './log/combined.log',json: true ,timestamp:true,maxFiles: 10, maxsize: 1000000,tailable: true})
-  ]
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+    ),
+    transports: [
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/combined.log' })
+    ]
 });
 
-module.exports=logger;
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.simple()
+    }));
+}
+
+module.exports = logger;

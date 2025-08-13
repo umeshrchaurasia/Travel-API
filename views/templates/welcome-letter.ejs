@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Welcome Letter</title>
+</head>
+<body style="font-family: Arial, sans-serif; font-size: 12px; color: #000;">
+    <div style="text-align: center;">
+        
+        <img src="<%= logoImage %>" alt="Company Logo"  style="max-width: 100px;max-height: 50px;">
+       </div>
+
+<h5 style="font-size: 13px; font-weight: bold; text-align: center; margin: 0 0 20px 0; padding: 0;">WELCOME LETTER</h5>
+
+
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+  <div style="width: 60%;">
+  <%
+  const addressLines = customerAddress.length > 60
+    ? customerAddress.match(/(.{1,60})(?:,|$)/g)  // split by 70 chars at commas
+    : [customerAddress];
+%>
+<p><strong>Dear</strong> <%= customerName %>,<br>
+  <% addressLines.forEach(line => { %>
+    <%= line.trim() %><br>
+  <% }) %>
+  <%= customerEmail %>
+</p>
+  </div>
+  <div style="width: 40%; text-align: right;">
+    <p><strong>Date:</strong> <%= customerDate %></p>
+  </div>
+</div>
+
+
+
+<p>Welcome and Thank You for Choosing <strong>Interstellar Services Private Limited</strong> (“Company”)!</p>
+<p>We are pleased to welcome you and introduce you to a unique offering curated by the Company — a bundled overseas travel support package that includes access to global travel assistance services along with a travel insurance policy, underwritten by a leading insurance company in India.</p>
+<p>This value-added offering has been thoughtfully designed to enhance your travel experience and provide peace of mind during your journey. While the Company has facilitated and marketed this bundled product for your convenience, please note that the travel insurance and travel assistance services are independently provided by third-party service providers with whom you are directly connected through this arrangement.The Company does not underwrite, issue, or service the insurance policy, nor does it provide travel assistance services. Our role is limited to facilitating access to this bundled solution and assisting you in connecting with the respective service providers.</p>
+<p>The terms, conditions, coverage details, claims process, and servicing of the travel insurance policy are governed by the issuing insurance company. Similarly, the travel assistance services will be rendered by the respective travel assistance company as per their own terms of engagement.</p>
+<p>We strongly encourage you to carefully read and understand the insurance policy wordings and the service terms provided by the respective service providers to fully understand the scope of coverage and assistance available to you.</p>
+<p>What you can expect from this bundled offering:</p>
+<ul style="margin-top: 0;">
+  <li>24x7 overseas travel assistance from a reputed service provider.</li>
+  <li>Travel insurance cover (please read the policy wordings before you travel. Brief details as below).</li>
+  <li>Ongoing support from the Company in helping you navigate and access these services.</li>
+</ul>
+
+<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; text-align: left;">Date of Departure (from India)</th>
+    <td style="border: 1px solid #000; padding: 5px; text-align: left;"><%= departureDate %></td>
+  </tr>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; text-align: left;">Date of Arrival (in India)</th>
+    <td style="border: 1px solid #000; padding: 5px; text-align: left;"><%= arrivalDate %></td>
+  </tr>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; text-align: left;">Duration of Travel</th>
+    <td style="border: 1px solid #000; padding: 5px; text-align: left;"><%= travelDuration %></td>
+  </tr>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; text-align: left;">Insurance Policy/Certificate Number</th>
+    <td style="border: 1px solid #000; padding: 5px; text-align: left;"><%= policyNumber %></td>
+  </tr>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; text-align: left;">Travel Assistance Number</th>
+    <td style="border: 1px solid #000; padding: 5px; text-align: left;"><%= assistanceNumber %></td>
+  </tr>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; text-align: left;">Travel Assistance Charges (Incl. of GST)</th>
+    <td style="border: 1px solid #000; padding: 5px; text-align: left;"><%= assistanceCharges.includes('₹') ? assistanceCharges : `₹ ${assistanceCharges}` %></td>
+  </tr>
+</table>
+
+
+<p>To Know more about Travel Assistance, <a href="http://inv.policyboss.com/travel-api/assist.html" style="color: #0066cc; text-decoration: underline; font-weight: bold;">Click here</a>.</p>
+<p>We appreciate your trust in the Company and will use our best efforts in supporting you in every way possible during your overseas journey.
+Wishing you safe, smooth, and memorable travels.</p>
+
+<div style="margin-bottom: 10px;">
+  <p>Warm regards,<br>For, <strong>Interstellar Services Private Limited</strong></p>
+  <br> <div style="text-align: left;">       
+        <img src="<%= travel_signImageBase64 %>" alt="Company Logo"  style="max-width: 100px;max-height: 50px;margin-left: 40px;">
+       </div>
+</div>
+
+
+<p>Customer Services Support Team<br>Email: <%= SupportEmail %> | Contact No: <%= SupportcontactNo %></p>
+
+<p style="font-size: 8px;"><strong>Disclaimer:</strong> Interstellar Services Private Limited (“Company”) acts solely as a facilitator in offering and marketing a bundled product that includes travel assistance services and a travel insurance policy underwritten by a licensed insurance company in India. The Company is not an insurance company, insurance intermediary, or travel assistance service provider and does not assume any responsibility or liability for the underwriting, issuance, servicing, or fulfillment of the travel insurance policy or the provision of travel assistance services. All claims, disputes, and service-related matters are to be addressed directly with the respective service providers, whose terms and conditions shall govern such interactions. Customers are advised to carefully review the insurance policy documents/insurance certificate and service terms issued by the respective third parties prior to availing the services. The Company shall not be held liable for any act, omission, delay, denial, or deficiency in service by the third-party service providers. The Company shall extend all necessary assistance to its customers/members/clients.</p>
+
+</body>
+</html>
+  

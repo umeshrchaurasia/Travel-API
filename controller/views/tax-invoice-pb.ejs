@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Tax Invoice</title>
+</head>
+
+<body style="font-family:Arial, Helvetica, sans-serif;">
+	<table border="0" cellpadding="0" cellspacing="0" width="800px" style="margin:0 auto;font-family:Arial, Helvetica, sans-serif;">
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" >
+						<tr>
+							<td style="padding:3px 5px;text-align: left;width:50%"><img src="http://api.magicfinmart.com/invoice/policylogo.png"></td>
+							<td style="font-size:8px;font-family:Arial, Helvetica, sans-serif;"><strong>Regd. Office</strong><br>
+							187/22,4th Floor(above ICICI Bank ATM),<br> Venkatesh Meher,Ghole Road,Shivaji Nagar,<br>Pune (Maharashtra)-411005.<br>PAN : AAHCS3947E<br>GSTIN : 27AAHCS3947E1Z7
+							</td>
+						</tr>
+						<tr>
+							<td style=" font-size:10px;font-family:Arial, Helvetica, sans-serif;"><strong>Landmark Insurance Brokers Pvt. Ltd.</strong> <br>CIN U66030PN2002PTC017009 | www.policyboss.com | 1800-419-419-9
+							
+							<br> IRDAI CoR No: 216 |Category: Direct (Life & General)<br></td>
+							
+						</tr>
+						
+					</table>
+				</td>
+			</tr>
+			<tr style="text-align: left;">
+				<td style="padding-left:260px; text-align: left;font-size: 10px; padding-top:10px"><strong>Tax Invoice</strong></td>
+			</tr>
+				<tr>
+				<td>
+					<table cellpadding="0" cellspacing="0" width="70%" style="margin: 10px 0px;border:1px solid black; ">
+						<tr>
+							<td style="padding:3px 5px; font-size:8px;">Name :</td>
+							<td style="padding:3px 5px;border-right: 1px solid black;width: 150px; font-size:8px;" ><%= students.name %></td>
+							<td style="padding:3px 5px; font-size:8px;">State Code :</td>
+							<td style="padding:3px 5px;border-right: 1px solid black;width: 120px; font-size:8px;"><%= students.statecode %></td>
+							<td style="padding:3px 5px; font-size:8px;">Invoice Date :</td>
+							<td style="padding:3px 5px; font-size:8px;"><%= students.Date %></td>
+						</tr>
+						<tr>
+							<td style="padding:3px 5px; font-size:8px;">&nbsp;</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">&nbsp;</td>
+							<td style="padding:3px 5px; font-size:8px;">PAN :</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;"><%= students.PAN %></td>
+							<td style="padding:3px 5px; font-size:8px;">Invoice No. :</td>
+							<td style="padding:3px 5px; font-size:8px;"><%= students.InvNo %></td>
+						</tr>
+						<tr>
+							<td style="padding:3px 5px; font-size:8px;">Address:</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;"><%= students.Address %></td>
+							<td style="padding:3px 5px; font-size:8px;">GST :</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;"><%= students.GST %></td>
+							<td style="padding:3px 5px; font-size:8px;">Customer ID :</td>
+							<td style="padding:3px 5px; font-size:8px;"><%= students.CustId %></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="70%" style="margin: 10px 0px; font-size:10px;">
+						<tr style="text-align: center;">
+							<td style="padding:3px 5px; border: 1px solid black; font-size:10px;"><strong>No.</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Description</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>SAC / HSN Code</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Qty.</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;display:none"><strong>Unit</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Rate</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Amount</strong>
+							</td>
+						</tr>
+						<tr style="text-align: center;">
+							<td style="padding:3px 5px; border: 1px solid black;border-top: none;border-bottom:  none; font-size:10px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">Being the amount paid towards one time non-refundable fee, as per the option/pack selected.</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">998314</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;display:none">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;"><%= students.Rate %> </td>
+							<td style="padding:3px 5px; border-right:1px solid black;text-align: right; font-size:10px;"><%= students.Rate %> </td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black; font-size:10px;">Sub Total</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><%= students.Rate %> </td>
+						</tr>
+						<tr style="text-align: right;display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Discount</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right;display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Amount</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><%= students.Rate %> </td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">CGST (@9.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><%= students.CGST %></td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">SGST (@9.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><%= students.SGST %></td>
+						</tr>
+						<tr style="text-align: right; ">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">IGST (@18.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><%= students.IGST %></td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Round Off</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;"><strong>Total Invoice Amount</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><strong> <%= students.totalamount %> </strong>
+							</td>
+						</tr>
+						<tr style="text-align: right;display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;"><strong>(Less) : Advance Received (Receipt Voucher No.)</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right; display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;"><strong>Payable Amount</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><strong> <%= students.totalamount %>  </strong>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="650px" style="font-weight: bold; font-size:10px;">
+						<tr>
+							<td style="padding:5px 8px; font-size:9px;"> <%= students.Wordsamount %></td>
+							<td style="padding:5px 11px; font-size:9px"> For Landmark Insurance Brokers Pvt. Ltd.</td>
+						</tr>
+						<tr style="height: 80px;vertical-align: bottom; font-size:8px;">
+							
+							<td style="padding:2px 5px; font-size:9px"></td>
+							<td style="padding:2px 5px; font-size:9px"><img src="http://api.magicfinmart.com/invoice/inv4.png"  width='200px' height='100px'></td>
+						</tr>
+						<tr style="height: 0px;vertical-align: bottom; font-size:8px;">
+							
+							<td style="padding:5px 8px; font-size:9px;"></td>
+							<td style="padding:5px 42px; font-size:9px">Authorised Signatory</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+	</table>
+</body>
+
+</html>

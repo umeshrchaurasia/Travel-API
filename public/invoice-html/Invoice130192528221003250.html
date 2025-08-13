@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Tax Invoice</title>
+
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 10mm;
+                    }
+                    
+                    body {
+                        font-family: Arial, Helvetica, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        font-size: 12px;
+                        line-height: 1.4;
+                    }
+                    
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+                    
+                    table[width="70%"] {
+                        width: 100%;
+                        max-width: 700px;
+                        margin: 10px auto;
+                    }
+                    
+                    td {
+                        padding: 4px;
+                        vertical-align: top;
+                    }
+                    
+                    th {
+                        padding: 4px;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+                    
+                    td[style*="border: 1px solid black"], 
+                    th[style*="border: 1px solid black"] {
+                        border: 1px solid black !important;
+                    }
+                    
+                    td[style*="border-right: 1px solid black"] {
+                        border-right: 1px solid black !important;
+                    }
+                    
+                    tr[style*="text-align: center"] td {
+                        text-align: center;
+                    }
+                    
+                    tr[style*="text-align: right"] td {
+                        text-align: right;
+                    }
+                    
+                    /* Fix right alignment for address in header */
+                    table[width="100%"] td:nth-child(2) {
+                        text-align: right;
+                        vertical-align: top;
+                    }
+                    
+                    /* Fix for signature image */
+                    table[style*="font-weight: bold"] tr td img {
+                        max-width: 200px;
+                        max-height: 100px;
+                    }
+                </style>
+            </head>
+
+<body style="font-family:Arial, Helvetica, sans-serif;">
+	<table border="0" cellpadding="0" cellspacing="0" width="800px" style="margin:0 auto;font-family:Arial, Helvetica, sans-serif;">
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:10px;">
+                <tr>
+                    <td style="padding:3px 5px; text-align:left; width:50%; vertical-align:top;">
+                        <img src="http://mfmapi.policyboss.com/invoice/policylogo.png" style="max-width:200px; max-height:70px;">
+                    </td>
+                    <td style="font-size:8px; font-family:Arial, Helvetica, sans-serif; text-align:right; vertical-align:top;">
+                        <strong>Regd. Office</strong><br>
+                        187/22,4th Floor(above ICICI Bank ATM),<br> 
+                        Venkatesh Meher,Ghole Road,Shivaji Nagar,<br>
+                        Pune (Maharashtra)-411005.<br>
+                        PAN : AAHCS3947E<br>
+                        GSTIN : 27AAHCS3947E1Z7
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:10px; font-family:Arial, Helvetica, sans-serif; padding-top:5px;">
+                        <strong>Landmark Insurance Brokers Pvt. Ltd.</strong><br>
+                        CIN U66030PN2002PTC017009 | www.policyboss.com | 1800-419-419-9<br>
+                        IRDAI CoR No: 216 |Category: Direct (Life & General)
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+				</td>
+			</tr>
+			<tr style="text-align: left;">
+				<td style="padding-left:260px; text-align: left;font-size: 10px; padding-top:10px"><strong>Tax Invoice</strong></td>
+			</tr>
+				<tr>
+				<td>
+					<table cellpadding="0" cellspacing="0" width="70%" style="margin: 10px 0px;border:1px solid black; ">
+						<tr>
+							<td style="padding:3px 5px; font-size:8px;">Name :</td>
+							<td style="padding:3px 5px;border-right: 1px solid black;width: 150px; font-size:8px;" >testUmesh tstt chaurasia</td>
+							<td style="padding:3px 5px; font-size:8px;">State Code :</td>
+							<td style="padding:3px 5px;border-right: 1px solid black;width: 120px; font-size:8px;">MAHARASHTRA</td>
+							<td style="padding:3px 5px; font-size:8px;">Invoice Date :</td>
+							<td style="padding:3px 5px; font-size:8px;">25-04-2025</td>
+						</tr>
+						<tr>
+							<td style="padding:3px 5px; font-size:8px;">&nbsp;</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">&nbsp;</td>
+							<td style="padding:3px 5px; font-size:8px;">PAN :</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;"></td>
+							<td style="padding:3px 5px; font-size:8px;">Invoice No. :</td>
+							<td style="padding:3px 5px; font-size:8px;">55592/INV/2025-26</td>
+						</tr>
+						<tr>
+							<td style="padding:3px 5px; font-size:8px;">Address:</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">Rajiv gandhi nagar block no 4/A, room 11,Sion Dharavi-17</td>
+							<td style="padding:3px 5px; font-size:8px;">GST :</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;"></td>
+							<td style="padding:3px 5px; font-size:8px;">Customer ID :</td>
+							<td style="padding:3px 5px; font-size:8px;">130192528221003250</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="70%" style="margin: 10px 0px; font-size:10px;">
+						<tr style="text-align: center;">
+							<td style="padding:3px 5px; border: 1px solid black; font-size:10px;"><strong>No.</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Description</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>SAC / HSN Code</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Qty.</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;display:none"><strong>Unit</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Rate</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;"><strong>Amount</strong>
+							</td>
+						</tr>
+						<tr style="text-align: center;">
+							<td style="padding:3px 5px; border: 1px solid black;border-top: none;border-bottom:  none; font-size:10px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">Being the amount paid towards one time non-refundable fee, as per the option/pack selected.</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">998314</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;display:none">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">1815 </td>
+							<td style="padding:3px 5px; border-right:1px solid black;text-align: right; font-size:10px;">1815 </td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black; font-size:10px;">Sub Total</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">1815 </td>
+						</tr>
+						<tr style="text-align: right;display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Discount</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right;display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Amount</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">1815 </td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">CGST (@9.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">SGST (@9.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right; ">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">IGST (@18.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">327</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Round Off</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;"><strong>Total Invoice Amount</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><strong> 2142.00 </strong>
+							</td>
+						</tr>
+						<tr style="text-align: right;display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;"><strong>(Less) : Advance Received (Receipt Voucher No.)</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">-</td>
+						</tr>
+						<tr style="text-align: right; display:none">
+							<td colspan="5" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;"><strong>Payable Amount</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;"><strong> 2142.00  </strong>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+			</tr>
+<td>
+
+<table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 12px; border: 1px solid #000;">
+  <tr>
+    <td style="width: 50%; padding: 8px; vertical-align: top; border-right: 1px solid #000;">
+      <strong>Tax Amount (in words):</strong><br><br>
+      <strong>Company's PAN:</strong> AADCI7698J<br><br>
+      <strong>Declaration</strong><br>
+      We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.
+    </td>
+    <td style="width: 50%; padding: 8px; vertical-align: top;">
+      <strong>Company's Bank Details</strong><br><br>
+      <strong>A/c Holder's Name:</strong> INTERSTELLAR SERVICES PVT LTD.<br>
+      <strong>Bank Name:</strong> HDFC Bank Ltd.<br>
+      <strong>A/c No.:</strong> 00060330007481<br>
+      <strong>Branch & IFS Code:</strong> Navrangpura, A'bad & HDFC0000006<br>
+      <strong>SWIFT Code:</strong> <br><br>
+      <div style="font-weight: bold;">for Interstellar Services Pvt. Ltd.</div>
+    </td>
+  </tr>
+</table>
+
+<table style="width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-top: 10px; border-collapse: collapse;">
+  <tr>
+    <td style="text-align: right; padding: 8px; font-weight: bold;">
+      Authorised Signatory
+    </td>
+  </tr>
+</table>
+
+<table style="width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-top: 10px; border-top: 1px solid #000; border-collapse: collapse;">
+  <tr>
+    <td style="text-align: center; font-weight: bold; padding: 5px;">
+      SUBJECT TO AHMEDABAD JURISDICTION
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: center; padding: 5px;">
+      Tax Payable on Reverse Charges Basis: NO
+    </td>
+  </tr>
+</table>
+
+	
+</td>
+
+		</tr>
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="650px" style="font-weight: bold; font-size:10px;">
+						<tr>
+							<td style="padding:5px 8px; font-size:9px;"> Two Thousand One Hundred and Forty Two Rupees Only</td>
+							<td style="padding:5px 11px; font-size:9px"> For Landmark Insurance Brokers Pvt. Ltd.</td>
+						</tr>
+						<tr style="height: 80px;vertical-align: bottom; font-size:8px;">
+							
+							<td style="padding:2px 5px; font-size:9px"></td>
+							<td style="padding:2px 5px; font-size:9px"><img src="http://mfmapi.policyboss.com/invoice/inv4.png"  width='200px' height='100px'></td>
+						</tr>
+						<tr style="height: 0px;vertical-align: bottom; font-size:8px;">
+							
+							<td style="padding:5px 8px; font-size:9px;"></td>
+							<td style="padding:5px 42px; font-size:9px">Authorised Signatory</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+	</table>
+</body>
+
+</html>

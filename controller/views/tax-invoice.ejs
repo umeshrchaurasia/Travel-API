@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Tax Invoice</title>
+</head>
+
+<body style="font-family:Arial, Helvetica, sans-serif;">
+	<table border="0" cellpadding="0" cellspacing="0" width="800px" style="margin:0 auto;font-family:Arial, Helvetica, sans-serif;">
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" >
+						<tr>
+							<td style="padding:3px 5px;text-align: center;width:50%"><img src="http://qa.mgfm.in/invoice/rb-logo.png"></td>
+							<td style="font-size:12px;font-family:Arial, Helvetica, sans-serif;"><strong>Corporate Office</strong><br>
+							Unit No.201, A Wing, Kanakia Zillion LBS Marg, CST Road Junction, BKC Annexe, Kurla (West), Mumbai - 400070.
+							</td>
+						</tr>
+						<tr>
+							<td style=" font-size:16px;font-family:Arial, Helvetica, sans-serif;"><strong>Rupeeboss Financial Services Private Limited</strong></td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td style="font-size:12px;font-family:Arial, Helvetica, sans-serif;">State Code : <%= students.statecode %></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding:5px; text-align: center;font-size: 26px;"><strong>Tax Invoice</strong></td>
+			</tr>
+			<tr>
+				<td>
+					<table cellpadding="0" cellspacing="0" width="100%" style="margin: 10px 0px;border:1px solid black; ">
+						<tr>
+							<td style="padding:3px 5px; font-size:12px;">Name :</td>
+							<td style="padding:3px 5px;border-right: 1px solid black;width: 200px; font-size:12px;" ><%= students.name %></td>
+							<td style="padding:3px 5px; font-size:12px;">State Code :</td>
+							<td style="padding:3px 5px;border-right: 1px solid black;width: 120px; font-size:12px;"><%= students.statecode %></td>
+							<td style="padding:3px 5px; font-size:12px;">Invoice Date :</td>
+							<td style="padding:3px 5px; font-size:12px;"><%= students.Date %></td>
+						</tr>
+						<tr>
+							<td style="padding:3px 5px; font-size:12px;">&nbsp;</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:12px;">&nbsp;</td>
+							<td style="padding:3px 5px; font-size:12px;">PAN :</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:12px;"><%= students.pan %></td>
+							<td style="padding:3px 5px; font-size:12px;">Invoice No. :</td>
+							<td style="padding:3px 5px; font-size:12px;"><%= students.InvNo %></td>
+						</tr>
+						<tr>
+							<td style="padding:3px 5px; font-size:12px;">Address:</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:12px;"><%= students.address %></td>
+							<td style="padding:3px 5px; font-size:12px;">GST :</td>
+							<td style="padding:3px 5px; border-right: 1px solid black; font-size:12px;"><%= students.GST %></td>
+							<td style="padding:3px 5px; font-size:12px;">Customer ID :</td>
+							<td style="padding:3px 5px; font-size:12px;"><%= students.CustId %></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 10px 0px; font-size:12px;">
+						<tr style="text-align: center;">
+							<td style="padding:3px 5px; border: 1px solid black; font-size:12px;"><strong>No.</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;"><strong>Description</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;"><strong>SAC / HSN Code</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;"><strong>Qty.</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;"><strong>Unit</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;"><strong>Rate</strong>
+							</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;"><strong>Amount</strong>
+							</td>
+						</tr>
+						<tr style="text-align: center;">
+							<td style="padding:3px 5px; border: 1px solid black;border-top: none;border-bottom:  none; font-size:12px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:12px;">Training fees for onboarding on finmart Platform</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:12px;">998314</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:12px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:12px;">1</td>
+							<td style="padding:3px 5px; border-right:1px solid black; font-size:12px;">847</td>
+							<td style="padding:3px 5px; border-right:1px solid black;text-align: right; font-size:12px;">847</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black; font-size:12px;">Sub Total</td>
+							<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:12px;">847</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;">Discount</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">-</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;">Amount</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">847</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;">CGST (@9.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">76</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;">SGST (@9.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">76</td>
+						</tr>
+						<tr style="text-align: right; display:none">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;">IGST (@18.00%)</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">90</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;">Round Off</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">-</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;"><strong>Total Invoice Amount</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;"><strong> 999 </strong>
+							</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;"><strong>(Less) : Advance Received (Receipt Voucher No.)</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;">-</td>
+						</tr>
+						<tr style="text-align: right;">
+							<td colspan="6" style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:12px;"><strong>Payable Amount</strong>
+							</td>
+							<td style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:12px;"><strong> 999 </strong>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table border="0" cellpadding="0" cellspacing="0" width="800px" style="font-weight: bold; font-size:12px;">
+						<tr>
+							<td style="padding:5px 8px; font-size:12px;">Rupees Nine Hundred and Ninty only</td>
+							<td style="padding:5px 8px; font-size:12px;">PAN : AAHCR6713M</td>
+						</tr>
+						<tr>
+							<td style="padding:5px 8px; font-size:12px;">&nbsp;</td>
+							<td style="padding:5px 8px; font-size:12px;">GSTIN : 27AAHCR6713M1ZX</td>
+						</tr>
+						<tr style="height: 90px;vertical-align: bottom; font-size:12px;">
+							<td style="padding:5px 8px; font-size:12px;">&nbsp;</td>
+							<td style="padding:5px 8px; font-size:12px;">Authorised Signatory</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+	</table>
+</body>
+
+</html>

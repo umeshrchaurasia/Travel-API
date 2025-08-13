@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Verification - Interstellar Services</title>
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 2rem; 
+      text-align: center; 
+     
+      margin: 0;
+      background-color: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .verification-container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+    
+    .status { 
+      margin-top: 2rem; 
+      font-size: 1.2rem; 
+      color: #333; 
+      padding: 15px;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .success { 
+      color: #155724; 
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .error { 
+      color: #721c24; 
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 2px;
+    }
+
+    .logo img {
+      max-width: 130px; /* Reduced from 200px */
+      height: auto;
+    }
+
+    .loading {
+      margin: 20px auto;
+      text-align: center;
+      display: none;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4285f4;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #4285f4;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-top: 20px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .button:hover {
+      opacity: 0.9;
+    }
+    
+    .button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: block;
+      stroke-width: 2;
+      stroke: #4CAF50;
+      stroke-miterlimit: 10;
+      margin: 10% auto;
+      box-shadow: inset 0px 0px 0px #4CAF50;
+      animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+      display: none;
+    }
+    
+    .checkmark__circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #4CAF50;
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    
+    .checkmark__check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #444;
+    }
+    
+    input[type="text"] {
+      width: 200px; /* Reduced from 100% */
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 18px; /* Reduced from 24px */
+      box-sizing: border-box;
+      text-align: center;
+      letter-spacing: 8px; /* Reduced from 10px */
+      margin: 0 auto;
+      display: block;
+    }
+    
+    .iframe-container {
+      margin: 20px auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100% !important; /* Changed from 600px to 100% */
+      max-width: 540px;
+      overflow: hidden;
+    }
+    
+    iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+    }
+    
+    .checkbox-container {
+      margin: 20px 0;
+      text-align: left;
+      display: flex;
+      align-items: center;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    
+    .checkbox-container label {
+      font-weight: normal;
+      display: inline;
+    }
+    
+    @keyframes stroke {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+    
+    @keyframes scale {
+      0%, 100% {
+        transform: none;
+      }
+      50% {
+        transform: scale3d(1.1, 1.1, 1);
+      }
+    }
+    
+    @keyframes fill {
+      100% {
+        box-shadow: inset 0px 0px 0px 30px #4CAF50;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="verification-container">
+    <div class="logo">
+      <img src="http://3.111.3.129/travel-api/images/icon/travel_resized.webp" alt="Company Logo">
+    </div>
+    
+    <h4>Verify Your Account</h4>
+
+    <!-- ISPL Declaration Iframe -->
+    <div class="iframe-container">
+      <iframe src="http://3.111.3.129/travel-api/ispl.html" title="ISPL Declaration"></iframe>
+    </div>
+    
+    <!-- Declaration checkbox -->
+    <div class="checkbox-container">
+      <input type="checkbox" id="acceptDeclaration">
+      <label for="acceptDeclaration">I have read and agree to the above declaration</label>
+    </div>
+    <p>Please enter the 4-digit verification code that was sent to your email</p>
+    
+    <div class="form-group">
+      <label for="otpInput">Verification Code</label>
+      <input type="text" id="otpInput" maxlength="4" placeholder="Code" required>
+    </div>
+    
+    <button id="verifyBtn" class="button" disabled>Verify Now</button>
+    
+    <div class="loading" id="loadingIndicator">
+      <div class="loading-spinner"></div>
+      <p>Please wait while we verify your account...</p>
+    </div>
+    
+    <svg class="checkmark" id="successMark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+      <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+    
+    <div id="status" class="status"></div>
+    
+    <div id="loginButton" style="display: none;">
+      <a href="http://zextratravelassist.interstellar.co.in/login" class="button">Go to Login</a>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const email = urlParams.get("email");
+      const agentId = urlParams.get("agentId");
+      
+      // Check if email and agentId are provided
+      if (!email || !agentId) {
+        $("#status").text("Missing verification information. Please use the link from your email.")
+          .addClass("error")
+          .show();
+        $("#verifyBtn").prop("disabled", true);
+        return;
+      }
+      
+      // Log the parameters for debugging
+      console.log("Email:", email);
+      console.log("Agent ID:", agentId);
+      
+      // Focus on OTP input
+      $("#otpInput").focus();
+      
+      // Format OTP input to only accept numbers
+      $("#otpInput").on('input', function() {
+        // Remove non-numeric characters
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // Limit to 4 digits
+        if (this.value.length > 4) {
+          this.value = this.value.slice(0, 4);
+        }
+      });
+      
+      // Handle declaration checkbox change
+      $("#acceptDeclaration").on('change', function() {
+        // Enable or disable the verify button based on checkbox
+        $("#verifyBtn").prop("disabled", !this.checked);
+      });
+      
+      // Handle verification button click
+      $("#verifyBtn").click(function() {
+        // Check if declaration is accepted
+        if (!$("#acceptDeclaration").is(":checked")) {
+          $("#status").text("Please accept the declaration before proceeding")
+            .addClass("error")
+            .removeClass("success")
+            .show();
+          return;
+        }
+        
+        const otp = $("#otpInput").val().trim();
+        
+        // Validate OTP
+        if (!otp || otp.length !== 4) {
+          $("#status").text("Please enter a valid 4-digit verification code")
+            .addClass("error")
+            .removeClass("success")
+            .show();
+          return;
+        }
+        
+        // Show loading, hide verify button
+        $("#loadingIndicator").show();
+        $("#verifyBtn").hide();
+        $("#status").hide();
+        
+        // Create request data
+        const requestData = {
+          email: email,
+          agentId: agentId,
+          otp: otp
+        };
+      
+        console.log("Sending verification request with:", requestData);
+        
+        // Send AJAX request
+        $.ajax({
+          url: "http://3.111.3.129/travel-api/api/verifyOtp",
+          type: "POST",
+          contentType: "application/json",
+          headers: {
+            "token": "1234567890"
+          },
+          data: JSON.stringify(requestData),
+          success: function(result) {
+            console.log("Verification response:", result);
+            
+            // Hide loading
+            $("#loadingIndicator").hide();
+            
+            if (result.Status === "Success") {
+              // Show success message and checkmark
+              $("#successMark").show();
+              $("#status").text("✅ Your account has been verified successfully!")
+                .removeClass("error")
+                .addClass("success")
+                .show();
+              $("#loginButton").show();
+              
+              // Disable input
+              $("#otpInput").prop("disabled", true);
+              $("#acceptDeclaration").prop("disabled", true);
+            } else {
+              // Show error message and restore verify button
+              $("#status").text("❌ " + (result.Message || 'Verification failed'))
+                .removeClass("success")
+                .addClass("error")
+                .show();
+              $("#verifyBtn").show();
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error("Verification error:", error);
+            console.log("Response:", xhr.responseText);
+            
+            // Try to parse response
+            let errorMessage = "Server error occurred. Please try again later.";
+            try {
+              const errorResponse = JSON.parse(xhr.responseText);
+              if (errorResponse.Message) {
+                errorMessage = "❌ " + errorResponse.Message;
+              }
+            } catch (e) {
+              console.log("Could not parse error response");
+            }
+            
+            // Hide loading, show error
+            $("#loadingIndicator").hide();
+            $("#status").text(errorMessage)
+              .removeClass("success")
+              .addClass("error")
+              .show();
+            $("#verifyBtn").show();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

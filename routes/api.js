@@ -32,6 +32,9 @@ const HtmlToPdfController  = require('../controller/HtmlToPdfController');
 
 const InvoiceController = require('../controller/InvoiceController');
 
+const InvoicePractoController = require('../controller/InvoicePractoController');
+
+
 const MailOtpController = require('../controller/mail/MailOtpController');
 
 const welcomeLetterController = require('../controller/welcomeLetterController');
@@ -42,6 +45,8 @@ const MailSendController = require('../controller/mail/MailSendController');
 const OTPVerificationController = require('../controller/OTPVerificationController');
 
 const ZoopController = require('../controller/ZoopController');
+
+const practoController = require('../controller/PractoController');
 
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
@@ -64,6 +69,10 @@ router.get('/agents_listByEmp', wrapper.asyncHandler(travelController.getAgents_
 router.get('/GetAgentSummary', wrapper.asyncHandler(travelController.GetAgentSummary));
 
 router.post('/addagent', wrapper.asyncHandler(travelController.insertAgent));
+
+router.post('/addAgent_nonkyc', wrapper.asyncHandler(travelController.addAgent_nonkyc));
+
+
 
 router.post('/getPremium-including', wrapper.asyncHandler(agentController.getPremium_including));
 router.post('/getPremium-excluding', wrapper.asyncHandler(agentController.getPremium_excluding));
@@ -93,6 +102,8 @@ router.post('/update-approval', wrapper.asyncHandler(adminController.updateAgent
 
 
 router.post('/get_agentlist_admin', wrapper.asyncHandler(adminController.get_agentlist_admin));
+router.post('/get_agentnamelist_admin',wrapper.asyncHandler(adminController.get_agentnamelist_admin));
+router.post('/updateAgentDetails', wrapper.asyncHandler(adminController.updateAgentDetails));
 
 
 router.get('/wallet-applications', wrapper.asyncHandler(agentController.getWalletApplications));
@@ -177,6 +188,42 @@ router.post('/verify-pan-pro', wrapper.asyncHandler(ZoopController.verifyPANpro)
 //cancel-policy
 router.post('/cancel-policy', wrapper.asyncHandler(proposalController.insertCancelPolicy));
 
+// --- ADD THE NEW PRACTO ROUTE AT THE END ---
+router.post('/createPractoProposal', wrapper.asyncHandler(practoController.createPractoProposal));
+
+router.post('/getSubscriptionStatus', wrapper.asyncHandler(practoController.getSubscriptionStatus));
+
+ router.post('/getPractoPremium', wrapper.asyncHandler(practoController.getPractoPremium));
+
+router.post('/update-practo-proposal-wallet', wrapper.asyncHandler(practoController.updatePractoProposalWallet));
+
+router.post('/generateInvoicePractoPdf', wrapper.asyncHandler(InvoicePractoController.generateInvoicePractoByCertificate));
+
+// Route to accept certificate ID from URL parameter
+router.get('/generateInvoice-practo/:certificateId', wrapper.asyncHandler(InvoicePractoController.generateInvoicePractoByCertificate));
+
+
+router.post('/getProposalDetailsByAgent_Practo', wrapper.asyncHandler(BatchPaymentController.getProposalDetailsByAgent_Practo));
+
+
+router.post('/insertBatchPayment_Practo', wrapper.asyncHandler(BatchPaymentController.insertBatchPayment_Practo));
+
+router.post('/getBatchPaymentsByStatus_Practo', wrapper.asyncHandler(BatchPaymentController.getBatchPaymentsByStatus_Practo));
+
+router.post('/updateBatchPayment_Practo', wrapper.asyncHandler(BatchPaymentController.updateBatchPayment_Practo));
+
+router.post('/getProposalMIS_Practo',wrapper.asyncHandler(UpdateProposalController.getProposalMIS_Practo));
+
+router.post('/getProposalTDS_Practo',wrapper.asyncHandler(UpdateProposalController.getProposalTDS_Practo));
+
+router.get('/subagents_listByagent', wrapper.asyncHandler(travelController.subagents_listByagent));
+
+router.post('/getProposalMIS_SubAgent',wrapper.asyncHandler(UpdateProposalController.getProposalMIS_SubAgent));
+
+
+router.post('/getProposalTDS_SubAgent',wrapper.asyncHandler(UpdateProposalController.getProposalTDS_SubAgent));
+
+router.post('/getSub_Main_AgentMIS_byAdmin',wrapper.asyncHandler(UpdateProposalController.getSub_Main_AgentMIS_byAdmin));
 
 
 module.exports = router;

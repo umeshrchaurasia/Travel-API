@@ -132,6 +132,7 @@ class TravelController {
             const {
                 UId,
                 FullName,
+                TraderName,
                 Password,
                 EmailID,
                 MobileNumber,
@@ -143,7 +144,8 @@ class TravelController {
                 EducationQualification,
                 GST,
                 Address,
-                PAN_No
+                PAN_No,
+                State,
             } = req.body;
 
             // Validate required fields
@@ -182,10 +184,11 @@ class TravelController {
 
             // Call the stored procedure
             const [result] = await db.query(
-                'CALL insert_Agent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'CALL insert_Agent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',
                 [
                     UId || '',
                     FullName || '',
+                    TraderName || '',
                     Password || '',
                     EmailID || '',
                     MobileNumber || '',
@@ -197,7 +200,8 @@ class TravelController {
                     EducationQualification || '',
                     GST || '',
                     Address || '',           // Add this parameter
-                    PAN_No || ''
+                    PAN_No || '',
+                    State || ''
                 ]
             );
 
@@ -430,6 +434,174 @@ class TravelController {
         }
     }
 
+     // Insert Agent - Updated method with enhanced duplicate validation
+    async addAgent_nonkyc(req, res) {
+        try {
+            const {
+                UId,
+                FullName,
+                TraderName,
+                Password,
+                EmailID,
+                MobileNumber,
+                Gender,
+                DOB,
+                PayoutPercentage,
+                PaymentMode,
+                Wallet_Amount,
+                EducationQualification,
+                GST,
+                Address,
+                PAN_No,
+                State,
+                Main_Agent
+            } = req.body;
+
+            // Validate required fields
+            if (!UId || !FullName || !Password || !EmailID) {
+                return base.send_response(
+                    "Missing required fields",
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(EmailID)) {
+                return base.send_response(
+                    "Invalid email format",
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            // Mobile number validation
+            if (MobileNumber && !/^\d{10}$/.test(MobileNumber)) {
+                return base.send_response(
+                    "Invalid mobile number format",
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            // Call the stored procedure
+            const [result] = await db.query(
+                'CALL insert_Agent_nonkyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)',
+                [
+                    UId || '',
+                    FullName || '',
+                    TraderName || '',
+                    Password || '',
+                    EmailID || '',
+                    MobileNumber || '',
+                    Gender || 'Male',
+                    DOB || '',
+                    PayoutPercentage || '',
+                    PaymentMode || 'Full Pay',
+                    Wallet_Amount || '0',
+                    EducationQualification || '',
+                    GST || '',
+                    Address || '',           // Add this parameter
+                    PAN_No || '',
+                    State || '',
+                    Main_Agent || ''
+                ]
+            );
+
+            // Check the result from stored procedure
+            const procedureResult = result[0][0];
+            console.log('Procedure Result:', procedureResult);
+
+            // Handle the response based on the Result field
+            if (procedureResult.Result === 'Error') {
+                // Return error response for duplicates or other errors
+                return base.send_response(
+                    procedureResult.Message || "Error creating agent",
+                    null,
+                    res,
+                    "Error",
+                    procedureResult.StatusNo || 1
+                );
+            } else {
+                // Success response
+                return base.send_response(
+                    procedureResult.Message || "Agent created successfully",
+                    {
+                        AgentId: procedureResult.AgentId,
+                        Agent_Code: procedureResult.Agent_Code,
+                        FullName: FullName,
+                        EmailID: EmailID,
+                        MobileNumber: MobileNumber
+                    },
+                    res,
+                    procedureResult.Result || "Success",
+                    procedureResult.StatusNo || 0
+                );
+            }
+
+        } catch (error) {
+            logger.error('Error in insertAgent:', error);
+
+            // Check if it's a MySQL duplicate entry error (additional safety)
+            if (error.code === 'ER_DUP_ENTRY') {
+                let duplicateField = 'field';
+                if (error.sqlMessage.includes('EmailID')) {
+                    duplicateField = 'email address';
+                } else if (error.sqlMessage.includes('MobileNumber')) {
+                    duplicateField = 'mobile number';
+                }
+
+                return base.send_response(
+                    `This ${duplicateField} is already registered with another agent`,
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            base.send_response(
+                "Error inserting Agent",
+                null,
+                res,
+                "Error",
+                1
+            );
+        }
+    }
+
+
+      // Get subagents
+    async subagents_listByagent(req, res) {
+        try {
+
+            const agentId = req.params.agentId || req.query.agentId || req.body.agentId;
+
+            if (!agentId) {
+                return base.send_response("AgentId is required", null, res, 400);
+            }
+
+            const [rows] = await db.query('CALL get_subagentlist(?)', [agentId]);
+
+            if (rows[0] && rows[0].length > 0) {
+                base.send_response("Agents retrieved successfully", rows[0], res);
+            } else {
+                base.send_response("No record found for this employee", [], res);
+            }
+
+
+        } catch (error) {
+            logger.error('Error in getAgentslist_byEmp:', error);
+            base.send_response("Error retrieving agents", null, res);
+        }
+    }
 }
 
 module.exports = new TravelController();

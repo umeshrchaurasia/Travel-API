@@ -1,0 +1,623 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <title>Tax Invoice</title>
+</head>
+
+<body>
+
+    <table border="0" cellpadding="0" cellspacing="0" width="800px"
+        style="margin:0 auto;font-family:Arial, Helvetica, sans-serif;">
+        <tr>
+            <td>
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="padding:3px 5px;text-align: left;width:50%">
+                            <% if (typeof policyLogoBase64 !=='undefined' && policyLogoBase64) { %>
+                                <img src="<%= policyLogoBase64 %>" style="max-width:200px; max-height:70px;">
+                                <% } else { %>
+
+                                    <% } %>
+
+                        </td>
+                        <td style="text-align: right;font-size:10px;font-family:Arial, Helvetica, sans-serif;">
+                            <strong>Regd.
+                                Office</strong><br>
+                            634 Gala Empire, Opp. TV Tower,<br> Drive-in-Road, Ahmedabad,<br>Gujarat, India
+                            380052.<br>PAN : AADCI7698J<br>GSTIN : 24AADCI7698J1Z0
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style=" font-size:10px;font-family:Arial, Helvetica, sans-serif;"><strong>Interstellar
+                                Services Pvt.Ltd.</strong> <br>CIN U74120GJ2015PTC082533 | www.interstellar.co.in |
+                            86579 37403
+
+                            <br> E-Mail : finance@interstellar.co.in<br>
+                        </td>
+
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+        <tr style="text-align: center;">
+            <td style="text-align: center;font-size: 14px;font-family: Arial, Helvetica, sans-serif;">
+
+                <u><b>Tax Invoice</b></u>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <table cellpadding="0" cellspacing="0" width="70%" style="margin: 0px 0px;border:1px solid black; ">
+                    <tr>
+                        <td style="padding:3px 5px; font-size:8px;">Name :</td>
+                        <td style="padding:3px 5px;border-right: 1px solid black;width: 150px; font-size:8px;">
+                            <%= students.FullName_Agent %>
+                        </td>
+                        <td style="padding:3px 5px; font-size:8px;">State Code :</td>
+                        <td style="padding:3px 5px;border-right: 1px solid black;width: 120px; font-size:8px;">
+                            <%= students.statecode %>
+                        </td>
+                        <td style="padding:3px 5px; font-size:8px;">Invoice Date :</td>
+                        <td style="padding:3px 5px; font-size:8px;">
+                            <%= students.Date %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:3px 5px; font-size:8px;">&nbsp;</td>
+                        <td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">&nbsp;</td>
+                        <td style="padding:3px 5px; font-size:8px;">PAN :</td>
+                        <td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">
+                            <%= students.PAN_No_Agent %>
+                        </td>
+                        <td style="padding:3px 5px; font-size:8px;">Invoice No. :</td>
+                        <td style="padding:3px 5px; font-size:8px;">
+                            <%= students.InvNo %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:3px 5px; font-size:8px;">Address:</td>
+                        <td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">
+                            <%= students.Address_Agent %>
+                        </td>
+                        <td style="padding:3px 5px; font-size:8px;">GST :</td>
+                        <td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">
+                            <%= students.GST_Agent %>
+                        </td>
+                        <td style="padding:3px 5px; font-size:8px;"></td>
+                        <td style="padding:3px 5px; font-size:8px;">
+                          
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table border="0" cellpadding="0" cellspacing="0" width="70%" style="margin: 10px 0px; font-size:10px;">
+                    <tr style="text-align: center;">
+                        <td style="padding:3px 5px; border: 1px solid black; font-size:10px;"><strong>No.</strong>
+                        </td>
+                        <td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
+                            <strong>Name Of Member</strong>
+                        </td>
+                        <td colspan="2" style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
+                            <strong>Description</strong>
+                        </td>
+                        
+                        <td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
+                            <strong>SAC / HSN </strong>
+                        </td>
+
+
+                        <td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
+                            <strong>Amount</strong>
+                        </td>
+                    </tr>
+                    <tr style="text-align: center;">
+                        <td
+                            style="padding:3px 5px; border: 1px solid black;border-top: none;border-bottom:  none; font-size:10px;">
+                            1</td>
+                        <td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">
+                            <%= students.name %>
+                        </td>
+
+                        <td colspan="2" style="padding:3px 5px; border-right:1px solid black; font-size:10px;">Practo
+                            Subscription</td>
+
+                        <td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">997169</td>
+
+
+                        <td style="padding:3px 5px; border-right:1px solid black;text-align: right; font-size:10px;">
+                            <%= students.subTotalAmount_Upfront %>
+                        </td>
+                    </tr>
+                    <tr style="text-align: right;">
+                        <td colspan="5" style="padding:3px 5px; border: 1px solid black; font-size:10px;">Sub Total</td>
+                        <td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
+                            <%= students.subTotalAmount_Upfront %>
+                        </td>
+                    </tr>
+                    <tr style="text-align: right;display:none">
+                        <td colspan="5"
+                            style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Discount
+                        </td>
+                        <td
+                            style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">
+                            -</td>
+                    </tr>
+                    <tr style="text-align: right;display:none">
+                        <td colspan="5"
+                            style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">Amount
+                        </td>
+                        <td
+                            style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">
+                            <%= students.subTotalAmount_Upfront %>
+                        </td>
+                    </tr>
+                    <tr style="text-align: right;">
+                        <td colspan="5"
+                            style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">CGST
+                            (@9.00%)</td>
+                        <td
+                            style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">
+                            <%= students.CGST %>
+                        </td>
+                    </tr>
+                    <tr style="text-align: right;">
+                        <td colspan="5"
+                            style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">SGST
+                            (@9.00%)</td>
+                        <td
+                            style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">
+                            <%= students.SGST %>
+                        </td>
+                    </tr>
+                    <tr style="text-align: right; ">
+                        <td colspan="5"
+                            style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">IGST
+                            (@18.00%)</td>
+                        <td
+                            style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">
+                            <%= students.IGST %>
+                        </td>
+                    </tr>
+
+                    <tr style="text-align: right;">
+                        <td colspan="5"
+                            style="padding:3px 5px; border: 1px solid black;border-top: none; font-size:10px;">
+                            <strong>Total Invoice Amount</strong>
+                        </td>
+                        <td
+                            style="padding:3px 5px; border-bottom: 1px solid black;border-right: 1px solid black; font-size:10px;">
+                            <strong>
+                                <%= students.finalTotalAmount_Upfront %>
+                            </strong>
+                        </td>
+                    </tr>
+
+
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+
+
+            <td>
+
+                <table
+                    style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 12px; border: 1px solid #000;"
+                    cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="width: 50%; padding: 8px; vertical-align: top; border-right: 1px solid #000;">
+                            <strong>Tax Amount (in words): <%= students.finalWordsAmount_Upfront %></strong><br><br>
+                            <strong>Company's PAN:</strong> AADCI7698J<br><br>
+                            <strong>Declaration</strong><br>
+                            We declare that this invoice shows the actual price of the goods described and that all
+                            particulars are true and correct.
+                        </td>
+
+                        <td style="width: 50%; padding: 8px; vertical-align: top;">
+                            <strong>Company's Bank Details</strong><br><br>
+                            <strong>A/c Holder's Name:</strong> INTERSTELLAR SERVICES PVT LTD.<br>
+                            <strong>Bank Name:</strong> HDFC Bank Ltd.<br>
+                            <strong>A/c No.:</strong> 00060330007481<br>
+                            <strong>Branch & IFS Code:</strong> Navrangpura, A'bad & HDFC0000006<br>
+                            <strong>SWIFT Code:</strong>
+                        </td>
+                    </tr>
+                </table>
+                <br><br>
+                <table style="width: 100%; font-family: Arial, sans-serif; font-size: 12px;border-collapse: collapse;">
+                    <tr>
+                        <td style="text-align: right; font-weight: bold;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="650px"
+                                style="font-weight: bold; font-size:10px;">
+
+                                <tr style="height: 0px;vertical-align: bottom; font-size:8px;">
+
+                                    <td style="padding:5px 8px; font-size:9px;"></td>
+                                    <td style="padding:5px 42px; font-size:9px">
+                                        <div style="font-weight: bold;">for Interstellar Services Pvt. Ltd.</div>
+                                    </td>
+                                </tr>
+
+                                <tr style="height: 80px;vertical-align: bottom; font-size:8px;">
+
+                                    <td style="padding:2px 5px; font-size:9px"></td>
+                                    <td style="padding:2px 5px; font-size:9px">
+
+                                        <img src="<%= signatureBase64 %>" style="max-width:200px; max-height:100px;">
+
+
+                                    </td>
+                                </tr>
+                                <tr style="height: 0px;vertical-align: bottom; font-size:8px;">
+
+                                    <td style="padding:5px 8px; font-size:9px;"></td>
+                                    <td style="padding:5px 42px; font-size:9px">Authorised Signatory</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <table
+                    style="width: 100%; font-family: Arial, sans-serif; font-size: 12px; margin-top: 10px; border-top: 1px solid #000; border-collapse: collapse;">
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; padding: 5px;">
+                            SUBJECT TO AHMEDABAD JURISDICTION
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; padding: 5px;">
+                            Tax Payable on Reverse Charges Basis: NO
+                        </td>
+                    </tr>
+                </table>
+
+
+            </td>
+
+        </tr>
+
+    </table>
+
+    <div style="page-break-after: always;"></div>
+    <!-- Second Page of the Invoice (Rewritten with Divs) -->
+    <div class="invoice-wrapper">
+        <div class="invoice-header">
+            <u><b>Invoice</b></u>
+        </div>
+
+        <div class="invoice-main-box">
+            <!-- Top Section: Agent and Invoice Details -->
+            <div class="top-section">
+                <div class="agent-details">
+                    <p><b>Agent name:</b>
+                        <%= students.FullName_Agent %>
+                    </p>
+                    <p><b>Address:</b>
+                        <%= students.Address_Agent %>
+                    </p>
+                    <p><b>PAN -</b>
+                        <%= students.PAN_No_Agent %>
+                    </p>
+                    <p><b>GST -</b>
+                        <%= students.GST_Agent %>
+                    </p>
+                    <p><b>E-Mail:</b>
+                        <%= students.Agent_EmailID %>
+                    </p>
+                    <p><b>Contact Details:</b>
+                        <%= students.Agent_MobileNumber %>
+                    </p>
+                </div>
+                <div class="invoice-details">
+
+                    <table style="width: 100%; font-size: 10px;border-bottom: 1px solid #000;">
+                        <tr>
+                            <!-- Left Side: Declaration -->
+                            <td style="width: 60%;border-right: 1px solid #000;">
+                                <div>
+                                    <span>Invoice No.: </span>
+                                    <span>
+                                        <%= students.PAN_No_Agent %> / <%= students.upfron_InvoiceNo %>
+                                    </span>
+                                </div>
+                            </td>
+                            <td style="width: 40%;">
+                                <div class="invoice-date">
+                                    <span>Date: </span>
+                                    <span>
+                                        <%= students.Date %>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr style="border-top: 1px solid #000;">
+
+                            <td style="width: 60%;border-right: 1px solid #000;">
+
+                            </td>
+                            <td style="width: 40%;">
+
+                            </td>
+                        </tr>
+                        <tr style="border-top: 1px solid #000;">
+
+                            <td style="width: 60%;border-right: 1px solid #000;">
+
+                            </td>
+                            <td style="width: 40%;">
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </div>
+            </div>
+
+            <!-- To Address Section -->
+            <div class="to-address">
+                <p>To</p>
+                <p><b>Interstellar Services Pvt.Ltd.</b></p>
+                <p>634 Gala Empire, Opp. TV Tower, Drive-in-Road, Ahmedabad, Gujarat, India 380052</p>
+                <p>PAN # AADCI7698J</p>
+                <p>GSTIN # 24AADCI7698J1Z0</p>
+            </div>
+
+            <!-- Particulars Table Section -->
+            <div class="particulars-section">
+                <table class="particulars-table">
+                    <thead>
+                        <tr>
+                            <th class="col-sr-no">SR No.</th>
+                            <th class="col-particulars">PARTICULARS</th>
+                            <th class="col-hsn">HSN/SAC</th>
+                            <th class="col-amount">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="col-sr-no" style="text-align: center;">1</td>
+                            <td class="col-particulars">
+                                <b>Commission on Sale of Practo Subscription</b><br>
+                                <%= students.name %><br><br>
+                                        Round Off
+                            </td>
+                            <td class="col-hsn" style="text-align: center;">998555</td>
+                            <td class="col-amount" style="text-align: right;">
+                                <%= students.lessCommission %><br><br><br>0.00
+                            </td>
+                        </tr>
+                        <tr class="total-row">
+                            <td></td>
+                            <td style="text-align: left;"><b>Total</b></td>
+                            <td></td>
+                            <td class="col-amount" style="text-align: right;"><b>₹ <%= students.lessCommission %></b>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Amount in Words Section -->
+            <div class="amount-words">
+                <span>Amount Chargeable (in words): <%= students.lessCommissionWords_Upfront %></span>
+                <span style="float: right;">E. & O.E</span>
+            </div>
+
+            <!-- Declaration and Signature Section -->
+            <!-- Declaration and Signature Block -->
+            <table
+                style="width: 100%; font-size: 10px; border-bottom: 0px ; border-top: 1px solid #000; border-collapse: collapse;">
+                <tr>
+                    <!-- Left Side: Declaration -->
+                    <td style="width: 100%; padding: 8px; vertical-align: top; border-bottom: 0px">
+                        <strong>Declaration :</strong> We declare that this invoice shows the actual price of the goods
+                        & services described and that all particulars are true and correct.
+                    </td>
+                </tr>
+
+            </table>
+            <table style="width: 100%; font-size: 10px;">
+
+                <tr>
+                    <!-- Right Side: Signature Area -->
+                    <td style="width: 30%;border-top: 0px">
+
+                    </td>
+                    <td
+                        style="width: 70%; padding: 8px; text-align: center; vertical-align: bottom; border-left: 1px solid #000; border-top: 1px solid #000;">
+
+                        <div style="text-align: left;vertical-align: top;">For <%= students.FullName_Agent %>
+                        </div>
+
+                        <div style="text-align: right; font-weight: bold;">Authorised Signatory</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-declaration">
+            <p><b>Declaration: Tax payable on Reverse Charge Basis: No</b></p>
+            <p style="padding-top: 30px;""><b>Note: This invoice is for NON GST Vendors only. GST Vendors, are required to raise Tax Invoice to us
+                    separately</b></p>
+        </div>
+    </div>
+
+
+    <div style=" page-break-after: always;">
+        </div>
+
+
+
+        <table border="0" cellpadding="0" cellspacing="0" width="800px"
+            style="margin:0 auto;font-family:Arial, Helvetica, sans-serif;">
+            <tr>
+                <td style="padding-left:20px; padding-right:20px;">
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr>
+                            <td align="center"
+                                style="font-size:14px; font-family: Arial, Helvetica, sans-serif;padding-bottom:10px;">
+                                <u><b>Statement of Receivable</b></u>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:12px; font-family: Arial, Helvetica, sans-serif;">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                                    style="border: solid 1px #000000;">
+                                    <tr>
+                                        <td
+                                            style="width: 40%;font-size:12px; font-family: Arial, Helvetica, sans-serif; border-right: solid 1px #000000;">
+                                            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                                <tr>
+                                                    <td style="padding:5px;">Name :</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.FullName_Agent %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;">Address:</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.Address_Agent %>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td
+                                            style="width: 26%;font-size:12px;text-align: left; font-family: Arial, Helvetica, sans-serif; border-right: solid 1px #000000;">
+                                            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                                <tr>
+                                                    <td style="padding:5px;">State Code :</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.statecode %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;">PAN :</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.PAN_No_Agent %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;">GST :</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.GST_Agent %>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td
+                                            style="width: 34%;text-align: left;font-size:12px; font-family: Arial, Helvetica, sans-serif;">
+                                            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                                <tr>
+                                                    <td style="padding:5px;">Invoice Date :</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.Date %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;">Invoice No.:</td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                        <%= students.InvNo %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding:5px;"></td>
+                                                    <td style="padding:5px;text-align: left;">
+                                                       
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:12px; font-family: Arial, Helvetica, sans-serif;">
+                                <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                                    style="font-size:12px; font-family: Arial, Helvetica, sans-serif; border-left: solid 1px #000000; border-top: solid 1px #000000;">
+                                    <tr>
+                                        <td style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;"
+                                            <b>No.</b></td>
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;">
+                                            <b>Name of Member</b>
+                                        </td>
+                                        <td  colspan="2"
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;">
+                                            <b>Description</b>
+                                        </td>
+                                     
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;">
+                                            <b>Amount</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;">
+                                            1</td>
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;">
+                                            <%= students.name %>
+                                        </td>
+                                        <td colspan="2"
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: center;">
+                                           Practo Subscription</td>
+                                      
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            <%= students.finalTotalAmount_Upfront %>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            Less commission payable </td>
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            (<%= students.lessCommission%>) </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            Add TDS on commission</td>
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            <%= students.tdsAmount %>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            <b>Total Receivable Amount</b>
+                                        </td>
+                                        <td
+                                            style="border-right: solid 1px #000000;border-bottom: solid 1px #000000; padding:5px; text-align: right;">
+                                            <b>₹ <%= students.finalpayout_commisionAmount %></b>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+</body>
+
+</html>

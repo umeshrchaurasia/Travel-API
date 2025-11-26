@@ -103,7 +103,7 @@ class InvoiceController {
             try {
                 // Use same query pattern as UpdateProposalController
                 const [rows] = await db.query(
-                    'CALL ManageInvoiceByCertificate(?)',
+                    'CALL ManageInvoiceByCertificate2(?)',
                     [certificateId]
                 );
 

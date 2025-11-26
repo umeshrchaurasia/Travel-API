@@ -40,10 +40,9 @@
 				</table>
 			</td>
 		</tr>
-		<tr>
-			<td style="text-align: center; font-size: 10px; padding-top: 10px;">
-				<strong>Tax Invoice</strong>
-			</td>
+		<tr style="text-align: left;">
+			<td style="padding-left:260px; text-align: left;font-size: 10px; padding-top:10px"><strong>Tax
+					Invoice</strong></td>
 		</tr>
 		<tr>
 			<td>
@@ -83,9 +82,9 @@
 						<td style="padding:3px 5px; border-right: 1px solid black; font-size:8px;">
 							<%= students.GST_Agent %>
 						</td>
-						<td style="padding:3px 5px; font-size:8px;">Certificate No.</td>
+						<td style="padding:3px 5px; font-size:8px;"></td>
 						<td style="padding:3px 5px; font-size:8px;">
-							<%= students.CustId %>
+
 						</td>
 					</tr>
 				</table>
@@ -100,12 +99,11 @@
 						<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
 							<strong>Name Of Member</strong>
 						</td>
-						<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
+						<td colspan="2"
+							style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
 							<strong>Description</strong>
 						</td>
-						<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
-							<strong>Assistance Number</strong>
-						</td>
+
 						<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
 							<strong>SAC / HSN </strong>
 						</td>
@@ -123,22 +121,20 @@
 							<%= students.name %>
 						</td>
 
-						<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">Travel Assistance
-							Product</td>
-						<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">
-							<%= students.Asnumber%>
+						<td colspan="2" style="padding:3px 5px; border-right:1px solid black; font-size:10px;">Practo Subscription
 						</td>
+						
 						<td style="padding:3px 5px; border-right:1px solid black; font-size:10px;">997169</td>
 
 
 						<td style="padding:3px 5px; border-right:1px solid black;text-align: right; font-size:10px;">
-							<%= students.Rate %>
+							<%= students.Actual_PremiumAmount_Upfront %>
 						</td>
 					</tr>
 					<tr style="text-align: right;">
 						<td colspan="5" style="padding:3px 5px; border: 1px solid black; font-size:10px;">Sub Total</td>
 						<td style="padding:3px 5px; border: 1px solid black;border-left:none; font-size:10px;">
-							<%= students.Rate %>
+							<%= students.Actual_PremiumAmount_Upfront %>
 						</td>
 					</tr>
 					<tr style="text-align: right;display:none">

@@ -61,14 +61,14 @@ class AdminController {
         let connection;
         try {
             // Extract parameters from request body using exact parameter names
-            const { 
-                "uId": uId, 
-                "agentId": agentId, 
-                "adminApproved": adminApproved, 
+            const {
+                "uId": uId,
+                "agentId": agentId,
+                "adminApproved": adminApproved,
                 "adminComment": adminComment,
-                "walletAmount": walletAmount 
+                "walletAmount": walletAmount
             } = req.body;
-    
+
             // Debug log the incoming parameters with exact format
             console.log('Received parameters:', JSON.stringify({
                 "uId": uId,
@@ -77,28 +77,28 @@ class AdminController {
                 "adminComment": adminComment,
                 "walletAmount": walletAmount
             }, null, 2));
-    
+
             // Validate required fields
             if (!agentId || !uId) {
                 console.log('Validation failed - missing required fields');
                 return base.send_response("Agent ID and UID are required", null, res);
             }
-    
+
             connection = await db.getConnection();
-    
+
             // Execute the stored procedure with exact parameter format
             const [result] = await connection.execute(
                 'CALL update_agent_approval(?, ?, ?, ?, ?)',
                 [uId, agentId, adminApproved, adminComment || '', walletAmount || '5000']
             );
-    
+
             console.log('Stored procedure result:', JSON.stringify(result, null, 2));
-    
+
             // Check if we got any results and specifically first row
             if (result && Array.isArray(result) && result[0] && Array.isArray(result[0]) && result[0][0]) {
                 const affectedRows = result[0][0].AffectedRows || 0;
                 console.log('Affected rows:', affectedRows);
-    
+
                 if (affectedRows > 0) {
                     // Send successful response with exact parameter format
                     return base.send_response("Agent approval status updated successfully", {
@@ -117,7 +117,7 @@ class AdminController {
                 console.log('Invalid result structure:', JSON.stringify(result, null, 2));
                 return base.send_response("Invalid response from database", null, res);
             }
-    
+
         } catch (error) {
             console.error('Error in updateAgentApproval:', {
                 error: error.message,
@@ -132,23 +132,23 @@ class AdminController {
         }
     }
 
-      async get_agentlist_admin(req, res) {
+    async get_agentlist_admin(req, res) {
         try {
             // Call the stored procedure to get pending wallet applications
 
-             const { startdate, enddate } = req.body;
+            const { startdate, enddate } = req.body;
 
-              if (!startdate || !enddate) {
-                             return base.send_response(
-                                 "startdate and enddate are required",
-                                 null,
-                                 res,
-                                 400
-                             );
-                         }
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
 
-         
-              const [rows] = await db.query('CALL get_agentlist_admin(?, ?)',[startdate, enddate]);
+
+            const [rows] = await db.query('CALL get_agentlist_admin(?, ?)', [startdate, enddate]);
 
 
             if (rows && rows[0] && rows[0].length > 0) {
@@ -161,6 +161,60 @@ class AdminController {
             return base.send_response("Error retrieving Agent", null, res);
         }
     }
+
+    async get_agentnamelist_admin(req, res) {
+        try {
+            const { startdate, enddate, agentname } = req.body;
+
+            // Corrected Validation:
+            // Only return an error if BOTH the date range AND the agent name are missing.
+            if ((!startdate || !enddate) && !agentname) {
+                return base.send_response(
+                    "Either a date range or an agent name is required for the search.",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // The rest of your code is correct and will now execute properly.
+            const [rows] = await db.query('CALL get_agentnamelist_admin(?, ?, ?)', [startdate, enddate, agentname]);
+
+            if (rows && rows[0] && rows[0].length > 0) {
+                return base.send_response("Agent retrieved successfully", rows[0], res);
+            } else {
+                return base.send_response("No Agent found", [], res);
+            }
+        } catch (error) {
+            logger.error('Error in get_agentnamelist_admin:', error);
+            return base.send_response("Error retrieving Agent", null, res);
+        }
+    }
+
+    async updateAgentDetails(req, res) {
+        try {
+            const { AgentId, Payout, Wallet_Amount } = req.body;
+
+            // Corrected Validation:
+            // Only return an error if BOTH the date range AND the agent name are missing.
+            if (!AgentId || Payout === undefined || Wallet_Amount === undefined) {
+                return base.send_response("AgentId, Payout, and Wallet_Amount are required.", null, res, 400);
+            }
+
+            // The rest of your code is correct and will now execute properly.
+            const [rows] = await db.query('CALL update_agent_details(?, ?, ?)', [AgentId, Payout, Wallet_Amount]);
+
+            if (rows && rows[0] && rows[0].length > 0) {
+                return base.send_response("Agent retrieved successfully", rows[0], res);
+            } else {
+                return base.send_response("No Agent found", [], res);
+            }
+        } catch (error) {
+            logger.error('Error in update_agent_details:', error);
+            return base.send_response("Error retrieving Agent", null, res);
+        }
+    }
+
 }
 
 module.exports = new AdminController();

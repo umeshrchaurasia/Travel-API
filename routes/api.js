@@ -66,12 +66,16 @@ router.post('/login', wrapper.asyncHandler(travelController.loginForAll));
 
 // Agent routes
 router.get('/agents_listByEmp', wrapper.asyncHandler(travelController.getAgents_listbyEmp));
+
+router.get('/agents_listBy_Agent', wrapper.asyncHandler(travelController.getagents_listBy_Agent));
+
 router.get('/GetAgentSummary', wrapper.asyncHandler(travelController.GetAgentSummary));
 
 router.post('/addagent', wrapper.asyncHandler(travelController.insertAgent));
 
 router.post('/addAgent_nonkyc', wrapper.asyncHandler(travelController.addAgent_nonkyc));
 
+router.post('/addAgent_kyc', wrapper.asyncHandler(travelController.addAgent_kyc));
 
 
 router.post('/getPremium-including', wrapper.asyncHandler(agentController.getPremium_including));

@@ -10,7 +10,6 @@ const express = require('express');
 
 class TravelDocController {
     constructor() {
-        // Define valid document types with their display names
         this.VALID_DOC_TYPES = {
             'pancard': 'PAN Card',
             'bankdetails': 'Bank details',
@@ -20,7 +19,6 @@ class TravelDocController {
             'other': 'Other document'
         };
 
-        // Define allowed file extensions and their corresponding mime types
         this.ALLOWED_FILE_TYPES = {
             '.pdf': 'application/pdf',
             '.jpg': 'image/jpeg',
@@ -30,14 +28,11 @@ class TravelDocController {
             '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         };
 
-        // Create Express router for middleware
         this.router = express.Router();
         
-        // Initialize multer storage configuration
         this.storage = multer.diskStorage({
             destination: (req, file, cb) => {
                 try {
-                    // Store the temporary file first
                     const tempDir = path.join(__dirname, '../public/uploads/temp');
                     if (!fs.existsSync(tempDir)) {
                         fs.mkdirSync(tempDir, { recursive: true });
@@ -50,7 +45,6 @@ class TravelDocController {
             },
             filename: (req, file, cb) => {
                 try {
-                    // Generate a temporary filename
                     const fileExt = this.getFileExtension(file.originalname);
                     if (!fileExt) {
                         throw new Error('Invalid file extension');
@@ -64,7 +58,6 @@ class TravelDocController {
             }
         });
 
-        // Initialize multer upload
         this.upload = multer({
             storage: this.storage,
             fileFilter: (req, file, cb) => {
@@ -118,7 +111,18 @@ class TravelDocController {
         return [
             // First middleware to handle file upload
             (req, res, next) => {
+                // FIX: Increase timeout to 5 minutes to prevent disconnection on slow uploads
+                req.setTimeout(300000); 
+
                 this.upload.single('document')(req, res, async (err) => {
+                    // FIX: Explicitly handle File Too Large error from Multer
+                    if (err instanceof multer.MulterError) {
+                        if (err.code === 'LIMIT_FILE_SIZE') {
+                            logger.error('Upload error: File too large');
+                            return base.send_response("File size exceeds the 4MB limit.", null, res);
+                        }
+                    }
+                    
                     if (err) {
                         logger.error('Upload error:', err);
                         return base.send_response(err.message || "Error uploading file", null, res);
@@ -137,57 +141,39 @@ class TravelDocController {
                     if (!req.file) {
                         return base.send_response("No file uploaded", null, res);
                     }
-
-                    if (!agentId) {
-                        return base.send_response("Agent ID is required", null, res);
-                    }
-
-                    if (!uId) {
-                        return base.send_response("UID is required", null, res);
-                    }
-
-                    if (!docType) {
-                        return base.send_response("Document type is required", null, res);
-                    }
+                    // ... rest of validation logic remains the same ...
+                    if (!agentId) return base.send_response("Agent ID is required", null, res);
+                    if (!uId) return base.send_response("UID is required", null, res);
+                    if (!docType) return base.send_response("Document type is required", null, res);
 
                     const standardizedDocType = this.standardizeDocType(docType);
                     if (!standardizedDocType) {
                         return base.send_response(
                             `Invalid document type. Valid types are: ${Object.values(this.VALID_DOC_TYPES).join(', ')}`,
-                            null,
-                            res
+                            null, res
                         );
                     }
 
-                    // Create agent directory
                     const agentDir = path.join(__dirname, `../public/uploads/agent-documents/${agentId}`);
                     if (!fs.existsSync(agentDir)) {
                         fs.mkdirSync(agentDir, { recursive: true });
                     }
 
-                    // Move file from temp to final location
                     const fileExt = path.extname(req.file.filename);
                     const finalFilename = `${standardizedDocType}${fileExt}`;
                     const finalPath = path.join(agentDir, finalFilename);
 
                     await this.moveFile(req.file.path, finalPath);
 
-                    // Update request object with processed data
                     req.processedData = {
-                        agentId,
-                        uId,
-                        standardizedDocType,
-                        finalFilename,
+                        agentId, uId, standardizedDocType, finalFilename,
                         relativePath: `${agentId}/${finalFilename}`
                     };
 
                     next();
                 } catch (error) {
                     logger.error('Validation error:', error);
-                    // Clean up temp file if it exists
-                    if (req.file) {
-                        fs.unlink(req.file.path, () => {});
-                    }
+                    if (req.file) fs.unlink(req.file.path, () => {});
                     return base.send_response(error.message || "Validation error", null, res);
                 }
             },
@@ -213,7 +199,6 @@ class TravelDocController {
 
                 } catch (error) {
                     logger.error('Database error:', error);
-                    // Clean up the moved file if database operation fails
                     if (req.processedData && req.processedData.relativePath) {
                         const fullPath = path.join(__dirname, '../public/uploads/agent-documents', req.processedData.relativePath);
                         fs.unlink(fullPath, () => {});
@@ -232,10 +217,7 @@ class TravelDocController {
         let connection;
         try {
             const { agentId } = req.params;
-            
-            if (!agentId) {
-                return base.send_response("Agent ID is required", null, res);
-            }
+            if (!agentId) return base.send_response("Agent ID is required", null, res);
 
             connection = await db.getConnection();
             const [rows] = await connection.execute(

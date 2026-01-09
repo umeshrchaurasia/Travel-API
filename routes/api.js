@@ -20,14 +20,14 @@ const testuserController = require('../controller/Test_UserController');
 //BatchPayment
 const BatchPaymentController = require('../controller/BatchPaymentController');
 
-const UpdateProposalController =  require('../controller/UpdateProposalController');
+const UpdateProposalController = require('../controller/UpdateProposalController');
 
 const razorPaymentController = require('../controller/RazorPaymentController');
 
 const PolicyGenerateController = require('../controller/PolicyGenerateController');
 //const PolicyGeneratorController1 = require('../controller/PolicyGeneratorController1');
 
-const HtmlToPdfController  = require('../controller/HtmlToPdfController');
+const HtmlToPdfController = require('../controller/HtmlToPdfController');
 
 
 const InvoiceController = require('../controller/InvoiceController');
@@ -47,6 +47,10 @@ const OTPVerificationController = require('../controller/OTPVerificationControll
 const ZoopController = require('../controller/ZoopController');
 
 const practoController = require('../controller/PractoController');
+
+const AyushController = require('../controller/AyushController');
+
+const InvoiceAyushPayController = require('../controller/InvoiceAyushPayController');
 
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
@@ -87,11 +91,11 @@ router.post('/Apply-wallet-balance', wrapper.asyncHandler(agentController.Insert
 
 
 // Document routes
-router.post('/documents/upload', 
+router.post('/documents/upload',
     documentController.getUploadMiddleware()
 );
 
-router.get('/documents/agent/:agentId', 
+router.get('/documents/agent/:agentId',
     wrapper.asyncHandler(async (req, res) => {
         await documentController.getAgentDocuments(req, res);
     })
@@ -100,13 +104,13 @@ router.get('/documents/agent/:agentId',
 
 // Approval routes // Admin routes
 router.get('/pending-approvals', wrapper.asyncHandler(adminController.getApprovalsAgentlist));
-router.get('/getAgentDoc-approvals', 
+router.get('/getAgentDoc-approvals',
     wrapper.asyncHandler(adminController.getAgentDocumentsForApproval));
 router.post('/update-approval', wrapper.asyncHandler(adminController.updateAgentApproval));
 
 
 router.post('/get_agentlist_admin', wrapper.asyncHandler(adminController.get_agentlist_admin));
-router.post('/get_agentnamelist_admin',wrapper.asyncHandler(adminController.get_agentnamelist_admin));
+router.post('/get_agentnamelist_admin', wrapper.asyncHandler(adminController.get_agentnamelist_admin));
 router.post('/updateAgentDetails', wrapper.asyncHandler(adminController.updateAgentDetails));
 
 
@@ -135,12 +139,12 @@ router.post('/updateBatchPayment', wrapper.asyncHandler(BatchPaymentController.u
 
 router.post('/getUpdateProposalDetailsByAgent', wrapper.asyncHandler(UpdateProposalController.getUpdateProposalDetailsByAgent));
 
-router.post('/getProposalDetailsByEmployee',wrapper.asyncHandler(UpdateProposalController.getProposalDetailsByEmployee));
+router.post('/getProposalDetailsByEmployee', wrapper.asyncHandler(UpdateProposalController.getProposalDetailsByEmployee));
 
-router.post('/getProposalMIS',wrapper.asyncHandler(UpdateProposalController.getProposalMIS));
+router.post('/getProposalMIS', wrapper.asyncHandler(UpdateProposalController.getProposalMIS));
 
 
-router.post('/getProposalTDS',wrapper.asyncHandler(UpdateProposalController.getProposalTDS));
+router.post('/getProposalTDS', wrapper.asyncHandler(UpdateProposalController.getProposalTDS));
 
 
 router.post('/getPolicyDetailsbyPolicyno', wrapper.asyncHandler(UpdateProposalController.getPolicyDetailsbyPolicyno));
@@ -158,7 +162,7 @@ router.post('/generatePolicybyPolicyno', wrapper.asyncHandler(PolicyGenerateCont
 
 // Add route for generating sample policy
 router.get('/generate-sample-policy', wrapper.asyncHandler(PolicyGenerateController.generateSamplePolicy));
-router.post('/generatePolicyHTML',  wrapper.asyncHandler(PolicyGenerateController.generatePolicyHTML));
+router.post('/generatePolicyHTML', wrapper.asyncHandler(PolicyGenerateController.generatePolicyHTML));
 
 
 router.post('/generateInvoicePdf', wrapper.asyncHandler(InvoiceController.generateInvoiceByCertificate));
@@ -197,7 +201,9 @@ router.post('/createPractoProposal', wrapper.asyncHandler(practoController.creat
 
 router.post('/getSubscriptionStatus', wrapper.asyncHandler(practoController.getSubscriptionStatus));
 
- router.post('/getPractoPremium', wrapper.asyncHandler(practoController.getPractoPremium));
+router.post('/getPractoPremium', wrapper.asyncHandler(practoController.getPractoPremium));
+
+router.post('/getPractoPlan', wrapper.asyncHandler(practoController.getPractoPlan));
 
 router.post('/update-practo-proposal-wallet', wrapper.asyncHandler(practoController.updatePractoProposalWallet));
 
@@ -216,18 +222,50 @@ router.post('/getBatchPaymentsByStatus_Practo', wrapper.asyncHandler(BatchPaymen
 
 router.post('/updateBatchPayment_Practo', wrapper.asyncHandler(BatchPaymentController.updateBatchPayment_Practo));
 
-router.post('/getProposalMIS_Practo',wrapper.asyncHandler(UpdateProposalController.getProposalMIS_Practo));
+router.post('/getProposalMIS_Practo', wrapper.asyncHandler(UpdateProposalController.getProposalMIS_Practo));
 
-router.post('/getProposalTDS_Practo',wrapper.asyncHandler(UpdateProposalController.getProposalTDS_Practo));
+router.post('/getProposalTDS_Practo', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_Practo));
 
 router.get('/subagents_listByagent', wrapper.asyncHandler(travelController.subagents_listByagent));
 
-router.post('/getProposalMIS_SubAgent',wrapper.asyncHandler(UpdateProposalController.getProposalMIS_SubAgent));
+router.post('/getProposalMIS_SubAgent', wrapper.asyncHandler(UpdateProposalController.getProposalMIS_SubAgent));
 
 
-router.post('/getProposalTDS_SubAgent',wrapper.asyncHandler(UpdateProposalController.getProposalTDS_SubAgent));
+router.post('/getProposalTDS_SubAgent', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_SubAgent));
 
-router.post('/getSub_Main_AgentMIS_byAdmin',wrapper.asyncHandler(UpdateProposalController.getSub_Main_AgentMIS_byAdmin));
+router.post('/getSub_Main_AgentMIS_byAdmin', wrapper.asyncHandler(UpdateProposalController.getSub_Main_AgentMIS_byAdmin));
 
+
+
+
+router.post('/createAyushPayProposal', wrapper.asyncHandler(AyushController.createAyushPayProposal));
+
+router.post('/checkAyushDuplicate', wrapper.asyncHandler(AyushController.checkDuplicate));
+
+
+router.post('/update-ayush-proposal-wallet', wrapper.asyncHandler(AyushController.updateAyushProposalWallet));
+
+router.post('/getAyushPayPremium', wrapper.asyncHandler(AyushController.getAyushPayPremium));
+
+router.post('/generateInvoiceAyushPayPdf', wrapper.asyncHandler(InvoiceAyushPayController.generateInvoiceAyushPayByCertificate));
+
+
+router.get('/generateInvoice-AyushPay/:certificateId', wrapper.asyncHandler(InvoiceAyushPayController.generateInvoiceAyushPayByCertificate));
+
+router.post('/getProposalDetailsByAgent_AyushPay', wrapper.asyncHandler(BatchPaymentController.getProposalDetailsByAgent_AyushPay));
+
+
+
+
+router.post('/getProposalDetailsByAgent_AyushPay', wrapper.asyncHandler(BatchPaymentController.getProposalDetailsByAgent_AyushPay));
+
+
+router.post('/insertBatchPayment_AyushPay', wrapper.asyncHandler(BatchPaymentController.insertBatchPayment_AyushPay));
+
+router.post('/getBatchPaymentsByStatus_AyushPay', wrapper.asyncHandler(BatchPaymentController.getBatchPaymentsByStatus_AyushPay));
+
+router.post('/updateBatchPayment_AyushPay', wrapper.asyncHandler(BatchPaymentController.updateBatchPayment_AyushPay));
+
+// Router
 
 module.exports = router;

@@ -50,14 +50,14 @@ class TravelController {
     }
 
 
-      async getagents_listBy_Agent(req, res) {
+    async getagents_listBy_Agent(req, res) {
         try {
 
             const agentId = req.params.agentId || req.query.agentId || req.body.agentId;
 
             if (!agentId) {
                 return base.send_response("AgentId is required", null, res, 400);
-            }           
+            }
 
             const [rows] = await db.query('CALL get_agentlist_by_agent(?)', [agentId]);
 
@@ -74,7 +74,7 @@ class TravelController {
         }
     }
 
-    
+
 
 
     // Insert employee
@@ -167,6 +167,8 @@ class TravelController {
                 Gender,
                 DOB,
                 PayoutPercentage,
+                PayoutPracto,
+                PayoutAyush,
                 PaymentMode,
                 Wallet_Amount,
                 EducationQualification,
@@ -210,26 +212,31 @@ class TravelController {
                 );
             }
 
+            const finalPayoutPracto = PayoutPracto ? PayoutPracto : '0';
+            const finalPayoutAyush = PayoutAyush ? PayoutAyush : '0';
+
             // Call the stored procedure
             const [result] = await db.query(
-                'CALL insert_Agent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',
+                'CALL insert_Agent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
-                    UId || '',
-                    FullName || '',
-                    TraderName || '',
-                    Password || '',
-                    EmailID || '',
-                    MobileNumber || '',
-                    Gender || 'Male',
-                    DOB || '',
-                    PayoutPercentage || '',
-                    PaymentMode || 'Full Pay',
-                    Wallet_Amount || '0',
-                    EducationQualification || '',
-                    GST || '',
-                    Address || '',           // Add this parameter
-                    PAN_No || '',
-                    State || ''
+                    UId,
+                    FullName,
+                    TraderName,
+                    Password,
+                    EmailID,
+                    MobileNumber,
+                    Gender,
+                    DOB,
+                    PayoutPercentage,
+                    finalPayoutPracto,
+                    finalPayoutAyush,
+                    PaymentMode, // Now this variable is defined
+                    Wallet_Amount,
+                    EducationQualification,
+                    GST,
+                    Address,
+                    PAN_No,
+                    State
                 ]
             );
 
@@ -462,7 +469,7 @@ class TravelController {
         }
     }
 
-     // Insert Agent - Updated method with enhanced duplicate validation
+    // Insert Agent - Updated method with enhanced duplicate validation
     async addAgent_nonkyc(req, res) {
         try {
             const {
@@ -606,8 +613,8 @@ class TravelController {
     }
 
 
-    
-       async addAgent_kyc(req, res) {
+
+    async addAgent_kyc(req, res) {
         try {
             const {
                 UId,
@@ -749,7 +756,7 @@ class TravelController {
         }
     }
 
-      // Get subagents
+    // Get subagents
     async subagents_listByagent(req, res) {
         try {
 

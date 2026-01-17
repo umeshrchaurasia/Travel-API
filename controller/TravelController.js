@@ -470,6 +470,7 @@ class TravelController {
     }
 
     // Insert Agent - Updated method with enhanced duplicate validation
+
     async addAgent_nonkyc(req, res) {
         try {
             const {
@@ -482,6 +483,8 @@ class TravelController {
                 Gender,
                 DOB,
                 PayoutPercentage,
+                PayoutPracto,
+                PayoutAyush,
                 PaymentMode,
                 Wallet_Amount,
                 EducationQualification,
@@ -526,9 +529,14 @@ class TravelController {
                 );
             }
 
+            // Ensure numeric values for payouts default to '0' if missing
+            const finalPayoutPracto = PayoutPracto || '0';
+            const finalPayoutAyush = PayoutAyush || '0';
+
             // Call the stored procedure
+            // Fixed the typo in the SQL string (removed extra space and ensured 19 placeholders)
             const [result] = await db.query(
-                'CALL insert_Agent_nonkyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)',
+                'CALL insert_Agent_nonkyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     UId || '',
                     FullName || '',
@@ -539,11 +547,13 @@ class TravelController {
                     Gender || 'Male',
                     DOB || '',
                     PayoutPercentage || '',
+                    finalPayoutPracto,
+                    finalPayoutAyush,
                     PaymentMode || 'Full Pay',
                     Wallet_Amount || '0',
                     EducationQualification || '',
                     GST || '',
-                    Address || '',           // Add this parameter
+                    Address || '',
                     PAN_No || '',
                     State || '',
                     Main_Agent || ''
@@ -552,11 +562,10 @@ class TravelController {
 
             // Check the result from stored procedure
             const procedureResult = result[0][0];
-            console.log('Procedure Result:', procedureResult);
+            // console.log('Procedure Result:', procedureResult);
 
             // Handle the response based on the Result field
             if (procedureResult.Result === 'Error') {
-                // Return error response for duplicates or other errors
                 return base.send_response(
                     procedureResult.Message || "Error creating agent",
                     null,
@@ -565,7 +574,6 @@ class TravelController {
                     procedureResult.StatusNo || 1
                 );
             } else {
-                // Success response
                 return base.send_response(
                     procedureResult.Message || "Agent created successfully",
                     {
@@ -582,9 +590,8 @@ class TravelController {
             }
 
         } catch (error) {
-            logger.error('Error in insertAgent:', error);
+            logger.error('Error in addAgent_nonkyc:', error);
 
-            // Check if it's a MySQL duplicate entry error (additional safety)
             if (error.code === 'ER_DUP_ENTRY') {
                 let duplicateField = 'field';
                 if (error.sqlMessage.includes('EmailID')) {
@@ -612,8 +619,6 @@ class TravelController {
         }
     }
 
-
-
     async addAgent_kyc(req, res) {
         try {
             const {
@@ -626,6 +631,8 @@ class TravelController {
                 Gender,
                 DOB,
                 PayoutPercentage,
+                PayoutPracto,
+                PayoutAyush,
                 PaymentMode,
                 Wallet_Amount,
                 EducationQualification,
@@ -670,9 +677,14 @@ class TravelController {
                 );
             }
 
+            // Ensure numeric values for payouts default to '0' if missing
+            const finalPayoutPracto = PayoutPracto || '0';
+            const finalPayoutAyush = PayoutAyush || '0';
+
             // Call the stored procedure
+            // Ensured 19 placeholders correspond to the array below
             const [result] = await db.query(
-                'CALL insert_Agent_kyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)',
+                'CALL insert_Agent_kyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     UId || '',
                     FullName || '',
@@ -683,11 +695,13 @@ class TravelController {
                     Gender || 'Male',
                     DOB || '',
                     PayoutPercentage || '',
+                    finalPayoutPracto,
+                    finalPayoutAyush,
                     PaymentMode || 'Full Pay',
                     Wallet_Amount || '0',
                     EducationQualification || '',
                     GST || '',
-                    Address || '',           // Add this parameter
+                    Address || '',
                     PAN_No || '',
                     State || '',
                     Main_Agent || ''
@@ -696,11 +710,10 @@ class TravelController {
 
             // Check the result from stored procedure
             const procedureResult = result[0][0];
-            console.log('Procedure Result:', procedureResult);
+            // console.log('Procedure Result:', procedureResult);
 
             // Handle the response based on the Result field
             if (procedureResult.Result === 'Error') {
-                // Return error response for duplicates or other errors
                 return base.send_response(
                     procedureResult.Message || "Error creating agent",
                     null,
@@ -709,7 +722,6 @@ class TravelController {
                     procedureResult.StatusNo || 1
                 );
             } else {
-                // Success response
                 return base.send_response(
                     procedureResult.Message || "Agent created successfully",
                     {
@@ -726,9 +738,8 @@ class TravelController {
             }
 
         } catch (error) {
-            logger.error('Error in insertAgent:', error);
+            logger.error('Error in addAgent_kyc:', error);
 
-            // Check if it's a MySQL duplicate entry error (additional safety)
             if (error.code === 'ER_DUP_ENTRY') {
                 let duplicateField = 'field';
                 if (error.sqlMessage.includes('EmailID')) {

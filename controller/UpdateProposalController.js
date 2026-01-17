@@ -321,7 +321,7 @@ class UpdateProposalController {
     }
 
 
-       // TDS Excel Dynamic filter:  agent / admin
+    // TDS Excel Dynamic filter:  agent / admin
     async getProposalTDS(req, res) {
         try {
             const { startdate, enddate, empId, agentId } = req.body;
@@ -365,7 +365,7 @@ class UpdateProposalController {
     }
 
 
-      async getProposalMIS_Practo(req, res) {
+    async getProposalMIS_Practo(req, res) {
         try {
             const { startdate, enddate, empId, agentId } = req.body;
 
@@ -408,7 +408,7 @@ class UpdateProposalController {
     }
 
 
-      async getProposalTDS_Practo(req, res) {
+    async getProposalTDS_Practo(req, res) {
         try {
             const { startdate, enddate, empId, agentId } = req.body;
 
@@ -452,7 +452,7 @@ class UpdateProposalController {
 
     // Sub Agent MIS 
 
-     // MIS Excel Dynamic filter: employee / agent / admin
+    // MIS Excel Dynamic filter: employee / agent / admin
     async getProposalMIS_SubAgent(req, res) {
         try {
             const { startdate, enddate, empId, agentId } = req.body;
@@ -496,7 +496,7 @@ class UpdateProposalController {
     }
 
 
-       // TDS Excel Dynamic filter:  agent / admin
+    // TDS Excel Dynamic filter:  agent / admin
     async getProposalTDS_SubAgent(req, res) {
         try {
             const { startdate, enddate, empId, agentId } = req.body;
@@ -540,9 +540,9 @@ class UpdateProposalController {
     }
 
     //Admin
-    
 
-      async getSub_Main_AgentMIS_byAdmin(req, res) {
+
+    async getSub_Main_AgentMIS_byAdmin(req, res) {
         try {
             const { startdate, enddate, empId, agentId } = req.body;
 
@@ -558,6 +558,93 @@ class UpdateProposalController {
             // Execute procedure
             const [rows] = await db.query(
                 'CALL getSub_Main_AgentMIS_byAdmin(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+    //AyushPay
+
+    async getProposalMIS_AyushPay(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getProposal_MIS_AyushPay(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+
+    async getProposalTDS_AyushPay(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getProposalTDS_AyushPay(?, ?, ?, ?)',
                 [startdate, enddate, empId || null, agentId || null]
             );
 

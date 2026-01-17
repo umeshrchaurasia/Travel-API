@@ -254,17 +254,18 @@ router.get('/generateInvoice-AyushPay/:certificateId', wrapper.asyncHandler(Invo
 
 router.post('/getProposalDetailsByAgent_AyushPay', wrapper.asyncHandler(BatchPaymentController.getProposalDetailsByAgent_AyushPay));
 
-
-
-
 router.post('/getProposalDetailsByAgent_AyushPay', wrapper.asyncHandler(BatchPaymentController.getProposalDetailsByAgent_AyushPay));
-
 
 router.post('/insertBatchPayment_AyushPay', wrapper.asyncHandler(BatchPaymentController.insertBatchPayment_AyushPay));
 
 router.post('/getBatchPaymentsByStatus_AyushPay', wrapper.asyncHandler(BatchPaymentController.getBatchPaymentsByStatus_AyushPay));
 
 router.post('/updateBatchPayment_AyushPay', wrapper.asyncHandler(BatchPaymentController.updateBatchPayment_AyushPay));
+
+router.post('/getProposalMIS_AyushPay', wrapper.asyncHandler(UpdateProposalController.getProposalMIS_AyushPay));
+
+router.post('/getProposalTDS_AyushPay', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_AyushPay));
+
 
 // Router
 

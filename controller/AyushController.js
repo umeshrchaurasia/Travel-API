@@ -8,9 +8,9 @@ const crypto = require('crypto');
 
 // Configuration
 const AYUSH_CONFIG = {
-    BASE_URL: "https://sandbox.ayushpay.com",
-    USERNAME: "aupy.testuser2.user",
-    PASSWORD: "Qwerty@123"
+    BASE_URL: "https://core.ayushpay.com",
+    USERNAME: "aupy.policyboss.user",
+    PASSWORD: "Wgnvsl8Qa9"
 };
 
 // Create an HTTPS Agent that disables Keep-Alive to prevent socket hang ups

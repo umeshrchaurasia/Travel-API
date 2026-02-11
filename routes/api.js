@@ -37,6 +37,8 @@ const InvoicePractoController = require('../controller/InvoicePractoController')
 
 const MailOtpController = require('../controller/mail/MailOtpController');
 
+const MailCustDetailController = require('../controller/mail/MailCustDetailController');
+
 const welcomeLetterController = require('../controller/welcomeLetterController');
 
 const MailSendController = require('../controller/mail/MailSendController');
@@ -52,6 +54,9 @@ const AyushController = require('../controller/AyushController');
 
 const InvoiceAyushPayController = require('../controller/InvoiceAyushPayController');
 
+const NoLogin_CustomerController = require('../controller/NoLogin_CustomerController');
+
+
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
 // OTP routes
@@ -60,6 +65,7 @@ router.post('/verifyOtp', wrapper.asyncHandler(MailOtpController.verifyOtp));
 router.post('/resendOtp', wrapper.asyncHandler(MailOtpController.resendOtp));
 router.get('/testSmtp', wrapper.asyncHandler(MailOtpController.testSmtpConnection));
 
+router.post('/sendCustomerDetailsMail', wrapper.asyncHandler(MailCustDetailController.sendCustomerDetailsMail));
 
 // Employee routes
 router.get('/employee_list', wrapper.asyncHandler(travelController.getEmployees));
@@ -267,6 +273,11 @@ router.post('/getProposalMIS_AyushPay', wrapper.asyncHandler(UpdateProposalContr
 router.post('/getProposalTDS_AyushPay', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_AyushPay));
 
 
+router.post('/createCustomerDetailEntry', wrapper.asyncHandler(NoLogin_CustomerController.createCustomerDetailEntry));
+
+router.post('/getAgentByAgentCode', wrapper.asyncHandler(NoLogin_CustomerController.getAgentByAgentCode));
+
+router.post('/getCustomerList_emp_wise', wrapper.asyncHandler(NoLogin_CustomerController.getCustomerList_emp_wise));  
 // Router
 
 module.exports = router;

@@ -56,6 +56,7 @@ const InvoiceAyushPayController = require('../controller/InvoiceAyushPayControll
 
 const NoLogin_CustomerController = require('../controller/NoLogin_CustomerController');
 
+const BajajController = require('../controller/BajajController');
 
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
@@ -280,4 +281,6 @@ router.post('/getAgentByAgentCode', wrapper.asyncHandler(NoLogin_CustomerControl
 router.post('/getCustomerList_emp_wise', wrapper.asyncHandler(NoLogin_CustomerController.getCustomerList_emp_wise));  
 // Router
 
+router.post('/saveMasterPlan_calc', wrapper.asyncHandler(BajajController.saveMasterPlan_calc));
+router.post('/saveMasterPlan_ISSUE_POLICY', wrapper.asyncHandler(BajajController.saveMasterPlan_ISSUE_POLICY));
 module.exports = router;

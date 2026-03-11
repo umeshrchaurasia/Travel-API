@@ -166,7 +166,6 @@ router.get('/getPaymentStatus/:policyNo', wrapper.asyncHandler(razorPaymentContr
 router.post('/generatePolicybyPolicyno', wrapper.asyncHandler(PolicyGenerateController.generatePolicybyPolicyno));
 
 
-
 // Add route for generating sample policy
 router.get('/generate-sample-policy', wrapper.asyncHandler(PolicyGenerateController.generateSamplePolicy));
 router.post('/generatePolicyHTML', wrapper.asyncHandler(PolicyGenerateController.generatePolicyHTML));
@@ -282,5 +281,12 @@ router.post('/getCustomerList_emp_wise', wrapper.asyncHandler(NoLogin_CustomerCo
 // Router
 
 router.post('/saveMasterPlan_calc', wrapper.asyncHandler(BajajController.saveMasterPlan_calc));
-router.post('/saveMasterPlan_ISSUE_POLICY', wrapper.asyncHandler(BajajController.saveMasterPlan_ISSUE_POLICY));
+
+router.post('/getPremium-including_bajaj', wrapper.asyncHandler(BajajController.getPremium_including_bajaj));
+
+router.post('/getPremium-excluding_bajaj', wrapper.asyncHandler(BajajController.getPremium_excluding_bajaj));
+
+router.post('/generatePolicybyPolicyno_bajaj', wrapper.asyncHandler(BajajController.generatePolicybyPolicyno_bajaj));
+
+
 module.exports = router;

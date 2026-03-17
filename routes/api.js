@@ -57,6 +57,8 @@ const InvoiceAyushPayController = require('../controller/InvoiceAyushPayControll
 const NoLogin_CustomerController = require('../controller/NoLogin_CustomerController');
 
 const BajajController = require('../controller/BajajController');
+const InvoiceController_bajaj = require('../controller/InvoiceController_bajaj');
+const WelcomeLetterBajajController = require('../controller/WelcomeLetterBajajController');
 
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
@@ -288,5 +290,10 @@ router.post('/getPremium-excluding_bajaj', wrapper.asyncHandler(BajajController.
 
 router.post('/generatePolicybyPolicyno_bajaj', wrapper.asyncHandler(BajajController.generatePolicybyPolicyno_bajaj));
 
+router.post('/generateBajajInvoicePdf', wrapper.asyncHandler(InvoiceController_bajaj.generateInvoiceBybajajCertificate));
+
+router.post('/welcome-letter_bajaj_excel', wrapper.asyncHandler(WelcomeLetterBajajController.generate_welcome_bajaj_excel));
+
+router.post('/download_welcome_bajaj_zip', wrapper.asyncHandler(WelcomeLetterBajajController.download_welcome_bajaj_zip));
 
 module.exports = router;

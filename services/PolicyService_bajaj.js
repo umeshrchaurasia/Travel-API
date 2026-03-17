@@ -43,9 +43,6 @@ class PolicyService_bajaj {
       const pdfPath = path.join(this.pdfStorePath, `${policyNo}_${timestamp}.pdf`);
       const htmlPath = path.join(this.htmlStorePath, `${policyNo}.html`);
 
-
-
-
       // Add base64 images directly instead of file URLs
 
       processed.logoBase64 = this.LogoImageBase64;
@@ -64,7 +61,7 @@ class PolicyService_bajaj {
       await fs.promises.writeFile(htmlPath, renderedHtml);
 
       const browser = await puppeteer.launch({
-        headless: true,
+        headless: "new",
         executablePath: puppeteer.executablePath(),
         args: [
           '--no-sandbox',

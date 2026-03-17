@@ -6,6 +6,8 @@ const axios = require('axios');
 const https = require('https');
 const PolicyService_bajaj = require('../services/PolicyService_bajaj');
 const path = require('path');
+const { PDFDocument } = require('pdf-lib');
+const fs = require('fs'); // You need fs to read/write the physical PDF files
 // Configuration
 
 const BAJAJ_CONFIG = {
@@ -215,8 +217,40 @@ class BajajController {
             const basePrem = issueData.pPremiumDtls?.basePrem || calcBasePremium;
             const issuePremDetails = issueData.pPremiumDtls;
             const issuePolicyData = issueData.pPolicyData;
+            const pdf64based = "JVBERi0xLjMKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUgo+PgplbmRvYmoKMiAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjEgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iagozIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNCAwIG9iago8PAovQ29udGVudHMgOCAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4IF0gL1BhcmVudCA3IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9QYWdlTW9kZSAvVXNlTm9uZSAvUGFnZXMgNyAwIFIgL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjYgMCBvYmoKPDwKL0F1dGhvciAoYW5vbnltb3VzKSAvQ3JlYXRpb25EYXRlIChEOjIwMjYwMzEyMDUxODA0KzAwJzAwJykgL0NyZWF0b3IgKGFub255bW91cykgL0tleXdvcmRzICgpIC9Nb2REYXRlIChEOjIwMjYwMzEyMDUxODA0KzAwJzAwJykgL1Byb2R1Y2VyIChSZXBvcnRMYWIgUERGIExpYnJhcnkgLSBcKG9wZW5zb3VyY2VcKSkgCiAgL1N1YmplY3QgKHVuc3BlY2lmaWVkKSAvVGl0bGUgKHVudGl0bGVkKSAvVHJhcHBlZCAvRmFsc2UKPj4KZW5kb2JqCjcgMCBvYmoKPDwKL0NvdW50IDEgL0tpZHMgWyA0IDAgUiBdIC9UeXBlIC9QYWdlcwo+PgplbmRvYmoKOCAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxMjEKPj4Kc3RyZWFtCkdhcTNdMGFgRmImLVZtQ0BTPStiXGA5RFUucWlMPjU3Zzg6PDkhcFBKZmtIPTE5YURqM0UzTzg/ckhWKUpKYF1gYCFVVipYSlU7dUtdO3JETFlwUilfPGBdWCshQSpeT1UrWnBUIVtCZiRiYDM9KThObWtCR2Jzfj5lbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDA2MSAwMDAwMCBuIAowMDAwMDAwMTAyIDAwMDAwIG4gCjAwMDAwMDAyMDkgMDAwMDAgbiAKMDAwMDAwMDMyMSAwMDAwMCBuIAowMDAwMDAwNTI0IDAwMDAwIG4gCjAwMDAwMDA1OTIgMDAwMDAgbiAKMDAwMDAwMDg1MyAwMDAwMCBuIAowMDAwMDAwOTEyIDAwMDAwIG4gCnRyYWlsZXIKPDwKL0lEIApbPDcxZmI1MDQ5ZWY3ODJmZWEzMGY3NGM5Yjc0YzIyZWU0Pjw3MWZiNTA0OWVmNzgyZmVhMzBmNzRjOWI3NGMyMmVlND5dCiUgUmVwb3J0TGFiIGdlbmVyYXRlZCBQREYgZG9jdW1lbnQgLS0gZGlnZXN0IChvcGVuc291cmNlKQoKL0luZm8gNiAwIFIKL1Jvb3QgNSAwIFIKL1NpemUgOQo+PgpzdGFydHhyZWYKMTEyMwolJUVPRgo=";
 
             logger.info(`[BAJAJ ISSUE SUCCESS]: PolicyNo=${resultPolicyNo}, FinalPremium=${resultPremium}`);
+
+            // NEW STEP: Convert Base64 to PDF and save to folder
+
+            let bajajDbUrl = "";
+            try {
+                // 1. Ensure the folder exists
+                const bajajFolder = path.join(__dirname, '../public/policygivenbyBajaj');
+                if (!fs.existsSync(bajajFolder)) {
+                    fs.mkdirSync(bajajFolder, { recursive: true });
+                }
+
+                // 2. Create a clean file name using the policy number
+                const cleanPolicyNo = resultPolicyNo.replace(/[^a-zA-Z0-9]/g, ''); // Removes dashes/special chars
+                const bajajPdfFileName = `bajaj${cleanPolicyNo}.pdf`;
+                const physicalBajajPath = path.join(bajajFolder, bajajPdfFileName);
+
+                // 3. This is the URL we will send to the database
+                bajajDbUrl = `/policygivenbyBajaj/${bajajPdfFileName}`;
+
+                // 4. Convert base64 to buffer and save it physically
+                const pdfBuffer = Buffer.from(pdf64based, 'base64');
+                fs.writeFileSync(physicalBajajPath, pdfBuffer);
+                logger.info(`[BAJAJ PDF SAVED]: Successfully saved to ${physicalBajajPath}`);
+
+            } catch (fsError) {
+                logger.error(`[BAJAJ PDF ERROR]: Failed to save base64 PDF: ${fsError.message}`);
+            }
+
+
+
+
 
             // ════════════════════════════════════════════════════════════
             // STEP 3A: DB Insert — Header + Proposer (SP)
@@ -267,7 +301,8 @@ class BajajController {
                 ProposerDetails.Area || '',                  // 40 p_Prop_Area         ✅
                 ProposerDetails.nomineeName || '',           // 41 p_Prop_nomineeName  ✅
                 ProposerDetails.nomineeRelation || '',     // 42 p_Prop_nomineeRelation ✅
-                Payout_Bajaj
+                Payout_Bajaj,
+                bajajDbUrl
             ];
 
             const [headerRows] = await db.query(
@@ -276,7 +311,7 @@ class BajajController {
                     ?,?,?,?,?,?,?,?,?,?,
                     ?,?,?,?,?,?,?,?,?,?,
                     ?,?,?,?,?,?,?,?,?,?,
-                    ?,?,?
+                    ?,?,?,?
                 )`,
                 headerParams
             );
@@ -531,7 +566,7 @@ class BajajController {
                 const policyData = results[0];
                 logger.info(`Found policy data for ${Policyno}, generating documents`);
                 const rawPlanAmount = policyData.PremiumAmount;
-                    
+
                 try {
                     const fullName = [policyData.Title, policyData.FirstName, policyData.MiddleName, policyData.LastName].filter(Boolean).join(' ');
                     const fullAddress = [policyData.AddressLine1, policyData.AddressLine2, policyData.CityName, policyData.State, policyData.PinCode].filter(Boolean).join(', ');
@@ -564,16 +599,51 @@ class BajajController {
                         return base.send_response("Error generating policy documents: " + err.message, { count: results.length, proposals: results }, res, 500);
                     }
 
-                    const pdfUrl = '/welcome-letters-bajaj/' + path.basename(result.pdfPath);
-                    const bajajgivenurl = '/BajajgivenpolicyUrl' + path.basename(policyData.bajajgivenurl);
                     const certificateId = Policyno;
+                    const pdfFileName = path.basename(result.pdfPath);
 
-                   // FOR cobine pdf code
+                    const pdfUrl = '/welcome-letters-bajaj/' + pdfFileName; // original welcome letter DB url
+                    const bajajDbUrl = policyData.BajajgivenpolicyUrl;
+                    const combinepdfurl = '/policybajaj/' + pdfFileName;
+
+                    // FOR cobine pdf code
 
                     // Update proposal_main with pdfUrl
                     try {
-                        const updateQuery = `UPDATE Bajaj_Travel_Proposal_main SET PolicypdfUrl = ? , BajajgivenpolicyUrl= ? WHERE PolicyNo = ?`;
-                        const [updateResult] = await db.query(updateQuery, [pdfUrl,combinepdfurl, certificateId]);
+
+                        // 1. Define physical paths on the server
+                        // result.pdfPath is already the absolute/relative physical path to the generated welcome letter
+                        const welcomeLetterPath = result.pdfPath;
+                        const bajajPolicyPath = path.join('./public', bajajDbUrl); // e.g. ./public/policygivenbyBajaj/bajaj1234567891.pdf
+                        const finalCombinedPath = path.join('./public/policybajaj', pdfFileName);
+
+                        // 2. Read both PDFs into memory
+                        const welcomePdfBytes = await fs.promises.readFile(welcomeLetterPath);
+                        const bajajPdfBytes = await fs.promises.readFile(bajajPolicyPath);
+
+                        // 3. Create a new PDF and load the existing ones
+                        const mergedPdf = await PDFDocument.create();
+                        const welcomePdfDoc = await PDFDocument.load(welcomePdfBytes);
+                        const bajajPdfDoc = await PDFDocument.load(bajajPdfBytes);
+
+                        // 4. Copy pages from Welcome Letter and add to merged document
+                        const welcomePages = await mergedPdf.copyPages(welcomePdfDoc, welcomePdfDoc.getPageIndices());
+                        welcomePages.forEach((page) => mergedPdf.addPage(page));
+
+                        // 5. Copy pages from Bajaj Policy and append to merged document
+                        const bajajPages = await mergedPdf.copyPages(bajajPdfDoc, bajajPdfDoc.getPageIndices());
+                        bajajPages.forEach((page) => mergedPdf.addPage(page));
+
+                        // 6. Save the merged PDF physically to the policybajaj folder
+                        const mergedPdfBytes = await mergedPdf.save();
+                        await fs.promises.writeFile(finalCombinedPath, mergedPdfBytes);
+
+                        logger.info(`Successfully combined PDFs into: ${finalCombinedPath}`);
+
+
+
+                        const updateQuery = `UPDATE Bajaj_Travel_Proposal_main SET PolicypdfUrl = ? , Main_Bajaj_Policy_Url= ? WHERE PolicyNo = ?`;
+                        const [updateResult] = await db.query(updateQuery, [pdfUrl, combinepdfurl, certificateId]);
 
                         if (updateResult.affectedRows > 0) {
                             logger.info(`Successfully updated proposal_main for certificate: ${certificateId}`);
@@ -591,7 +661,7 @@ class BajajController {
                         {
                             count: results.length,
                             proposals: results,
-                            pdfUrl,
+                            combinepdfurl,
                             qrCodeUrl: result.qrCodePath.replace('./public', ''),
                             asNumber: result.processedData.Asnumber
                         },

@@ -119,16 +119,13 @@ class WelcomeLetterController {
 
       // Validate required fields (removed assistanceNumber from required fields)
       const requiredFields = [
-        'customerName',
-        'customerAddress',
-        'customerEmail',
+        'customerName',       
         'customerDate',
         'departureDate',
         'arrivalDate',
         'travelDuration',
         'policyNumber',
-        'assistanceCharges',
-        'contactNo',
+        'assistanceCharges',        
         'SupportEmail',
         'SupportcontactNo'
       ];
@@ -167,8 +164,10 @@ class WelcomeLetterController {
         // Insert new record
         await db.query(
           'INSERT INTO welcome_letter (Certificate_Number, Asnumber, PolicyStartDate, PolicyEndDate, fulladdress, fullname, PremiumAmount, EmailID, MobileNumber, travelDuration, Created_Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
-          [formData.policyNumber, asNumber, formData.departureDate, formData.arrivalDate, formData.customerAddress,
-          formData.customerName, formData.assistanceCharges, formData.customerEmail, formData.contactNo, formData.travelDuration]
+          [formData.policyNumber, asNumber, formData.departureDate, formData.arrivalDate,
+             formData.customerAddress  || '',
+          formData.customerName, formData.assistanceCharges, 
+          formData.customerEmail  || '', formData.contactNo  || '', formData.travelDuration]
         );
 
 

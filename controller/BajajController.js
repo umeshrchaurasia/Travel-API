@@ -80,7 +80,7 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
             nomineeName: t.nomineeName || "",
             nomineeRelation: t.nomineeRelation || "",
             trvEmailId: "umeshchaurasia@gmail.com",
-            trvMobileNumber: "922462499",
+            trvMobileNumber: "9224624999",
             anyPreExistingDisease: t.anyPreExistingDisease || "No"
         })),
         pProposerDtls: {
@@ -96,7 +96,7 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
             City: ProposerDetails.City || "",
             Area: ProposerDetails.Area || "",
             Address: ProposerDetails.Address || "",
-            mobileNumber: "922462499",
+            mobileNumber: "9224624999",
             emailId: "umeshchaurasia@gmail.com",
             passportNumber: ProposerDetails.passportNumber || "",
             gender: ProposerDetails.gender || "M",
@@ -104,8 +104,8 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
             nomineeRelation: ProposerDetails.nomineeRelation || ""
         },
         pTripDetails: {
-            groupName: "Yes",
-            natureOfGroup: "Yes",
+            groupName: "No",
+            natureOfGroup: "No",
             typeOfTour: "No",
             multipleCity: "No"
         }
@@ -132,7 +132,9 @@ class BajajController {
                 Plan, GeographicalCover, CountryName,
                 premium, bajaj_premium_amount,
                 radiobtn_selectedOption, radiobtn_selectedAmount,
-                TravellerDetails, ProposerDetails, Payout_Bajaj
+                TravellerDetails, ProposerDetails, Payout_Bajaj,
+                commission_agent, premium_without_gst, premium_gst
+
             } = req.body;
 
             // ── Validate required fields ──────────────────────────────────
@@ -178,8 +180,8 @@ class BajajController {
             const generatedQuoteNo = calcData.pQuoteNo;                         // e.g. "Q202503261234"
             const calcFinalPremium = calcData.pPremiumDtls?.finalPremium || 0;
             const calcBasePremium = calcData.pPremiumDtls?.basePrem || 0;
-            const calcPremiumDetails = calcData.pPremiumDtls;
-            const calcPolicyData = calcData.pPolicyData;
+         //   const calcPremiumDetails = calcData.pPremiumDtls;
+          //  const calcPolicyData = calcData.pPolicyData;
 
             logger.info(`[BAJAJ CALC SUCCESS]: QuoteNo=${generatedQuoteNo}, Premium=${calcFinalPremium}`);
 
@@ -302,7 +304,10 @@ class BajajController {
                 ProposerDetails.nomineeName || '',           // 41 p_Prop_nomineeName  ✅
                 ProposerDetails.nomineeRelation || '',     // 42 p_Prop_nomineeRelation ✅
                 Payout_Bajaj,
-                bajajDbUrl
+                bajajDbUrl,
+                commission_agent || '0',
+                premium_without_gst || '0',
+                premium_gst || '0'
             ];
 
             const [headerRows] = await db.query(
@@ -311,7 +316,7 @@ class BajajController {
                     ?,?,?,?,?,?,?,?,?,?,
                     ?,?,?,?,?,?,?,?,?,?,
                     ?,?,?,?,?,?,?,?,?,?,
-                    ?,?,?,?
+                    ?,?,?,?,?,?,?
                 )`,
                 headerParams
             );
@@ -391,7 +396,6 @@ class BajajController {
     }
 
 
-
     async getPremium_including_bajaj(req, res) {
         try {
             const { duration, age_years, age_months, plan_amount, agentid } = req.body;
@@ -415,7 +419,10 @@ class BajajController {
                         paymentmode: result.paymentmode,
                         payout_bajaj: result.v_Payout,
                         reliance_premium_amount: result.reliance_premium_amount,
-                        upfront_agent_commission: result.upfront_agent_commission
+                        upfront_agent_commission: result.upfront_agent_commission,
+                        commission_agent: result.commission_agent,
+                        premium_without_gst: result.premium_without_gst,
+                        premium_gst: result.premium_gst
                     },
                     res
                 );
@@ -466,7 +473,10 @@ class BajajController {
                         paymentmode: result.paymentmode,
                         payout_bajaj: result.v_Payout,
                         reliance_premium_amount: result.reliance_premium_amount,
-                        upfront_agent_commission: result.upfront_agent_commission
+                        upfront_agent_commission: result.upfront_agent_commission,
+                        commission_agent: result.commission_agent,
+                        premium_without_gst: result.premium_without_gst,
+                        premium_gst: result.premium_gst
                     },
                     res
                 );
@@ -511,11 +521,11 @@ class BajajController {
 
                 // Get next AS number
                 const [numResults] = await db.query(
-                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 3) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj'
+                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj'
                 );
 
                 const nextNum = numResults[0].nextNum || 1;
-                const asNumber = 'AS' + String(nextNum).padStart(8, '0');
+                const asNumber = 'ASB' + String(nextNum).padStart(8, '0');
 
                 // Format dates properly if they're Date objects
                 const formattedStartDate = policyStartDate instanceof Date ?
@@ -545,6 +555,7 @@ class BajajController {
 
     //PDF GENERATOR
     // Updated part of PolicyGenerateController.js
+
     async generatePolicybyPolicyno_bajaj(req, res) {
         try {
             logger.info('API call received for generatePolicybyPolicyno_bajaj');
@@ -592,6 +603,11 @@ class BajajController {
                 // Store the original plan amount separately
                 policyData.originalPlanAmount = rawPlanAmount;
 
+                // Ensure directories exist
+                const publicDir = path.join(__dirname, '../public');
+                const welcomeLetterDir = path.join(publicDir, 'welcome-letters-bajaj');
+                const combinedPdfDir = path.join(publicDir, 'policybajaj');
+
                 // Generate PDF and related assets
                 PolicyService_bajaj.generatePolicy_bajaj(Policyno, policyData, async (err, result) => {
                     if (err) {
@@ -600,70 +616,111 @@ class BajajController {
                     }
 
                     const certificateId = Policyno;
-                    const pdfFileName = path.basename(result.pdfPath);
 
-                    const pdfUrl = '/welcome-letters-bajaj/' + pdfFileName; // original welcome letter DB url
-                    const bajajDbUrl = policyData.BajajgivenpolicyUrl;
-                    const combinepdfurl = '/policybajaj/' + pdfFileName;
+                    // ====================================================================
+                    // FIX: Format File Name and Move to correct folder (welcome-letters-bajaj)
+                    // ====================================================================
+                    const originalPdfPath = path.resolve(result.pdfPath); // e.g. /public/policybajaj/12-9911-000...pdf
+                    const rawFileName = path.basename(result.pdfPath);
 
-                    // FOR cobine pdf code
+                    // Force the required prefix "Welcome-letters-" if it doesn't have it
+                    const pdfFileName = rawFileName.startsWith('Welcome-letters-')
+                        ? rawFileName
+                        : `Welcome-letters-${rawFileName}`;
 
-                    // Update proposal_main with pdfUrl
+                    const newWelcomeLetterPath = path.join(welcomeLetterDir, pdfFileName);
+
+                    // Ensure target directory exists
+                    if (!fs.existsSync(welcomeLetterDir)) {
+                        fs.mkdirSync(welcomeLetterDir, { recursive: true });
+                    }
+
+                    // Move/Rename physical file to the required folder and name
+                    if (fs.existsSync(originalPdfPath) && originalPdfPath !== newWelcomeLetterPath) {
+                        fs.renameSync(originalPdfPath, newWelcomeLetterPath);
+                        logger.info(`Moved welcome letter to ${newWelcomeLetterPath}`);
+                    }
+
+                    // 1. Correct Database URL for PolicypdfUrl
+                    const pdfUrl = `/welcome-letters-bajaj/${pdfFileName}`;
+
+                    // Create a unique name for the combined PDF so it doesn't overwrite the original
+                    const combinedPdfFileName = `Combined_${rawFileName}`;
+                    const combinepdfurl = `/policybajaj/${combinedPdfFileName}`;
+
+                    // Safe fallback for null database values
+                    const bajajDbUrl = policyData.BajajgivenpolicyUrl || '';
+                    let finalMergedUrl = null;
+
+                    // 2. Safely Attempt PDF Merge
                     try {
+                        if (bajajDbUrl) {
+                            // Read from the NEW welcome letter path
+                            const welcomeLetterPath = newWelcomeLetterPath;
 
-                        // 1. Define physical paths on the server
-                        // result.pdfPath is already the absolute/relative physical path to the generated welcome letter
-                        const welcomeLetterPath = result.pdfPath;
-                        const bajajPolicyPath = path.join('./public', bajajDbUrl); // e.g. ./public/policygivenbyBajaj/bajaj1234567891.pdf
-                        const finalCombinedPath = path.join('./public/policybajaj', pdfFileName);
+                            let normalizedBajajUrl = bajajDbUrl.replace(/^\/?(public\/)?/, '');
+                            const bajajPolicyPath = path.join(publicDir, normalizedBajajUrl);
+                            const finalCombinedPath = path.join(combinedPdfDir, combinedPdfFileName);
 
-                        // 2. Read both PDFs into memory
-                        const welcomePdfBytes = await fs.promises.readFile(welcomeLetterPath);
-                        const bajajPdfBytes = await fs.promises.readFile(bajajPolicyPath);
+                            // Check if BOTH files exist before merging
+                            if (fs.existsSync(welcomeLetterPath) && fs.existsSync(bajajPolicyPath)) {
+                                const welcomePdfBytes = await fs.promises.readFile(welcomeLetterPath);
+                                const bajajPdfBytes = await fs.promises.readFile(bajajPolicyPath);
 
-                        // 3. Create a new PDF and load the existing ones
-                        const mergedPdf = await PDFDocument.create();
-                        const welcomePdfDoc = await PDFDocument.load(welcomePdfBytes);
-                        const bajajPdfDoc = await PDFDocument.load(bajajPdfBytes);
+                                const mergedPdf = await PDFDocument.create();
+                                const welcomePdfDoc = await PDFDocument.load(welcomePdfBytes);
+                                const bajajPdfDoc = await PDFDocument.load(bajajPdfBytes);
 
-                        // 4. Copy pages from Welcome Letter and add to merged document
-                        const welcomePages = await mergedPdf.copyPages(welcomePdfDoc, welcomePdfDoc.getPageIndices());
-                        welcomePages.forEach((page) => mergedPdf.addPage(page));
+                                const welcomePages = await mergedPdf.copyPages(welcomePdfDoc, welcomePdfDoc.getPageIndices());
+                                welcomePages.forEach((page) => mergedPdf.addPage(page));
 
-                        // 5. Copy pages from Bajaj Policy and append to merged document
-                        const bajajPages = await mergedPdf.copyPages(bajajPdfDoc, bajajPdfDoc.getPageIndices());
-                        bajajPages.forEach((page) => mergedPdf.addPage(page));
+                                const bajajPages = await mergedPdf.copyPages(bajajPdfDoc, bajajPdfDoc.getPageIndices());
+                                bajajPages.forEach((page) => mergedPdf.addPage(page));
 
-                        // 6. Save the merged PDF physically to the policybajaj folder
-                        const mergedPdfBytes = await mergedPdf.save();
-                        await fs.promises.writeFile(finalCombinedPath, mergedPdfBytes);
+                                const mergedPdfBytesSaved = await mergedPdf.save();
 
-                        logger.info(`Successfully combined PDFs into: ${finalCombinedPath}`);
+                                if (!fs.existsSync(combinedPdfDir)) {
+                                    fs.mkdirSync(combinedPdfDir, { recursive: true });
+                                }
+                                await fs.promises.writeFile(finalCombinedPath, mergedPdfBytesSaved);
 
+                                logger.info(`Successfully combined PDFs into: ${finalCombinedPath}`);
+                                finalMergedUrl = combinepdfurl; // Set successfully merged URL
+                            } else {
+                                logger.warn('Original Bajaj Policy or Welcome Letter not found on disk. Skipping merge.');
+                            }
+                        } else {
+                            logger.warn('No BajajgivenpolicyUrl found in DB. Skipping merge.');
+                        }
+                    } catch (mergeError) {
+                        logger.error(`Error merging PDFs: ${mergeError.message}`);
+                    }
 
-
-                        const updateQuery = `UPDATE Bajaj_Travel_Proposal_main SET PolicypdfUrl = ? , Main_Bajaj_Policy_Url= ? WHERE PolicyNo = ?`;
-                        const [updateResult] = await db.query(updateQuery, [pdfUrl, combinepdfurl, certificateId]);
+                    // 3. ALWAYS Update the Database
+                    try {
+                        // IF finalMergedUrl is null (merge failed), it keeps the old Main_Bajaj_Policy_Url using IFNULL
+                        const updateQuery = `UPDATE Bajaj_Travel_Proposal_main SET PolicypdfUrl = ?, Main_Bajaj_Policy_Url = IFNULL(?, Main_Bajaj_Policy_Url) WHERE PolicyNo = ?`;
+                        const [updateResult] = await db.query(updateQuery, [pdfUrl, finalMergedUrl, certificateId]);
 
                         if (updateResult.affectedRows > 0) {
                             logger.info(`Successfully updated proposal_main for certificate: ${certificateId}`);
                         } else {
                             logger.warn(`No rows updated in proposal_main for certificate: ${certificateId}`);
                         }
-                    } catch (updateError) {
-                        logger.error(`Error updating PolicypdfUrl: ${updateError}`);
+                    } catch (dbError) {
+                        logger.error(`Error updating Database: ${dbError.message}`);
                     }
 
-                    // Final response
+                    // 4. Final response
                     logger.info(`Successfully generated documents for policy ${Policyno}`);
                     base.send_response(
                         "Policy documents generated successfully",
                         {
                             count: results.length,
                             proposals: results,
-                            combinepdfurl,
-                            qrCodeUrl: result.qrCodePath.replace('./public', ''),
-                            asNumber: result.processedData.Asnumber
+                            combinepdfurl: finalMergedUrl,
+                            qrCodeUrl: (result.qrCodePath || '').replace('./public', ''),
+                            asNumber: result.processedData?.Asnumber || policyData.Asnumber
                         },
                         res
                     );
@@ -677,6 +734,508 @@ class BajajController {
             base.send_response("Error retrieving policy details: " + (error.message || error), null, res, 500);
         }
     }
+
+    async getProposalByPassport_bajaj(req, res) {
+        try {
+            const passportNo = req.query.passportpassportno || req.body.passportpassportno;
+
+            if (!passportNo) {
+                return base.send_response(
+                    "Passport number is required",
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            const [rows] = await db.query(
+                'CALL sp_GetProposalBypassport_bajaj(?)',
+                [passportNo]
+            );
+
+            if (rows[0] && rows[0].length > 0) {
+                base.send_response(
+                    "Proposal retrieved successfully",
+                    rows[0],
+                    res,
+                    "Success",
+                    0
+                );
+            } else {
+                base.send_response(
+                    "No proposal found with this passport number",
+                    [],
+                    res,
+                    "Success",
+                    0
+                );
+            }
+
+        } catch (error) {
+            logger.error('Error in getProposalBypassportnumber:', error);
+            base.send_response(
+                "Error retrieving proposal",
+                null,
+                res,
+                "Error",
+                1
+            );
+        }
+    }
+
+    async getUpdateProposalDetailsByAgent_bajaj(req, res) {
+        try {
+            const { agentId, paymentStatus } = req.body;
+
+            // Input validation
+            if (!agentId) {
+                return base.send_response(
+                    "Agent ID is required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Call stored procedure
+            const [rows] = await db.query(
+                'CALL getUpdateProposalDetailsByAgent_bajaj(?, ?)',
+                [agentId, paymentStatus || null]
+            );
+
+            // Get the result rows
+            const results = rows[0];
+
+            if (results && results.length > 0) {
+                // Successful query
+                base.send_response(
+                    "Proposal details retrieved successfully",
+                    {
+                        count: results.length,
+                        proposals: results
+                    },
+                    res
+                );
+            } else {
+                // No results found
+                base.send_response(
+                    "No proposals found for the given criteria",
+                    {
+                        count: 0,
+                        proposals: []
+                    },
+                    res
+                );
+            }
+        } catch (error) {
+            logger.error('GetProposalDetailsByAgent error:', error);
+            base.send_response(
+                "Error retrieving proposal details",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+    async InsertWalletApply_bajaj(req, res) {
+        try {
+            const {
+                AgentId,
+                Agent_Code,
+                wallet_amount
+            } = req.body;
+            const [result] = await db.query(
+                'CALL InsertWalletApply(?, ?, ?)',
+                [AgentId,
+                    Agent_Code,
+                    wallet_amount
+                ]
+            );
+            const procedureResult = result?.[0]?.[0] || {};
+            base.send_response(
+                procedureResult.message || "User inserted successfully",
+                procedureResult,
+                res,
+                procedureResult.status || "Success",
+                0
+            );
+        } catch (error) {
+            console.error("Error in User:", error);
+            // logger.error("Error in User:", error);
+            base.send_response("Error inserting User", null, res, "Error", 1);
+        }
+    }
+
+    async getSub_Main_AgentMIS_byAdmin_bajaj(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getSub_Main_AgentMIS_byAdmin_bajaj(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+    async getProposalDetailsByEmployee_bajaj(req, res) {
+        try {
+            const { empId, startdate, enddate } = req.body;
+
+            // Input validation
+            if (!empId) {
+                return base.send_response(
+                    "Employee ID is required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Call stored procedure
+            const [rows] = await db.query(
+                'CALL getProposalDetailsByEmployee_bajaj(?,?,?)',
+                [empId, startdate, enddate]
+            );
+
+            // Get the result rows
+            const results = rows[0];
+
+            if (results && results.length > 0) {
+                // Successful query
+                base.send_response(
+                    "Proposal details retrieved successfully",
+                    {
+                        count: results.length,
+                        proposals: results
+                    },
+                    res
+                );
+            } else {
+                // No results found
+                base.send_response(
+                    "No proposals found for the given criteria",
+                    {
+                        count: 0,
+                        proposals: []
+                    },
+                    res
+                );
+            }
+        } catch (error) {
+            logger.error('geteProposalDetailsByEmployee error:', error);
+            base.send_response(
+                "Error retrieving proposal details",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+
+    async getPolicyDetailsbyPolicyno_bajaj(req, res) {
+        try {
+            const { Policyno } = req.body;
+
+            // Input validation
+            if (!Policyno) {
+                return base.send_response(
+                    "Policy No is required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Call stored procedure
+            const [rows] = await db.query(
+                'CALL getPolicyDetailsbyPolicyno_bajaj(?)',
+                [Policyno]
+            );
+
+            // Get the result rows
+            const results = rows[0];
+
+            if (results && results.length > 0) {
+                // Successful query
+                base.send_response(
+                    "Policy details retrieved successfully",
+                    {
+                        count: results.length,
+                        proposals: results
+                    },
+                    res
+                );
+            } else {
+                // No results found
+                base.send_response(
+                    "No Policy found for the given criteria",
+                    {
+                        count: 0,
+                        proposals: []
+                    },
+                    res
+                );
+            }
+        } catch (error) {
+            logger.error('getPolicyDetailsbyPolicyno error:', error);
+            base.send_response(
+                "Error retrieving policy details",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+    async insertCancelPolicy_bajaj(req, res) {
+        try {
+            const {
+                policyNo,
+                UID,
+                Name,
+                AgentId,
+                proposal_id,
+                Premium
+            } = req.body;
+
+            // Validate inputs
+            if (!policyNo || !UID || !Name || !AgentId || !proposal_id || !Premium) {
+                return base.send_response(
+                    "Missing required fields: policyNo, UID, Name, AgentId, proposal_id, Premium",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            logger.info(`Cancelling policy: ${policyNo}, proposal_id: ${proposal_id}`);
+
+            // Call stored procedure
+            await db.query(
+                'CALL insert_cancel_policy_bajaj(?, ?, ?, ?, ?, ?)',
+                [policyNo, UID, Name, AgentId, proposal_id, Premium]
+            );
+
+            base.send_response(
+                "Policy cancelled successfully",
+                {
+                    policyNo,
+                    proposal_id,
+                    cancelledBy: UID,
+                    agentId: AgentId
+                },
+                res
+            );
+        } catch (error) {
+            logger.error('insertCancelPolicy error:', error);
+            base.send_response("Error cancelling policy", null, res, 500);
+        }
+    }
+
+    async getProposalMIS_bajaj(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getProposal_MIS_bajaj(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+
+    // TDS Excel Dynamic filter:  agent / admin
+    async getProposalTDSbajaj(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getProposal_TDS_bajaj(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+    async getProposalMIS_SubAgent_bajaj(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getSubAgent_byAgent_MIS_bajaj(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
+    async getProposalTDS_SubAgent_bajaj(req, res) {
+        try {
+            const { startdate, enddate, empId, agentId } = req.body;
+
+            if (!startdate || !enddate) {
+                return base.send_response(
+                    "startdate and enddate are required",
+                    null,
+                    res,
+                    400
+                );
+            }
+
+            // Execute procedure
+            const [rows] = await db.query(
+                'CALL getProposal_TDS_byAgent_MIS_bajaj(?, ?, ?, ?)',
+                [startdate, enddate, empId || null, agentId || null]
+            );
+
+            const results = rows[0] || [];
+
+            return base.send_response(
+                results.length > 0
+                    ? "Proposal MIS data fetched successfully"
+                    : "No data found for the given filters",
+                {
+                    count: results.length,
+                    proposals: results
+                },
+                res
+            );
+        } catch (error) {
+            logger.error("getProposalMIS error:", error);
+            return base.send_response(
+                "Error occurred while fetching proposal data",
+                null,
+                res,
+                500
+            );
+        }
+    }
+
 
 }
 

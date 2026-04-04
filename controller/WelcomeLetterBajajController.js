@@ -19,6 +19,8 @@ class WelcomeLetterBajajController {
         this.updatePdfUrl = this.updatePdfUrl.bind(this);
         this.getWelcomeLetterByCustomerId = this.getWelcomeLetterByCustomerId.bind(this);
         this.download_welcome_bajaj_zip = this.download_welcome_bajaj_zip.bind(this); // <-- ADD THIS
+        this.search_welcome_letters_bajaj = this.search_welcome_letters_bajaj.bind(this);
+
     }
 
 
@@ -37,7 +39,7 @@ class WelcomeLetterBajajController {
             const requiredFields = [
                 'customerName',
                 'policyNumber',
-                'assistanceCharges',              
+                'assistanceCharges',
                 'SupportEmail',
                 'SupportcontactNo'
             ];
@@ -67,11 +69,11 @@ class WelcomeLetterBajajController {
 
                 // Get next AS number
                 const [numResults] = await db.query(
-                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 3) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj'
+                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj'
                 );
 
                 const nextNum = numResults[0].nextNum || 1;
-                asNumber = 'AS' + String(nextNum).padStart(8, '0');
+                asNumber = 'ASB' + String(nextNum).padStart(8, '0');
 
                 // Insert new record
                 await db.query(
@@ -268,6 +270,84 @@ class WelcomeLetterBajajController {
         }
     }
 
+
+
+    async search_welcome_letters_bajaj(req, res) {
+        try {
+            const { startDate, endDate } = req.body;
+            if (!startDate || !endDate) {
+                return base.send_response("Start Date and End Date are required", null, res, 400);
+            }
+
+            const query = `
+                SELECT *
+                FROM welcome_letter_bajaj
+                WHERE DATE(Created_Date) BETWEEN ? AND ?
+                ORDER BY Created_Date DESC
+            `;
+
+            const [rows] = await db.query(query, [startDate, endDate]);
+            return base.send_response("Data fetched successfully", rows, res);
+        } catch (error) {
+            logger.error(`Error searching welcome letters: ${error.message}`);
+            return base.send_response("Failed to fetch data: " + error.message, null, res, 500);
+        }
+    }
+    
+    async download_welcome_bajaj_zip(req, res) {
+        try {
+            const { policyNumbers } = req.body;
+            if (!policyNumbers || !Array.isArray(policyNumbers) || policyNumbers.length === 0) {
+                return base.send_response("No policy numbers provided", null, res, 400);
+            }
+
+            const zip = new JSZip();
+            const publicFolder = path.join(__dirname, '../public');
+            let fileCount = 0;
+
+            // Generate placeholders dynamically: "?, ?, ?"
+            const placeholders = policyNumbers.map(() => '?').join(',');
+            const query = `SELECT Policy_Number, pdfurl FROM welcome_letter_bajaj WHERE Policy_Number IN (${placeholders})`;
+
+            // Fetch exact file URLs from the database
+            const [rows] = await db.query(query, policyNumbers);
+
+            for (const row of rows) {
+                if (row.pdfurl) {
+                    // Extract the clean relative path by removing leading slash or '/public/'
+                    let cleanPath = row.pdfurl.replace(/^\/?(public\/)?/, '');
+                    const filePath = path.join(publicFolder, cleanPath);
+
+                    if (fs.existsSync(filePath)) {
+                        const fileData = fs.readFileSync(filePath);
+                        const fileName = path.basename(filePath);
+                        zip.file(fileName, fileData); // Add file to ZIP
+                        fileCount++;
+                    } else {
+                        logger.warn(`File not found on disk during ZIP generation: ${filePath}`);
+                    }
+                }
+            }
+
+            if (fileCount === 0) {
+                return base.send_response("No PDF files found for the given policies", null, res, 404);
+            }
+
+            // Generate ZIP buffer
+            const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+
+            // Send binary ZIP file to frontend
+            res.setHeader('Content-Type', 'application/zip');
+            res.setHeader('Content-Disposition', `attachment; filename=Bajaj_Welcome_Letters.zip`);
+            res.setHeader('Content-Length', zipBuffer.length);
+
+            return res.send(zipBuffer);
+
+        } catch (error) {
+            logger.error(`Error generating ZIP: ${error.message}`);
+            return base.send_response("Failed to generate ZIP", null, res, 500);
+        }
+    }
 }
 
 module.exports = new WelcomeLetterBajajController();

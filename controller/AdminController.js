@@ -193,7 +193,15 @@ class AdminController {
 
     async updateAgentDetails(req, res) {
         try {
-            const { AgentId, Payout,Payout_Practo,Payout_Ayush, Wallet_Amount } = req.body;
+            const {
+                AgentId,
+                Payout,
+                Payout_Practo,
+                Payout_Ayush,
+                Payout_Bajaj,          // NEW
+                Payout_Bajaj_above61,  // NEW
+                Wallet_Amount
+            } = req.body;
 
             // Corrected Validation:,
             // Only return an error if BOTH the date range AND the agent name are missing.
@@ -204,14 +212,16 @@ class AdminController {
             const finalPracto = Payout_Practo !== undefined ? Payout_Practo : '0';
             const finalAyush = Payout_Ayush !== undefined ? Payout_Ayush : '0';
             const finalWallet = Wallet_Amount !== undefined ? Wallet_Amount : '0';
+            const finalBajaj = Payout_Bajaj !== undefined ? Payout_Bajaj : '0';
+            const finalBajajAbove61 = Payout_Bajaj_above61 !== undefined ? Payout_Bajaj_above61 : '0';  
 
             // The rest of your code is correct and will now execute properly.
-           const [rows] = await db.query(
-                'CALL update_agent_details(?, ?, ?, ?, ?)', 
-                [AgentId, finalPayout, finalPracto, finalAyush, finalWallet]
-            ); 
+            const [rows] = await db.query(
+                'CALL update_agent_details(?, ?, ?, ?, ?, ?, ?)',
+                [AgentId, finalPayout, finalPracto, finalAyush, finalBajaj, finalBajajAbove61,finalWallet]
+            );
 
-           if (rows) {
+            if (rows && rows[0] && rows[0].length > 0) {
                 return base.send_response("Agent details updated successfully", rows, res);
             } else {
                 return base.send_response("No changes made or Agent not found", [], res);

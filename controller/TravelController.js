@@ -169,6 +169,8 @@ class TravelController {
                 PayoutPercentage,
                 PayoutPracto,
                 PayoutAyush,
+                PayoutBajaj,
+                PayoutBajaj61,
                 PaymentMode,
                 Wallet_Amount,
                 EducationQualification,
@@ -215,9 +217,11 @@ class TravelController {
             const finalPayoutPracto = PayoutPracto ? PayoutPracto : '0';
             const finalPayoutAyush = PayoutAyush ? PayoutAyush : '0';
 
+            const finalPayoutBajaj = PayoutBajaj ? PayoutBajaj : '0';
+            const finalPayoutBajaj61 = PayoutBajaj61 ? PayoutBajaj61 : '0';
             // Call the stored procedure
             const [result] = await db.query(
-                'CALL insert_Agent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'CALL insert_Agent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     UId,
                     FullName,
@@ -230,7 +234,9 @@ class TravelController {
                     PayoutPercentage,
                     finalPayoutPracto,
                     finalPayoutAyush,
-                    PaymentMode, // Now this variable is defined
+                    finalPayoutBajaj,
+                    finalPayoutBajaj61,
+                    PaymentMode,
                     Wallet_Amount,
                     EducationQualification,
                     GST,
@@ -239,7 +245,6 @@ class TravelController {
                     State
                 ]
             );
-
             // Check the result from stored procedure
             const procedureResult = result[0][0];
             console.log('Procedure Result:', procedureResult);
@@ -485,6 +490,8 @@ class TravelController {
                 PayoutPercentage,
                 PayoutPracto,
                 PayoutAyush,
+                PayoutBajaj,
+                PayoutBajaj61,
                 PaymentMode,
                 Wallet_Amount,
                 EducationQualification,
@@ -533,10 +540,15 @@ class TravelController {
             const finalPayoutPracto = PayoutPracto || '0';
             const finalPayoutAyush = PayoutAyush || '0';
 
+            const finalPayoutBajaj = PayoutBajaj || '0';
+            const finalPayoutBajaj61 = PayoutBajaj61 || '0';
+
+
+
             // Call the stored procedure
             // Fixed the typo in the SQL string (removed extra space and ensured 19 placeholders)
             const [result] = await db.query(
-                'CALL insert_Agent_nonkyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'CALL insert_Agent_nonkyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     UId || '',
                     FullName || '',
@@ -549,6 +561,8 @@ class TravelController {
                     PayoutPercentage || '',
                     finalPayoutPracto,
                     finalPayoutAyush,
+                    finalPayoutBajaj,
+                    finalPayoutBajaj61,
                     PaymentMode || 'Full Pay',
                     Wallet_Amount || '0',
                     EducationQualification || '',
@@ -633,6 +647,8 @@ class TravelController {
                 PayoutPercentage,
                 PayoutPracto,
                 PayoutAyush,
+                PayoutBajaj,
+                PayoutBajaj61,
                 PaymentMode,
                 Wallet_Amount,
                 EducationQualification,
@@ -681,10 +697,13 @@ class TravelController {
             const finalPayoutPracto = PayoutPracto || '0';
             const finalPayoutAyush = PayoutAyush || '0';
 
+            const finalPayoutBajaj = PayoutBajaj || '0';
+            const finalPayoutBajaj61 = PayoutBajaj61 || '0';
+
             // Call the stored procedure
             // Ensured 19 placeholders correspond to the array below
-            const [result] = await db.query(
-                'CALL insert_Agent_kyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+           const [result] = await db.query(
+                'CALL insert_Agent_kyc(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     UId || '',
                     FullName || '',
@@ -697,6 +716,8 @@ class TravelController {
                     PayoutPercentage || '',
                     finalPayoutPracto,
                     finalPayoutAyush,
+                    finalPayoutBajaj,
+                    finalPayoutBajaj61,
                     PaymentMode || 'Full Pay',
                     Wallet_Amount || '0',
                     EducationQualification || '',

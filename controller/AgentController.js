@@ -30,8 +30,8 @@ class AgentController {
                         agentcollected: result.agentcollected,
                         paymentmode: result.paymentmode,
                         payout: result.v_Payout,
-                        reliance_premium_amount:result.reliance_premium_amount,
-                        upfront_agent_commission:result.upfront_agent_commission
+                        reliance_premium_amount: result.reliance_premium_amount,
+                        upfront_agent_commission: result.upfront_agent_commission
                     },
                     res
                 );
@@ -81,8 +81,8 @@ class AgentController {
                         agentcollected: result.agentcollected,
                         paymentmode: result.paymentmode,
                         payout: result.v_Payout,
-                        reliance_premium_amount:result.reliance_premium_amount,                       
-                        upfront_agent_commission:result.upfront_agent_commission
+                        reliance_premium_amount: result.reliance_premium_amount,
+                        upfront_agent_commission: result.upfront_agent_commission
                     },
                     res
                 );
@@ -146,7 +146,7 @@ class AgentController {
                     Agent_Code,
                     wallet_amount
                 ]
-            );          
+            );
             const procedureResult = result?.[0]?.[0] || {};
             base.send_response(
                 procedureResult.message || "User inserted successfully",
@@ -178,26 +178,26 @@ class AgentController {
         }
     }
 
-    async   processWalletApplication(req, res) {
+    async processWalletApplication(req, res) {
         try {
-                const { agentCode, status, adminComment, amount } = req.body;
+            const { agentCode, status, adminComment, amount } = req.body;
 
-                // Validate required fields
-                if (!agentCode || !status) {
-                    return base.send_response("Agent code and status are required", null, res, "Error", 1);
-                }
+            // Validate required fields
+            if (!agentCode || !status) {
+                return base.send_response("Agent code and status are required", null, res, "Error", 1);
+            }
 
-                // Status should be either 'Approved' or 'Rejected'
-                if (status !== 'Approved' && status !== 'Rejected') {
-                    return base.send_response("Status must be 'Approved' or 'Rejected'", null, res, "Error", 1);
-                }
+            // Status should be either 'Approved' or 'Rejected'
+            if (status !== 'Approved' && status !== 'Rejected') {
+                return base.send_response("Status must be 'Approved' or 'Rejected'", null, res, "Error", 1);
+            }
 
-                // Call stored procedure to process the wallet application
-                // Note: You'll need to create this stored procedure
-                const [result] = await db.query(
-                    'CALL sp_ProcessWalletApplication(?, ?, ?, ?)',
-                    [agentCode, status, adminComment || '', amount || 0]
-                );
+            // Call stored procedure to process the wallet application
+            // Note: You'll need to create this stored procedure
+            const [result] = await db.query(
+                'CALL sp_ProcessWalletApplication(?, ?, ?, ?)',
+                [agentCode, status, adminComment || '', amount || 0]
+            );
 
             const procedureResult = result[0][0];
 
@@ -213,8 +213,57 @@ class AgentController {
         }
     }
 
+    async getWalletApplications_bajaj(req, res) {
+        try {
+            // Call the stored procedure to get pending wallet applications
+            const [rows] = await db.query('CALL sp_GetWalletByAgentCode_bajaj()');
 
-  
+            if (rows && rows[0] && rows[0].length > 0) {
+                return base.send_response("Wallet applications retrieved successfully", rows[0], res);
+            } else {
+                return base.send_response("No pending wallet applications found", [], res);
+            }
+        } catch (error) {
+            logger.error('Error in getWalletApplications:', error);
+            return base.send_response("Error retrieving wallet applications", null, res);
+        }
+    }
+
+    async processWalletApplication_bajaj(req, res) {
+        try {
+            const { agentCode, status, adminComment, amount } = req.body;
+
+            // Validate required fields
+            if (!agentCode || !status) {
+                return base.send_response("Agent code and status are required", null, res, "Error", 1);
+            }
+
+            // Status should be either 'Approved' or 'Rejected'
+            if (status !== 'Approved' && status !== 'Rejected') {
+                return base.send_response("Status must be 'Approved' or 'Rejected'", null, res, "Error", 1);
+            }
+
+            // Call stored procedure to process the wallet application
+            // Note: You'll need to create this stored procedure
+            const [result] = await db.query(
+                'CALL sp_ProcessWalletApplication_bajaj(?, ?, ?, ?)',
+                [agentCode, status, adminComment || '', amount || 0]
+            );
+
+            const procedureResult = result[0][0];
+
+            return base.send_response(
+                procedureResult?.message || `Wallet application ${status.toLowerCase()} successfully`,
+                procedureResult,
+                res
+            );
+
+        } catch (error) {
+            logger.error('Error in processWalletApplication:', error);
+            return base.send_response("Error processing wallet application", null, res, "Error", 1);
+        }
+    }
+
 }
 
 module.exports = new AgentController();

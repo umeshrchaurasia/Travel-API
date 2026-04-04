@@ -57,8 +57,12 @@ const InvoiceAyushPayController = require('../controller/InvoiceAyushPayControll
 const NoLogin_CustomerController = require('../controller/NoLogin_CustomerController');
 
 const BajajController = require('../controller/BajajController');
+
 const InvoiceController_bajaj = require('../controller/InvoiceController_bajaj');
+
 const WelcomeLetterBajajController = require('../controller/WelcomeLetterBajajController');
+
+const BatchPayment_bajajController = require('../controller/BatchPayment_bajajController');
 
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
@@ -125,6 +129,10 @@ router.post('/updateAgentDetails', wrapper.asyncHandler(adminController.updateAg
 
 router.get('/wallet-applications', wrapper.asyncHandler(agentController.getWalletApplications));
 router.post('/process-wallet-application', wrapper.asyncHandler(agentController.processWalletApplication));
+
+router.get('/wallet-applications_bajaj', wrapper.asyncHandler(agentController.getWalletApplications_bajaj));
+
+router.post('/process-wallet-application_bajaj', wrapper.asyncHandler(agentController.processWalletApplication_bajaj));
 
 router.get('/users', wrapper.asyncHandler(travelController.getUsers));
 
@@ -239,10 +247,10 @@ router.get('/subagents_listByagent', wrapper.asyncHandler(travelController.subag
 router.post('/getProposalMIS_SubAgent', wrapper.asyncHandler(UpdateProposalController.getProposalMIS_SubAgent));
 
 
+
 router.post('/getProposalTDS_SubAgent', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_SubAgent));
 
 router.post('/getSub_Main_AgentMIS_byAdmin', wrapper.asyncHandler(UpdateProposalController.getSub_Main_AgentMIS_byAdmin));
-
 
 
 
@@ -279,7 +287,7 @@ router.post('/createCustomerDetailEntry', wrapper.asyncHandler(NoLogin_CustomerC
 
 router.post('/getAgentByAgentCode', wrapper.asyncHandler(NoLogin_CustomerController.getAgentByAgentCode));
 
-router.post('/getCustomerList_emp_wise', wrapper.asyncHandler(NoLogin_CustomerController.getCustomerList_emp_wise));  
+router.post('/getCustomerList_emp_wise', wrapper.asyncHandler(NoLogin_CustomerController.getCustomerList_emp_wise));
 // Router
 
 router.post('/saveMasterPlan_calc', wrapper.asyncHandler(BajajController.saveMasterPlan_calc));
@@ -295,5 +303,43 @@ router.post('/generateBajajInvoicePdf', wrapper.asyncHandler(InvoiceController_b
 router.post('/welcome-letter_bajaj_excel', wrapper.asyncHandler(WelcomeLetterBajajController.generate_welcome_bajaj_excel));
 
 router.post('/download_welcome_bajaj_zip', wrapper.asyncHandler(WelcomeLetterBajajController.download_welcome_bajaj_zip));
+
+router.post('/getProposalByPassport_bajaj', wrapper.asyncHandler(BajajController.getProposalByPassport_bajaj));
+
+router.post('/getUpdateProposalDetailsByAgent_bajaj', wrapper.asyncHandler(BajajController.getUpdateProposalDetailsByAgent_bajaj));
+
+
+router.post('/getProposalDetailsByAgent_bajaj', wrapper.asyncHandler(BatchPayment_bajajController.getProposalDetailsByAgent_bajaj));
+
+router.post('/insertBatchPayment_bajaj', wrapper.asyncHandler(BatchPayment_bajajController.insertBatchPayment_bajaj));
+
+router.post('/getBatchPaymentsByStatus_bajaj', wrapper.asyncHandler(BatchPayment_bajajController.getBatchPaymentsByStatus_bajaj));
+
+router.post('/updateBatchPayment_bajaj', wrapper.asyncHandler(BatchPayment_bajajController.updateBatchPayment_bajaj));
+
+router.post('/Apply-wallet-balance_bajaj', wrapper.asyncHandler(BajajController.InsertWalletApply_bajaj));
+
+router.post('/getWelcomeLetterBajaj', wrapper.asyncHandler(WelcomeLetterBajajController.getWelcomeLetterBajaj));
+
+router.post('/search_welcome_letters_bajaj', wrapper.asyncHandler(WelcomeLetterBajajController.search_welcome_letters_bajaj));
+
+
+router.post('/getSub_Main_AgentMIS_byAdmin_bajaj', wrapper.asyncHandler(BajajController.getSub_Main_AgentMIS_byAdmin_bajaj));
+
+router.post('/getProposalDetailsByEmployee_bajaj', wrapper.asyncHandler(BajajController.getProposalDetailsByEmployee_bajaj));
+
+
+router.post('/getPolicyDetailsbyPolicyno_bajaj', wrapper.asyncHandler(BajajController.getPolicyDetailsbyPolicyno_bajaj));
+
+router.post('/cancelpolicy_bajaj', wrapper.asyncHandler(BajajController.insertCancelPolicy_bajaj));
+
+router.post('/getProposalMIS_bajaj', wrapper.asyncHandler(BajajController.getProposalMIS_bajaj));
+
+
+router.post('/getProposalTDS_bajaj', wrapper.asyncHandler(BajajController.getProposalTDSbajaj));
+
+router.post('/getProposalMIS_SubAgent_bajaj', wrapper.asyncHandler(BajajController.getProposalMIS_SubAgent_bajaj));
+
+router.post('/getProposalTDS_SubAgent_bajaj', wrapper.asyncHandler(BajajController.getProposalTDS_SubAgent_bajaj));
 
 module.exports = router;

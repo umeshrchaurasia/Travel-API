@@ -118,7 +118,7 @@ class InvoiceController_bajaj {
                 logger.info(`Retrieved invoice data for certificate ID: ${certificateId}`);
 
                 // Log the received data structure for debugging
-             //   logger.info(`Invoice data: ${JSON.stringify(invoiceData)}`);
+                //   logger.info(`Invoice data: ${JSON.stringify(invoiceData)}`);
 
                 // Format the invoice data for the template
                 const formattedInvoiceData = {
@@ -129,13 +129,13 @@ class InvoiceController_bajaj {
                     PAN: invoiceData.Agent_PAN || '',
                     Date: this.formatDate(invoiceData.CreateDate),
                     InvNo: invoiceData.Invoice_Number || '',
-                    Rate: 0,
+                    Rate: Math.round(invoiceData.rate || 0).toString(),
                     totalamount: invoiceData.Selected_PremiumAmount || '0',
                     Wordsamount: invoiceData.wordsamount_selectedpremium || 'Zero Rupees Only',
                     GST: invoiceData.gstamount || '0',
-                     TDS: invoiceData.tdsamount || '0',
+                    TDS: invoiceData.tdsamount || '0',
                     Asnumber: invoiceData.Asnumber_bajaj || '',
-                         Commissionamount: invoiceData.commission_agentamount || '0',
+                    Commissionamount: invoiceData.commission_agentamount || '0',
                     // Add agent details
                     AgentId: invoiceData.AgentId || '',
                     Agent_Code: invoiceData.Agent_Code || '',
@@ -150,9 +150,9 @@ class InvoiceController_bajaj {
                     Paymentmode: invoiceData.Selected_Payment_Mode || '',
                     Payout: invoiceData.Payout || '',
 
-                    upfron_InvoiceNo: invoiceData.Invoice_Number|| '',
-                 
-                    Actual_PremiumAmount:invoiceData.Actual_PremiumAmount || '0'
+                    upfron_InvoiceNo: invoiceData.Invoice_Number || '',
+
+                    Actual_PremiumAmount: invoiceData.Actual_PremiumAmount || '0'
 
                 };
 
@@ -225,7 +225,7 @@ class InvoiceController_bajaj {
             );
         }
     }
-   
+
 }
 
 module.exports = new InvoiceController_bajaj();

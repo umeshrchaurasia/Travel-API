@@ -9,12 +9,14 @@ const db = require('../bin/dbconnection'); // This is a callback-style MySQL con
 const path = require('path');
 const base64Images = require('./Base64Images');
 
+const QRCode = require('qrcode');
+
 class PolicyService_bajaj {
 
   constructor() {
     this.pdfStorePath = './public/policybajaj/';
     this.htmlStorePath = './public/htmlbajaj/';
-
+    this.qrCodeStorePath = path.join(__dirname, '../public/qrcodes/');
     this.templatesPath = path.join(__dirname, '../views/templates');
     this.ensureDirectories();
 
@@ -31,16 +33,80 @@ class PolicyService_bajaj {
   }
 
   ensureDirectories() {
-    [this.pdfStorePath, this.htmlStorePath].forEach(dir => {
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    });
+    if (!fs.existsSync(this.pdfStorePath)) {
+      fs.mkdirSync(this.pdfStorePath, { recursive: true });
+    }
+    if (!fs.existsSync(this.htmlStorePath)) {
+      fs.mkdirSync(this.htmlStorePath, { recursive: true });
+    }
+    if (!fs.existsSync(this.templatesPath)) {
+      fs.mkdirSync(this.templatesPath, { recursive: true });
+    }
+    // <-- ADD THIS BLOCK -->
+    if (!fs.existsSync(this.qrCodeStorePath)) {
+      fs.mkdirSync(this.qrCodeStorePath, { recursive: true });
+    }
   }
 
-  async generatePolicy_bajaj(policyNo, policyData, callback) {
+  async imageToBase64(imagePath) {
     try {
+      const img = await fs.promises.readFile(imagePath);
+      const ext = path.extname(imagePath).toLowerCase();
+
+      let mime = 'image/jpeg';
+      if (ext === '.png') {
+        mime = 'image/png';
+      } else if (ext === '.svg') {
+        mime = 'image/svg+xml';
+      }
+
+      return `data:${mime};base64,${img.toString('base64')}`;
+    } catch (error) {
+      logger.error(`Error converting image to base64 for ${imagePath}: ${error.message}`);
+      return null;
+    }
+  }
+
+  async generatePolicy_bajaj(policyNo, policyData, outputPath, combinepdfurl,
+    callback) {
+    let browser = null;
+    try {
+
+      const imgDir = path.join(__dirname, '../public/svg');
+      const [wel_banner2, wel_credit, wel_footerbottom] = await Promise.all([
+        this.imageToBase64(path.join(imgDir, 'wel_banner2.svg')),
+        this.imageToBase64(path.join(imgDir, 'wel_credit.svg')),
+        this.imageToBase64(path.join(imgDir, 'wel_footerbottom.svg'))
+      ]);
+
+   //   const PDF_BASE_URL = 'http://localhost:3000/api'; // Update to your production URL if needed
+      const PDF_BASE_URL = 'http://zextratravelassist.interstellar.co.in/travel-api/api';
+
+      const pdfFileName = path.basename(outputPath);
+      const expectedPdfPath = `/welcome-letters-bajaj/${pdfFileName}`;
+
+      const encodedFilePath = Buffer.from(combinepdfurl).toString('base64');
+      const downloadUrl = `${PDF_BASE_URL}/downloadFileOpen?filePath=${encodeURIComponent(encodedFilePath)}`;
+
+      // const downloadQrPath = path.join(this.qrCodeStorePath, `${policyNo}-welcome-download.png`);
+      // await QRCode.toFile(downloadQrPath, downloadUrl, { errorCorrectionLevel: 'H', width: 180 });
+      // const downloadUrlQrCodeBase64 = await this.imageToBase64(downloadQrPath);
+      const downloadQrPath = path.join(this.qrCodeStorePath, `${policyNo}-welcome-download.png`);
+      
+      // UPDATED: Changed width to 300 for high-res, and added margin: 1
+      await QRCode.toFile(downloadQrPath, downloadUrl, { 
+          errorCorrectionLevel: 'M', 
+          width: 400, 
+          margin: 0 
+      });
+      
+      const downloadUrlQrCodeBase64 = await this.imageToBase64(downloadQrPath);
+
       const processed = this.preparePolicyData(policyData);
+
       const timestamp = Date.now();
       const pdfPath = path.join(this.pdfStorePath, `${policyNo}_${timestamp}.pdf`);
+
       const htmlPath = path.join(this.htmlStorePath, `${policyNo}.html`);
 
       // Add base64 images directly instead of file URLs
@@ -54,13 +120,28 @@ class PolicyService_bajaj {
       processed.techtravelImageBase64 = this.techtravelImageBase64;
 
 
+      processed.wel_banner2Base64 = wel_banner2;
+      processed.wel_creditBase64 = wel_credit;
+      processed.wel_footerbottomBase64 = wel_footerbottom;
+      processed.downloadUrlQrCodeBase64 = downloadUrlQrCodeBase64;
+
+      // Remove existing file to avoid lock issues
+      if (fs.existsSync(outputPath)) {
+        try {
+          fs.unlinkSync(outputPath);
+          logger.info(`Removed existing PDF file at ${outputPath}`);
+        } catch (err) {
+          logger.warn(`Could not remove existing PDF file: ${err.message}`);
+        }
+      }
+
 
       const templatePath = path.join(this.templatesPath, 'welcome-letter-bajaj.ejs');
       const renderedHtml = await ejs.renderFile(templatePath, { policy: processed });
 
       await fs.promises.writeFile(htmlPath, renderedHtml);
 
-      const browser = await puppeteer.launch({
+      browser = await puppeteer.launch({
         headless: "new",
         executablePath: puppeteer.executablePath(),
         args: [
@@ -95,39 +176,40 @@ class PolicyService_bajaj {
       });
 
       await page.pdf({
-        path: pdfPath,
+        path: outputPath,
         format: 'A4',
         printBackground: true,
         margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
       });
 
       await browser.close();
+      browser = null;
 
       callback(null, {
-        pdfPath,
-        htmlPath,
-        qrCodePath: 'qrPath',
+        pdfPath: outputPath,
+        htmlPath: htmlPath,
+        qrCodePath: downloadQrPath,
         htmlContent: renderedHtml,
         processedData: processed
       });
 
     } catch (error) {
+      if (browser) {
+        try {
+          await browser.close();
+        } catch (e) {
+          logger.error(`Error closing browser: ${e.message}`);
+        }
+      }
       logger.error('Error generating policy:', error);
-      callback(error, null);
+      if (typeof callback === 'function') {
+        callback(error, null);
+      }
     }
   }
 
 
-  async imageToBase64(imagePath) {
-    try {
-      const img = await fs.promises.readFile(imagePath);
-      const mime = path.extname(imagePath).toLowerCase() === '.png' ? 'image/png' : 'image/jpeg';
-      return `data:${mime};base64,${img.toString('base64')}`;
-    } catch (error) {
-      logger.error(`Error converting image to base64: ${error.message}`);
-      return null;
-    }
-  }
+
 
   preparePolicyData(policyData) {
     const formatDate = (d) => {
@@ -176,7 +258,7 @@ class PolicyService_bajaj {
       Gender: policyData.Gender || '',
       DateOfBirth: policyData.DateOfBirth || '',
 
-      BajajgivenpolicyUrl:policyData.BajajgivenpolicyUrl || '',
+      BajajgivenpolicyUrl: policyData.BajajgivenpolicyUrl || '',
 
       // Payment and financial information
       Cust_GSTINNO: policyData.Cust_GSTINNO || '',
@@ -208,8 +290,9 @@ class PolicyService_bajaj {
 
       formattedMonth_createdate: formatnewDate(policyData.Created_Date),
       formattedCurrentDate: formatDate(today),
-      currentDate: `${today.getFullYear()}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '0')} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}:${today.getSeconds().toString().padStart(2, '0')} IST`
+      currentDate: `${today.getFullYear()}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '0')} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}:${today.getSeconds().toString().padStart(2, '0')} IST`,
 
+       assistLink: `http://zextratravelassist.interstellar.co.in/travel-api/travel-euro/travel-euro-bajaj.html?policyNo=${policyData.Policy_No}`
     };
   }
 

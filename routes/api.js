@@ -25,6 +25,8 @@ const UpdateProposalController = require('../controller/UpdateProposalController
 const razorPaymentController = require('../controller/RazorPaymentController');
 
 const PolicyGenerateController = require('../controller/PolicyGenerateController');
+
+
 //const PolicyGeneratorController1 = require('../controller/PolicyGeneratorController1');
 
 const HtmlToPdfController = require('../controller/HtmlToPdfController');
@@ -63,6 +65,15 @@ const InvoiceController_bajaj = require('../controller/InvoiceController_bajaj')
 const WelcomeLetterBajajController = require('../controller/WelcomeLetterBajajController');
 
 const BatchPayment_bajajController = require('../controller/BatchPayment_bajajController');
+
+const policybossShareController = require('../controller/Policyboss_shareController');
+
+const downloadController = require('../controller/DownloadController'); // <-- NEW IMPORT
+
+// 2. Import your Auth Middleware
+
+router.get('/downloadFileOpen', downloadController.downloadFileOpen);
+
 
 // Add this line anywhere in the route block
 router.post('/sendTestMail', wrapper.asyncHandler(MailSendController.sendTest));
@@ -180,7 +191,6 @@ router.post('/generatePolicybyPolicyno', wrapper.asyncHandler(PolicyGenerateCont
 router.get('/generate-sample-policy', wrapper.asyncHandler(PolicyGenerateController.generateSamplePolicy));
 router.post('/generatePolicyHTML', wrapper.asyncHandler(PolicyGenerateController.generatePolicyHTML));
 
-
 router.post('/generateInvoicePdf', wrapper.asyncHandler(InvoiceController.generateInvoiceByCertificate));
 
 // Route to accept certificate ID from URL parameter
@@ -242,6 +252,8 @@ router.post('/getProposalMIS_Practo', wrapper.asyncHandler(UpdateProposalControl
 
 router.post('/getProposalTDS_Practo', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_Practo));
 
+router.post('/getProposalByPassport_Practo', wrapper.asyncHandler(practoController.getProposalByPassport_Practo));
+
 router.get('/subagents_listByagent', wrapper.asyncHandler(travelController.subagents_listByagent));
 
 router.post('/getProposalMIS_SubAgent', wrapper.asyncHandler(UpdateProposalController.getProposalMIS_SubAgent));
@@ -281,6 +293,8 @@ router.post('/updateBatchPayment_AyushPay', wrapper.asyncHandler(BatchPaymentCon
 router.post('/getProposalMIS_AyushPay', wrapper.asyncHandler(UpdateProposalController.getProposalMIS_AyushPay));
 
 router.post('/getProposalTDS_AyushPay', wrapper.asyncHandler(UpdateProposalController.getProposalTDS_AyushPay));
+
+router.post('/getProposalByPassport_AyushPay', wrapper.asyncHandler(AyushController.getProposalByPassport_AyushPay));
 
 
 router.post('/createCustomerDetailEntry', wrapper.asyncHandler(NoLogin_CustomerController.createCustomerDetailEntry));
@@ -341,5 +355,17 @@ router.post('/getProposalTDS_bajaj', wrapper.asyncHandler(BajajController.getPro
 router.post('/getProposalMIS_SubAgent_bajaj', wrapper.asyncHandler(BajajController.getProposalMIS_SubAgent_bajaj));
 
 router.post('/getProposalTDS_SubAgent_bajaj', wrapper.asyncHandler(BajajController.getProposalTDS_SubAgent_bajaj));
+
+
+
+router.post('/getPremium_Reliance', wrapper.asyncHandler(policybossShareController.getPremium_Reliance));
+
+router.post('/getPremium_Bajaj', wrapper.asyncHandler(policybossShareController.getPremium_Bajaj));
+
+router.post('/bajajlivepdf', wrapper.asyncHandler(BajajController.bajajlivepdf));
+
+router.post('/bajajpincode', wrapper.asyncHandler(BajajController.getCityByPincode_bajaj));
+
+router.post('/UpdateBajajProposer_policy', wrapper.asyncHandler(BajajController.UpdateBajajProposer_policy));
 
 module.exports = router;

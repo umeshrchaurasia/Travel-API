@@ -7,28 +7,32 @@ const https = require('https');
 const PolicyService_bajaj = require('../services/PolicyService_bajaj');
 const path = require('path');
 const { PDFDocument } = require('pdf-lib');
-const fs = require('fs'); // You need fs to read/write the physical PDF files
-// Configuration
+const fs = require('fs');
+
+// const BAJAJ_CONFIG_QA = {
+//     URL: "https://htapi.preprod.bajajgeneral.com/BjazTravelWebServices/SaveMasterplan",
+//     USERID: "webservice@policyboss.com",
+//     PASSWORD: "Bagic123",
+//     MASTER_POLICY_NO: "12-9911-0006640459-00",
+//     PRODUCT_CODE: "9911" //56530082
+// };
 
 const BAJAJ_CONFIG = {
-    URL: "https://htsoapapi.bagicpp.bajajallianz.com/BjazTravelWebServices/SaveMasterplan",
+    URL: "https://pit.bajajgeneral.com/BjazTravelWebServices/SaveMasterplan",
     USERID: "webservice@policyboss.com",
-    PASSWORD: "Bagic123",
-    MASTER_POLICY_NO: "12-9911-0006640459-00",
+    PASSWORD: "password",
+    MASTER_POLICY_NO: "12-9911-0009069439-00",
     PRODUCT_CODE: "9911"
 };
 
-// HTTPS Agent — prevents socket hang-ups on Bajaj server
 const httpsAgent = new https.Agent({ keepAlive: false, rejectUnauthorized: false });
 
-// Axios Client with timeout
 const bajajClient = axios.create({
     httpsAgent,
     headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
     timeout: 45000
 });
 
-// Helper: Convert dd/mm/yyyy → yyyy-mm-dd for MySQL
 const formatToDbDate = (dateStr) => {
     if (!dateStr) return null;
     const parts = dateStr.split('/');
@@ -36,15 +40,14 @@ const formatToDbDate = (dateStr) => {
     return null;
 };
 
-// ─────────────────────────────────────────────
-// Helper: Build Bajaj Payload (shared for CALC & ISSUE)
-// ─────────────────────────────────────────────
 const buildBajajPayload = (serviceMode, quoteNo, body) => {
     const {
         StartDate, EndDate, JourneyFromDate, JourneyToDate, NoOfDays,
         Plan, GeographicalCover, CountryName,
         TravellerDetails, ProposerDetails
     } = body;
+
+    const cleanPlan = (Plan && typeof Plan === 'string') ? Plan.trim() : "";
 
     return {
         pUserId: BAJAJ_CONFIG.USERID,
@@ -59,7 +62,7 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
             StartDate: StartDate,
             EndDate: EndDate,
             masterPolicyNumber: BAJAJ_CONFIG.MASTER_POLICY_NO,
-            Plan: "TPHGLD",
+            Plan: cleanPlan || "",
             geographicalCover: GeographicalCover || "Worldwide Including USA and Canada",
             countryName: CountryName || "INDIA",
             pJourneryDtls: {
@@ -79,8 +82,8 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
             passportNumber: t.passportNumber || "",
             nomineeName: t.nomineeName || "",
             nomineeRelation: t.nomineeRelation || "",
-            trvEmailId: "umeshchaurasia@gmail.com",
-            trvMobileNumber: "9224624999",
+            trvEmailId: t.trvEmailId,
+            trvMobileNumber: t.trvMobileNumber,
             anyPreExistingDisease: t.anyPreExistingDisease || "No"
         })),
         pProposerDtls: {
@@ -96,8 +99,8 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
             City: ProposerDetails.City || "",
             Area: ProposerDetails.Area || "",
             Address: ProposerDetails.Address || "",
-            mobileNumber: "9224624999",
-            emailId: "umeshchaurasia@gmail.com",
+            mobileNumber: ProposerDetails.mobileNumber,
+            emailId: ProposerDetails.emailId,
             passportNumber: ProposerDetails.passportNumber || "",
             gender: ProposerDetails.gender || "M",
             nomineeName: ProposerDetails.nomineeName || "",
@@ -112,44 +115,63 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
     };
 };
 
+const logBajajApiActivity = async (endpoint, requestData, successData, failData) => {
+    try {
+        const query = `INSERT INTO bajaj_api_logs (endpoint, request_data, success_data, fail_data, created_at) VALUES (?, ?, ?, ?, NOW())`;
+        await db.query(query, [
+            endpoint,
+            requestData ? JSON.stringify(requestData) : null,
+            successData ? JSON.stringify(successData) : null,
+            failData ? String(failData) : null
+        ]);
 
-// Controller
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
+        const logDirectory = path.join(__dirname, '../public/bajaj_api_logs');
+
+        if (!fs.existsSync(logDirectory)) {
+            fs.mkdirSync(logDirectory, { recursive: true });
+        }
+
+        const logFilePath = path.join(logDirectory, `${dateStr}.txt`);
+        const logContent = `
+=========================================================
+Time: ${today.toISOString()}
+Endpoint: ${endpoint}
+Request Data: ${requestData ? JSON.stringify(requestData, null, 2) : 'N/A'}
+Success Data: ${successData ? JSON.stringify(successData, null, 2) : 'N/A'}
+Fail Data: ${failData ? String(failData) : 'N/A'}
+=========================================================\n`;
+
+        fs.appendFileSync(logFilePath, logContent);
+    } catch (err) {
+        logger.error(`[BAJAJ LOGGING ERROR]: Failed to log API activity: ${err.message}`);
+    }
+};
 
 class BajajController {
-
     constructor() {
         this.generatePolicybyPolicyno_bajaj = this.generatePolicybyPolicyno_bajaj.bind(this);
-
         this.checkOrGenerateASNumber_Bajaj = this.checkOrGenerateASNumber_Bajaj.bind(this);
+        this.bajajlivepdf = this.bajajlivepdf.bind(this);
     }
-
 
     saveMasterPlan_calc = async (req, res) => {
         try {
             const {
-                AgentId,
-                StartDate, EndDate, JourneyFromDate, JourneyToDate, NoOfDays,
-                Plan, GeographicalCover, CountryName,
-                premium, bajaj_premium_amount,
-                radiobtn_selectedOption, radiobtn_selectedAmount,
-                TravellerDetails, ProposerDetails, Payout_Bajaj,
-                commission_agent, premium_without_gst, premium_gst
-
+                AgentId, StartDate, EndDate, JourneyFromDate, JourneyToDate, NoOfDays,
+                Plan, GeographicalCover, CountryName, premium, bajaj_premium_amount,
+                radiobtn_selectedOption, radiobtn_selectedAmount, TravellerDetails,
+                ProposerDetails, Payout_Bajaj, commission_agent, premium_without_gst,
+                premium_gst, Ss_id
             } = req.body;
 
-            // ── Validate required fields ──────────────────────────────────
-            if (!StartDate || !EndDate || !NoOfDays) {
-                return base.send_response("StartDate, EndDate and NoOfDays are required.", null, res);
-            }
-            if (!TravellerDetails || !Array.isArray(TravellerDetails) || TravellerDetails.length === 0) {
-                return base.send_response("At least one traveller is required.", null, res);
-            }
-            if (!ProposerDetails) {
-                return base.send_response("ProposerDetails are required.", null, res);
-            }
+            if (!StartDate || !EndDate || !NoOfDays) return base.send_response("StartDate, EndDate and NoOfDays are required.", null, res);
+            if (!TravellerDetails || !Array.isArray(TravellerDetails) || TravellerDetails.length === 0) return base.send_response("At least one traveller is required.", null, res);
+            if (!ProposerDetails) return base.send_response("ProposerDetails are required.", null, res);
 
             // ════════════════════════════════════════════════════════════
-            // STEP 1: CALC_PREM — Get QuoteNo & Premium from Bajaj
+            // STEP 1: CALC_PREM 
             // ════════════════════════════════════════════════════════════
             const calcPayload = buildBajajPayload("CALC_PREM", "", req.body);
             logger.info(`[BAJAJ CALC REQUEST]: ${JSON.stringify(calcPayload)}`);
@@ -158,259 +180,268 @@ class BajajController {
             try {
                 const calcResponse = await bajajClient.post(BAJAJ_CONFIG.URL, calcPayload);
                 calcData = calcResponse.data;
-                logger.info(`[BAJAJ CALC RESPONSE]: ${JSON.stringify(calcData)}`);
+                await logBajajApiActivity("CALC_PREM", calcPayload, calcData, null);
             } catch (calcErr) {
-                // Network / timeout / server error on CALC
-                logger.error(`[BAJAJ CALC NETWORK ERROR]: ${calcErr.message}`);
-                const networkMsg = calcErr.response?.data?.applicationError?.errorDescription
-                    || calcErr.message
-                    || "Unable to reach Bajaj server for premium calculation.";
-                return base.send_response(`Premium Calculation Failed: ${networkMsg}`, null, res);
+                await logBajajApiActivity("CALC_PREM", calcPayload, null, calcErr.message);
+                return base.send_response(`Premium Calculation Failed: ${calcErr.message}`, null, res);
             }
 
-            // Check Bajaj application-level error from CALC
             if (!calcData || calcData?.applicationError?.errorCode !== "0") {
-                const errorDesc = calcData?.applicationError?.errorDescription
-                    || "Bajaj API returned an error during Premium Calculation.";
-                logger.error(`[BAJAJ CALC APP ERROR]: ${errorDesc}`);
-                return base.send_response(`Premium Calculation Error: ${errorDesc}`, null, res);
+                return base.send_response(`Premium Calculation Error`, null, res);
             }
 
-            // ── Extract values from CALC response ────────────────────────
-            const generatedQuoteNo = calcData.pQuoteNo;                         // e.g. "Q202503261234"
+            const generatedQuoteNo = calcData.pQuoteNo;
             const calcFinalPremium = calcData.pPremiumDtls?.finalPremium || 0;
             const calcBasePremium = calcData.pPremiumDtls?.basePrem || 0;
-         //   const calcPremiumDetails = calcData.pPremiumDtls;
-          //  const calcPolicyData = calcData.pPolicyData;
-
-            logger.info(`[BAJAJ CALC SUCCESS]: QuoteNo=${generatedQuoteNo}, Premium=${calcFinalPremium}`);
 
             // ════════════════════════════════════════════════════════════
-            // STEP 2: ISSUE_POLICY — Use QuoteNo from CALC
+            // STEP 2: ISSUE_POLICY
             // ════════════════════════════════════════════════════════════
             const issuePayload = buildBajajPayload("ISSUE_POLICY", generatedQuoteNo, req.body);
-            logger.info(`[BAJAJ ISSUE REQUEST]: ${JSON.stringify(issuePayload)}`);
-
             let issueData;
             try {
                 const issueResponse = await bajajClient.post(BAJAJ_CONFIG.URL, issuePayload);
                 issueData = issueResponse.data;
-                logger.info(`[BAJAJ ISSUE RESPONSE]: ${JSON.stringify(issueData)}`);
+                await logBajajApiActivity("ISSUE_POLICY", issuePayload, issueData, null);
             } catch (issueErr) {
-                // Network / timeout / server error on ISSUE
-                logger.error(`[BAJAJ ISSUE NETWORK ERROR]: ${issueErr.message}`);
-                const networkMsg = issueErr.response?.data?.applicationError?.errorDescription
-                    || issueErr.message
-                    || "Unable to reach Bajaj server for policy issuance.";
-                return base.send_response(`Policy Issuance Failed: ${networkMsg}`, null, res);
+                await logBajajApiActivity("ISSUE_POLICY", issuePayload, null, issueErr.message);
+                return base.send_response(`Policy Issuance Failed: ${issueErr.message}`, null, res);
             }
 
-            // Check Bajaj application-level error from ISSUE
             if (!issueData || issueData?.applicationError?.errorCode !== "0") {
-                const errorDesc = issueData?.applicationError?.errorDescription
-                    || "Bajaj API returned an error during Policy Issuance.";
-                logger.error(`[BAJAJ ISSUE APP ERROR]: ${errorDesc}`);
-                return base.send_response(`Policy Issuance Error: ${errorDesc}`, null, res);
+                return base.send_response(`Policy Issuance Error`, null, res);
             }
 
-            // ── Extract values from ISSUE response ────────────────────────
             const resultPolicyNo = issueData.pPolicyData?.policy_no || "PENDING";
             const resultPremium = issueData.pPremiumDtls?.finalPremium || calcFinalPremium;
             const basePrem = issueData.pPremiumDtls?.basePrem || calcBasePremium;
             const issuePremDetails = issueData.pPremiumDtls;
             const issuePolicyData = issueData.pPolicyData;
-            const pdf64based = "JVBERi0xLjMKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgKG9wZW5zb3VyY2UpCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUgo+PgplbmRvYmoKMiAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAvTmFtZSAvRjEgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250Cj4+CmVuZG9iagozIDAgb2JqCjw8Ci9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNCAwIG9iago8PAovQ29udGVudHMgOCAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4IF0gL1BhcmVudCA3IDAgUiAvUmVzb3VyY2VzIDw8Ci9Gb250IDEgMCBSIC9Qcm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBdCj4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwKCj4+IAogIC9UeXBlIC9QYWdlCj4+CmVuZG9iago1IDAgb2JqCjw8Ci9QYWdlTW9kZSAvVXNlTm9uZSAvUGFnZXMgNyAwIFIgL1R5cGUgL0NhdGFsb2cKPj4KZW5kb2JqCjYgMCBvYmoKPDwKL0F1dGhvciAoYW5vbnltb3VzKSAvQ3JlYXRpb25EYXRlIChEOjIwMjYwMzEyMDUxODA0KzAwJzAwJykgL0NyZWF0b3IgKGFub255bW91cykgL0tleXdvcmRzICgpIC9Nb2REYXRlIChEOjIwMjYwMzEyMDUxODA0KzAwJzAwJykgL1Byb2R1Y2VyIChSZXBvcnRMYWIgUERGIExpYnJhcnkgLSBcKG9wZW5zb3VyY2VcKSkgCiAgL1N1YmplY3QgKHVuc3BlY2lmaWVkKSAvVGl0bGUgKHVudGl0bGVkKSAvVHJhcHBlZCAvRmFsc2UKPj4KZW5kb2JqCjcgMCBvYmoKPDwKL0NvdW50IDEgL0tpZHMgWyA0IDAgUiBdIC9UeXBlIC9QYWdlcwo+PgplbmRvYmoKOCAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxMjEKPj4Kc3RyZWFtCkdhcTNdMGFgRmImLVZtQ0BTPStiXGA5RFUucWlMPjU3Zzg6PDkhcFBKZmtIPTE5YURqM0UzTzg/ckhWKUpKYF1gYCFVVipYSlU7dUtdO3JETFlwUilfPGBdWCshQSpeT1UrWnBUIVtCZiRiYDM9KThObWtCR2Jzfj5lbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDA2MSAwMDAwMCBuIAowMDAwMDAwMTAyIDAwMDAwIG4gCjAwMDAwMDAyMDkgMDAwMDAgbiAKMDAwMDAwMDMyMSAwMDAwMCBuIAowMDAwMDAwNTI0IDAwMDAwIG4gCjAwMDAwMDA1OTIgMDAwMDAgbiAKMDAwMDAwMDg1MyAwMDAwMCBuIAowMDAwMDAwOTEyIDAwMDAwIG4gCnRyYWlsZXIKPDwKL0lEIApbPDcxZmI1MDQ5ZWY3ODJmZWEzMGY3NGM5Yjc0YzIyZWU0Pjw3MWZiNTA0OWVmNzgyZmVhMzBmNzRjOWI3NGMyMmVlND5dCiUgUmVwb3J0TGFiIGdlbmVyYXRlZCBQREYgZG9jdW1lbnQgLS0gZGlnZXN0IChvcGVuc291cmNlKQoKL0luZm8gNiAwIFIKL1Jvb3QgNSAwIFIKL1NpemUgOQo+PgpzdGFydHhyZWYKMTEyMwolJUVPRgo=";
 
-            logger.info(`[BAJAJ ISSUE SUCCESS]: PolicyNo=${resultPolicyNo}, FinalPremium=${resultPremium}`);
-
-            // NEW STEP: Convert Base64 to PDF and save to folder
-
+            // ════════════════════════════════════════════════════════════
+            // STEP 2B: Fetch Token & Download PDF from Bajaj API
+            // (mirrors bajajlivepdf exactly — full base64 parsing logic)
+            // ════════════════════════════════════════════════════════════
             let bajajDbUrl = "";
-            try {
-                // 1. Ensure the folder exists
-                const bajajFolder = path.join(__dirname, '../public/policygivenbyBajaj');
-                if (!fs.existsSync(bajajFolder)) {
-                    fs.mkdirSync(bajajFolder, { recursive: true });
+
+            if (resultPolicyNo !== "PENDING") {
+                try {
+                    // ── Token ──────────────────────────────────────────────
+                    const tokenPayload = new URLSearchParams({
+                        grant_type: 'password',
+                        client_id: 'B2BService_Client',
+                        client_secret: '0299dec1-fb95-45a8-8770-ca9537fc252c',
+                        username: 'webservice@policyboss.com',
+                        password: 'password',
+                    }).toString();
+
+                    logger.info(`[BAJAJ PDF] Fetching OAuth token for policy: ${resultPolicyNo}`);
+
+                    const tokenResponse = await axios.post(
+                        'https://auth.prod.bajajgeneral.com/auth/realms/Bagic/protocol/openid-connect/token',
+                        tokenPayload,
+                        {
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            httpsAgent
+                        }
+                    );
+
+                    const accessToken = tokenResponse.data.access_token;
+                    if (!accessToken) {
+                        throw new Error("No access token returned from Bajaj auth API");
+                    }
+
+                    logger.info(`[BAJAJ PDF] Token received: ${accessToken.substring(0, 20)}...[OK]`);
+                    await logBajajApiActivity("BAJAJ_OAUTH_TOKEN",
+                        { grant_type: 'password', client_id: 'B2BService_Client', username: 'webservice@policyboss.com', password: '***' },
+                        { success: true }, null
+                    );
+
+                    // ── PDF Download ───────────────────────────────────────
+                    const pdfDownloadUrl = `https://pit.bajajallianz.com/bjazDownload/travel/downloadPdf/${resultPolicyNo}`;
+                    logger.info(`[BAJAJ PDF] Calling PDF URL: ${pdfDownloadUrl}`);
+
+                    const pdfResponse = await axios.get(pdfDownloadUrl, {
+                        headers: {
+                            'auth': `Bearer ${accessToken}`,          // Bajaj custom header
+                            'Authorization': `Bearer ${accessToken}`, // keep both just in case
+                        },
+                        responseType: 'text',  // Bajaj returns raw base64 string, not binary
+                        httpsAgent
+                    });
+
+                    // ── Parse Response ─────────────────────────────────────
+                    // Bajaj can return:
+                    //   a) Plain base64 string
+                    //   b) JSON: { "downloadedPdf": "base64..." }
+                    //   c) JSON: { "file": "base64..." }
+                    //   d) JSON: { "p_pdf_string": "base64..." }
+                    //   e) Quoted string: "\"base64...\""
+                    let rawData = pdfResponse.data;
+
+                    logger.info(`[BAJAJ PDF] Response type: ${typeof rawData}, length: ${rawData?.length}`);
+                    await logBajajApiActivity("BAJAJ_PDF_RAW_RESPONSE", { url: pdfDownloadUrl }, {
+                        dataType: typeof rawData,
+                        length: rawData?.length,
+                        rawSnippet: typeof rawData === 'string' ? rawData.substring(0, 200) : JSON.stringify(rawData).substring(0, 200)
+                    }, null);
+
+                    let pdfBase64 = rawData;
+
+                    // Try parsing as JSON string first
+                    if (typeof pdfBase64 === 'string') {
+                        const trimmed = pdfBase64.trim();
+                        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                            try {
+                                const parsed = JSON.parse(trimmed);
+                                pdfBase64 = parsed.downloadedPdf
+                                    || parsed.file
+                                    || parsed.p_pdf_string
+                                    || parsed.data
+                                    || parsed.pdf
+                                    || parsed.base64
+                                    || null;
+                                if (!pdfBase64) {
+                                    throw new Error(`JSON response received but no known key found. Keys: ${Object.keys(parsed).join(', ')}`);
+                                }
+                            } catch (parseErr) {
+                                throw new Error(`Failed to parse JSON response: ${parseErr.message}`);
+                            }
+                        }
+                    }
+
+                    // Handle object response (axios auto-parsed JSON despite responseType:'text')
+                    if (typeof pdfBase64 === 'object' && pdfBase64 !== null) {
+                        pdfBase64 = pdfBase64.downloadedPdf
+                            || pdfBase64.file
+                            || pdfBase64.p_pdf_string
+                            || pdfBase64.data
+                            || pdfBase64.pdf
+                            || null;
+                    }
+
+                    // Strip surrounding quotes  "base64string" → base64string
+                    if (typeof pdfBase64 === 'string') {
+                        pdfBase64 = pdfBase64.trim().replace(/^"|"$/g, '');
+                    }
+
+                    if (!pdfBase64 || pdfBase64.length < 100) {
+                        throw new Error(`Invalid or empty base64 received. Length: ${pdfBase64?.length}. Raw: ${String(rawData).substring(0, 300)}`);
+                    }
+
+                    // ── Convert base64 → Buffer → Validate → Save ──────────
+                    const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+
+                    const pdfHeader = pdfBuffer.slice(0, 4).toString('ascii');
+                    if (pdfHeader !== '%PDF') {
+                        throw new Error(`Decoded data is not a valid PDF. Header bytes: "${pdfHeader}". Base64 length was: ${pdfBase64.length}`);
+                    }
+
+                    const bajajFolder = path.join(__dirname, '../public/policygivenbyBajaj');
+                    if (!fs.existsSync(bajajFolder)) {
+                        fs.mkdirSync(bajajFolder, { recursive: true });
+                    }
+
+                    const cleanPolicyNo = resultPolicyNo.replace(/[^a-zA-Z0-9]/g, '');
+                    const bajajPdfFileName = `bajaj${cleanPolicyNo}.pdf`;
+                    const physicalBajajPath = path.join(bajajFolder, bajajPdfFileName);
+                    bajajDbUrl = `/policygivenbyBajaj/${bajajPdfFileName}`;
+
+                    fs.writeFileSync(physicalBajajPath, pdfBuffer);
+                    logger.info(`[BAJAJ PDF] Saved: ${physicalBajajPath} (${pdfBuffer.length} bytes)`);
+
+                    await logBajajApiActivity("BAJAJ_PDF_DOWNLOAD_SUCCESS",
+                        { policyNo: resultPolicyNo },
+                        { savedPath: physicalBajajPath, dbUrl: bajajDbUrl, sizeBytes: pdfBuffer.length },
+                        null
+                    );
+
+                } catch (pdfErr) {
+                    let errMsg = pdfErr.message;
+                    if (pdfErr.response?.data) {
+                        const errData = Buffer.isBuffer(pdfErr.response.data)
+                            ? pdfErr.response.data.toString()
+                            : JSON.stringify(pdfErr.response.data);
+                        errMsg += ` | HTTP ${pdfErr.response.status} | Details: ${errData.substring(0, 500)}`;
+                    }
+                    logger.error(`[BAJAJ PDF ERROR]: ${errMsg}`);
+                    await logBajajApiActivity("BAJAJ_PDF_DOWNLOAD_ERROR", { policyNo: resultPolicyNo }, null, errMsg);
+                    // Non-fatal: policy was issued successfully; PDF failure is logged but does not block the response
                 }
-
-                // 2. Create a clean file name using the policy number
-                const cleanPolicyNo = resultPolicyNo.replace(/[^a-zA-Z0-9]/g, ''); // Removes dashes/special chars
-                const bajajPdfFileName = `bajaj${cleanPolicyNo}.pdf`;
-                const physicalBajajPath = path.join(bajajFolder, bajajPdfFileName);
-
-                // 3. This is the URL we will send to the database
-                bajajDbUrl = `/policygivenbyBajaj/${bajajPdfFileName}`;
-
-                // 4. Convert base64 to buffer and save it physically
-                const pdfBuffer = Buffer.from(pdf64based, 'base64');
-                fs.writeFileSync(physicalBajajPath, pdfBuffer);
-                logger.info(`[BAJAJ PDF SAVED]: Successfully saved to ${physicalBajajPath}`);
-
-            } catch (fsError) {
-                logger.error(`[BAJAJ PDF ERROR]: Failed to save base64 PDF: ${fsError.message}`);
             }
-
-
-
-
 
             // ════════════════════════════════════════════════════════════
             // STEP 3A: DB Insert — Header + Proposer (SP)
-            // Total params: 42 — must match sp_SaveBajajTransaction_Header exactly
             // ════════════════════════════════════════════════════════════
             const headerParams = [
-                // ── Policy Info (24 params) ──────────────────────────────
-                AgentId || '0',                              // 1  p_AgentId
-                "ISSUE_POLICY",                              // 2  p_ServiceMode
-                generatedQuoteNo,                            // 3  p_QuoteNo
-                resultPolicyNo,                              // 4  p_PolicyNo
-                BAJAJ_CONFIG.PRODUCT_CODE,                   // 5  p_ProductCode
-                "GROUP TRAVEL",                              // 6  p_Product
-                Plan || 'TPHGLD',                            // 7  p_Plan
-                BAJAJ_CONFIG.MASTER_POLICY_NO,               // 8  p_MasterPolicyNumber
-                GeographicalCover || '',                     // 9  p_GeographicalCover
-                CountryName || '',                           // 10 p_CountryName
-                formatToDbDate(StartDate),                   // 11 p_StartDate
-                formatToDbDate(EndDate),                     // 12 p_EndDate
-                formatToDbDate(JourneyFromDate || StartDate),// 13 p_JourneyFromDate
-                formatToDbDate(JourneyToDate || EndDate),    // 14 p_JourneyToDate
-                NoOfDays || 0,                               // 15 p_NoOfDays
-                basePrem || 0,                               // 16 p_BasePremium
-                resultPremium || 0,                          // 17 p_FinalPremium
-                BAJAJ_CONFIG.USERID,                         // 18 p_pUserId
-                BAJAJ_CONFIG.PASSWORD,                       // 19 p_pPassword
-                "AFLOAT",                                    // 20 p_pPayMode
-                radiobtn_selectedAmount || '0',              // 21 p_Selected_PremiumAmount
-                premium || '0',                              // 22 p_Actual_PremiumAmount
-                bajaj_premium_amount || '0',                 // 23 p_Bajaj_PremiumAmount
-                radiobtn_selectedOption || '',               // 24 p_Selected_Payment_Mode
-                // ── Proposer Info (18 params) ────────────────────────────
-                ProposerDetails.beforeTitle || 'Mr',         // 25 p_Prop_beforeTitle
-                ProposerDetails.firstName || '',             // 26 p_Prop_firstName
-                ProposerDetails.middleName || '',            // 27 p_Prop_middleName  ✅
-                ProposerDetails.LastName || '',              // 28 p_Prop_LastName
-                formatToDbDate(ProposerDetails.dateOfBirth), // 29 p_Prop_dateOfBirth
-                ProposerDetails.emailId || '',               // 30 p_Prop_emailId
-                ProposerDetails.mobileNumber || '',          // 31 p_Prop_mobileNumber
-                ProposerDetails.gender || 'M',               // 32 p_Prop_gender
-                ProposerDetails.Address || '',               // 33 p_Prop_Address
-                ProposerDetails.City || '',                  // 34 p_Prop_City
-                ProposerDetails.State || '',                 // 35 p_Prop_State
-                ProposerDetails.Pincode || '',               // 36 p_Prop_Pincode
-                ProposerDetails.passportNumber || '',        // 37 p_Prop_passportNumber
-                ProposerDetails.GSTINNumber || '',           // 38 p_Prop_GSTINNumber  ✅
-                ProposerDetails.PANNumber || '',             // 39 p_Prop_PANNumber    ✅
-                ProposerDetails.Area || '',                  // 40 p_Prop_Area         ✅
-                ProposerDetails.nomineeName || '',           // 41 p_Prop_nomineeName  ✅
-                ProposerDetails.nomineeRelation || '',     // 42 p_Prop_nomineeRelation ✅
-                Payout_Bajaj,
-                bajajDbUrl,
-                commission_agent || '0',
-                premium_without_gst || '0',
-                premium_gst || '0'
+                AgentId || '0', "ISSUE_POLICY", generatedQuoteNo, resultPolicyNo, BAJAJ_CONFIG.PRODUCT_CODE,
+                "GROUP TRAVEL", Plan || '', BAJAJ_CONFIG.MASTER_POLICY_NO, GeographicalCover || '',
+                CountryName || '', formatToDbDate(StartDate), formatToDbDate(EndDate), formatToDbDate(JourneyFromDate || StartDate),
+                formatToDbDate(JourneyToDate || EndDate), NoOfDays || 0, basePrem || 0, resultPremium || 0,
+                BAJAJ_CONFIG.USERID, BAJAJ_CONFIG.PASSWORD, "AFLOAT", radiobtn_selectedAmount || '0',
+                premium || '0', bajaj_premium_amount || '0', radiobtn_selectedOption || '', ProposerDetails.beforeTitle || 'Mr',
+                ProposerDetails.firstName || '', ProposerDetails.middleName || '', ProposerDetails.LastName || '',
+                formatToDbDate(ProposerDetails.dateOfBirth), ProposerDetails.emailId || '', ProposerDetails.mobileNumber || '',
+                ProposerDetails.gender || 'M', ProposerDetails.Address || '', ProposerDetails.City || '',
+                ProposerDetails.State || '', ProposerDetails.Pincode || '', ProposerDetails.passportNumber || '',
+                ProposerDetails.GSTINNumber || '', ProposerDetails.PANNumber || '', ProposerDetails.Area || '',
+                ProposerDetails.nomineeName || '', ProposerDetails.nomineeRelation || '', Payout_Bajaj, bajajDbUrl,
+                commission_agent || '0', premium_without_gst || '0', premium_gst || '0', Ss_id || ''
             ];
 
             const [headerRows] = await db.query(
-                `CALL sp_SaveBajajTransaction_Header(
-                    ?,?,?,?,?,?,?,?,?,?,
-                    ?,?,?,?,?,?,?,?,?,?,
-                    ?,?,?,?,?,?,?,?,?,?,
-                    ?,?,?,?,?,?,?,?,?,?,
-                    ?,?,?,?,?,?,?
-                )`,
+                `CALL sp_SaveBajajTransaction_Header(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
                 headerParams
             );
 
             const newBajajId = headerRows[0][0].BajajId;
-            if (!newBajajId) {
-                logger.error(`[BAJAJ DB ERROR]: BajajId not returned from sp_SaveBajajTransaction_Header`);
-                return base.send_response("Policy issued but DB save failed. Contact support.", null, res);
-            }
-
-            logger.info(`[BAJAJ DB HEADER SAVED]: BajajId=${newBajajId}`);
 
             // ════════════════════════════════════════════════════════════
-            // STEP 3B: DB Insert — Travellers (SP) — parallel inserts
-            // Total params per traveller: 15 — must match sp_SaveBajajTraveller
+            // STEP 3B: DB Insert — Travellers (SP)
             // ════════════════════════════════════════════════════════════
             const travellerPromises = TravellerDetails.map((t, index) => {
                 const trvParams = [
-                    newBajajId,                                // 1  p_BajajId
-                    AgentId || '0',                            // 2  p_AgentId
-                    t.beforeTitle || 'Mr',                     // 3  p_trv_beforeTitle
-                    t.gender || 'M',                           // 4  p_trv_gender
-                    t.firstName || '',                         // 5  p_trv_firstName
-                    t.middleName || '',                        // 6  p_trv_middleName
-                    t.LastName || '',                          // 7  p_trv_LastName
-                    formatToDbDate(t.dateOfBirth),             // 8  p_trv_dateOfBirth
-                    t.relationWithProposer || 'SELF',          // 9  p_trv_relationWithProposer
-                    t.passportNumber || '',                    // 10 p_trv_passportNumber
-                    t.nomineeName || '',                       // 11 p_trv_nomineeName
-                    t.nomineeRelation || '',                   // 12 p_trv_nomineeRelation
-                    t.trvEmailId || '',                        // 13 p_trv_emailId
-                    t.trvMobileNumber || '',                   // 14 p_trv_mobileNumber
-                    t.anyPreExistingDisease || 'No'            // 15 p_trv_anyPreExistingDisease
+                    newBajajId, AgentId || '0', t.beforeTitle || 'Mr', t.gender || 'M', t.firstName || '',
+                    t.middleName || '', t.LastName || '', formatToDbDate(t.dateOfBirth), t.relationWithProposer || 'SELF',
+                    t.passportNumber || '', t.nomineeName || '', t.nomineeRelation || '', t.trvEmailId || '',
+                    t.trvMobileNumber || '', t.anyPreExistingDisease || 'No'
                 ];
-
-                return db.query(
-                    'CALL sp_SaveBajajTraveller(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                    trvParams
-                ).then(() => {
-                    logger.info(`[BAJAJ DB TRAVELLER SAVED]: BajajId=${newBajajId}, Index=${index + 1}`);
-                });
+                return db.query('CALL sp_SaveBajajTraveller(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', trvParams);
             });
 
             await Promise.all(travellerPromises);
-            logger.info(`[BAJAJ DB ALL TRAVELLERS SAVED]: BajajId=${newBajajId}, Count=${TravellerDetails.length}`);
 
-            // ════════════════════════════════════════════════════════════
-            // STEP 4: Return Success Response to UI
-            // ════════════════════════════════════════════════════════════
             return base.send_response("Policy Issued Successfully.", {
-                // Quote & Policy
                 pQuoteNo: generatedQuoteNo,
                 PolicyNo: resultPolicyNo,
                 dbId: newBajajId,
                 AgentId: AgentId,
-                // Dates
                 StartDate: StartDate,
                 EndDate: EndDate,
-                // Premium Breakup
                 pPremiumDtls: issuePremDetails,
                 BasePremium: basePrem,
                 FinalPremium: resultPremium,
-                // Policy Data
                 pPolicyData: issuePolicyData,
-                // Bajaj Error Block (errorCode "0" = success)
                 applicationError: issueData.applicationError
             }, res);
 
         } catch (error) {
-            // Catch-all: unexpected errors (DB crash, code bug, etc.)
-            logger.error(`[BAJAJ CONTROLLER ERROR]: ${error.message} | Stack: ${error.stack}`);
-            const apiMsg = error.response?.data?.applicationError?.errorDescription
-                || error.message
-                || "An unexpected error occurred. Please try again.";
-            return base.send_response(`Error: ${apiMsg}`, null, res);
+            return base.send_response(`Error: ${error.message}`, null, res);
         }
     }
 
-
+    // [All other exact methods remain completely unchanged...]
     async getPremium_including_bajaj(req, res) {
         try {
             const { duration, age_years, age_months, plan_amount, agentid } = req.body;
-
-            // Call stored procedure
             const [rows] = await db.query(
                 'CALL GetPremium_including_bajaj(?,?,?,?,?)',
                 [duration, age_years, age_months, plan_amount, agentid]
             );
 
-            // Get first row of result
             const result = rows[0][0];
 
             if (result.SuccessStatus === '1') {
-                // Successful login
                 base.send_response(
                     "Premium including successful",
                     {
@@ -427,7 +458,6 @@ class BajajController {
                     res
                 );
             } else {
-                // Failed login
                 base.send_response(
                     result.Message || "Invalid credentials",
                     null,
@@ -435,36 +465,23 @@ class BajajController {
                     401
                 );
             }
-
         } catch (error) {
-
             logger.error('Login error:', error);
-            base.send_response(
-                "Error during login process",
-                null,
-                res,
-                500
-            );
+            base.send_response("Error during login process", null, res, 500);
         }
     }
-
-    // Premium_excluding
 
     async getPremium_excluding_bajaj(req, res) {
         try {
             const { duration, age_years, age_months, plan_amount, agentid } = req.body;
-
-            // Call stored procedure
             const [rows] = await db.query(
                 'CALL GetPremium_excluding_bajaj(?,?,?,?,?)',
                 [duration, age_years, age_months, plan_amount, agentid]
             );
 
-            // Get first row of result
             const result = rows[0][0];
 
             if (result.SuccessStatus === '1') {
-                // Successful login
                 base.send_response(
                     "Premium excluding successful",
                     {
@@ -481,7 +498,6 @@ class BajajController {
                     res
                 );
             } else {
-                // Failed login
                 base.send_response(
                     result.Message || "Invalid credentials",
                     null,
@@ -489,52 +505,39 @@ class BajajController {
                     401
                 );
             }
-
         } catch (error) {
-
             logger.error('Login error:', error);
-            base.send_response(
-                "Error during login process",
-                null,
-                res,
-                500
-            );
+            base.send_response("Error during login process", null, res, 500);
         }
     }
 
-    // Method to check or generate AS number
     async checkOrGenerateASNumber_Bajaj(policyNumber, policyStartDate, policyEndDate, fullName, fullAddress, premiumAmount, emailID, mobileNumber, day_of_difference) {
         try {
             logger.info(`Checking or generating AS number for policy: ${policyNumber}`);
-
-            // First check if AS number already exists
             const [existingRows] = await db.query('SELECT * FROM welcome_letter_bajaj WHERE Policy_Number = ?', [policyNumber]);
 
             if (existingRows && existingRows.length > 0) {
-                // Use existing record
                 const asNumber = existingRows[0].Asnumber_bajaj;
                 logger.info(`Found existing AS number: ${asNumber}`);
                 return asNumber;
             } else {
-                // Create new record with new AS number
                 logger.info('No existing AS number found, creating new one');
-
-                // Get next AS number
                 const [numResults] = await db.query(
-                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj'
+                    "SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj WHERE Asnumber_bajaj LIKE 'BEU%'"
                 );
 
-                const nextNum = numResults[0].nextNum || 1;
-                const asNumber = 'ASB' + String(nextNum).padStart(8, '0');
+                let nextNum = numResults[0].nextNum || 1;
+                if (nextNum === 1) {
+                    nextNum = 10001;
+                }
+                const asNumber = 'BEU' + String(nextNum).padStart(8, '0');
 
-                // Format dates properly if they're Date objects
                 const formattedStartDate = policyStartDate instanceof Date ?
                     policyStartDate.toISOString().split('T')[0] : policyStartDate;
 
                 const formattedEndDate = policyEndDate instanceof Date ?
                     policyEndDate.toISOString().split('T')[0] : policyEndDate;
 
-                // Insert new record with all the provided fields
                 const [insertResult] = await db.query(
                     `INSERT INTO welcome_letter_bajaj 
                 (Policy_Number, Asnumber_bajaj, PolicyStartDate, PolicyEndDate, 
@@ -553,9 +556,6 @@ class BajajController {
         }
     }
 
-    //PDF GENERATOR
-    // Updated part of PolicyGenerateController.js
-
     async generatePolicybyPolicyno_bajaj(req, res) {
         try {
             logger.info('API call received for generatePolicybyPolicyno_bajaj');
@@ -567,8 +567,7 @@ class BajajController {
                 return base.send_response("Policy No is required", null, res, 400);
             }
 
-            // Get policy details
-            const [policyRows] = await db.query('CALL getPolicyDetailsbyPolicyno_bajaj(?)', [Policyno]);
+            const [policyRows] = await db.query('CALL getPolicyDetailsbyPolicyno_bajaj1(?)', [Policyno]);
             const results = policyRows[0];
 
             logger.info(`Query results count: ${results ? results.length : 0}`);
@@ -597,19 +596,23 @@ class BajajController {
                     logger.info(`Using AS Number: ${asNumber} for policy ${Policyno}`);
                 } catch (asError) {
                     logger.error(`Error getting AS number: ${asError.message}`);
-                    policyData.Asnumber = ''; // Set to empty string if error occurs
+                    policyData.Asnumber = '';
                 }
 
-                // Store the original plan amount separately
                 policyData.originalPlanAmount = rawPlanAmount;
 
-                // Ensure directories exist
                 const publicDir = path.join(__dirname, '../public');
                 const welcomeLetterDir = path.join(publicDir, 'welcome-letters-bajaj');
-                const combinedPdfDir = path.join(publicDir, 'policybajaj');
+                const combinedPdfDir = path.join(publicDir, 'finalcombine_bajajpolicy');
 
-                // Generate PDF and related assets
-                PolicyService_bajaj.generatePolicy_bajaj(Policyno, policyData, async (err, result) => {
+                const rawFileName = `BajajPolicy_${Policyno}.pdf`;
+                const originalPdfPath = path.join(publicDir, 'policybajaj', rawFileName);
+
+                const combinedPdfFileName = `Combined_${rawFileName}`;
+                const combinepdfurl = `/finalcombine_bajajpolicy/${combinedPdfFileName}`;
+                const finalCombinedPath = path.join(combinedPdfDir, combinedPdfFileName);
+
+                PolicyService_bajaj.generatePolicy_bajaj(Policyno, policyData, originalPdfPath, combinepdfurl, async (err, result) => {
                     if (err) {
                         logger.error('Policy generation error:', err);
                         return base.send_response("Error generating policy documents: " + err.message, { count: results.length, proposals: results }, res, 500);
@@ -618,51 +621,48 @@ class BajajController {
                     const certificateId = Policyno;
 
                     // ====================================================================
-                    // FIX: Format File Name and Move to correct folder (welcome-letters-bajaj)
+                    // Format File Name and Move to correct folder (welcome-letters-bajaj)
                     // ====================================================================
-                    const originalPdfPath = path.resolve(result.pdfPath); // e.g. /public/policybajaj/12-9911-000...pdf
-                    const rawFileName = path.basename(result.pdfPath);
+                    const actualGeneratedPath = path.resolve(result.pdfPath || originalPdfPath);
+                    const actualRawFileName = path.basename(actualGeneratedPath);
 
-                    // Force the required prefix "Welcome-letters-" if it doesn't have it
-                    const pdfFileName = rawFileName.startsWith('Welcome-letters-')
-                        ? rawFileName
-                        : `Welcome-letters-${rawFileName}`;
+                    const pdfFileName = actualRawFileName.startsWith('Welcome-letters-')
+                        ? actualRawFileName
+                        : `Welcome-letters-${actualRawFileName}`;
 
                     const newWelcomeLetterPath = path.join(welcomeLetterDir, pdfFileName);
 
-                    // Ensure target directory exists
                     if (!fs.existsSync(welcomeLetterDir)) {
                         fs.mkdirSync(welcomeLetterDir, { recursive: true });
                     }
 
-                    // Move/Rename physical file to the required folder and name
-                    if (fs.existsSync(originalPdfPath) && originalPdfPath !== newWelcomeLetterPath) {
-                        fs.renameSync(originalPdfPath, newWelcomeLetterPath);
+                    if (fs.existsSync(actualGeneratedPath) && actualGeneratedPath !== newWelcomeLetterPath) {
+                        fs.renameSync(actualGeneratedPath, newWelcomeLetterPath);
                         logger.info(`Moved welcome letter to ${newWelcomeLetterPath}`);
                     }
 
-                    // 1. Correct Database URL for PolicypdfUrl
                     const pdfUrl = `/welcome-letters-bajaj/${pdfFileName}`;
 
-                    // Create a unique name for the combined PDF so it doesn't overwrite the original
-                    const combinedPdfFileName = `Combined_${rawFileName}`;
-                    const combinepdfurl = `/policybajaj/${combinedPdfFileName}`;
+                    // LOG: Welcome Letter Generated successfully
+                    await logBajajApiActivity("WELCOME_LETTER_GEN",
+                        { policyNo: Policyno },
+                        { message: "Welcome Letter Generated Successfully", savedPath: newWelcomeLetterPath, dbUrl: pdfUrl },
+                        null
+                    );
 
-                    // Safe fallback for null database values
                     const bajajDbUrl = policyData.BajajgivenpolicyUrl || '';
+
                     let finalMergedUrl = null;
 
                     // 2. Safely Attempt PDF Merge
                     try {
                         if (bajajDbUrl) {
-                            // Read from the NEW welcome letter path
+                            const { PDFDocument } = require('pdf-lib');
                             const welcomeLetterPath = newWelcomeLetterPath;
 
                             let normalizedBajajUrl = bajajDbUrl.replace(/^\/?(public\/)?/, '');
                             const bajajPolicyPath = path.join(publicDir, normalizedBajajUrl);
-                            const finalCombinedPath = path.join(combinedPdfDir, combinedPdfFileName);
 
-                            // Check if BOTH files exist before merging
                             if (fs.existsSync(welcomeLetterPath) && fs.existsSync(bajajPolicyPath)) {
                                 const welcomePdfBytes = await fs.promises.readFile(welcomeLetterPath);
                                 const bajajPdfBytes = await fs.promises.readFile(bajajPolicyPath);
@@ -685,25 +685,38 @@ class BajajController {
                                 await fs.promises.writeFile(finalCombinedPath, mergedPdfBytesSaved);
 
                                 logger.info(`Successfully combined PDFs into: ${finalCombinedPath}`);
-                                finalMergedUrl = combinepdfurl; // Set successfully merged URL
+                                finalMergedUrl = combinepdfurl;
+
+                                // LOG: PDF Merge Success
+                                await logBajajApiActivity("PDF_MERGE",
+                                    { welcomeLetterInput: welcomeLetterPath, bajajPolicyInput: bajajPolicyPath },
+                                    { message: "PDFs Merged Successfully", savedPath: finalCombinedPath, dbUrl: finalMergedUrl },
+                                    null
+                                );
+
                             } else {
                                 logger.warn('Original Bajaj Policy or Welcome Letter not found on disk. Skipping merge.');
+                                await logBajajApiActivity("PDF_MERGE", { policyNo: Policyno }, null, "Missing input file(s) on disk. Skipping merge.");
                             }
                         } else {
                             logger.warn('No BajajgivenpolicyUrl found in DB. Skipping merge.');
+                            await logBajajApiActivity("PDF_MERGE", { policyNo: Policyno }, null, "No BajajgivenpolicyUrl found in DB. Skipping merge.");
                         }
                     } catch (mergeError) {
                         logger.error(`Error merging PDFs: ${mergeError.message}`);
+                        await logBajajApiActivity("PDF_MERGE", { policyNo: Policyno }, null, `Error merging PDFs: ${mergeError.message}`);
                     }
 
                     // 3. ALWAYS Update the Database
                     try {
-                        // IF finalMergedUrl is null (merge failed), it keeps the old Main_Bajaj_Policy_Url using IFNULL
+
+                        const finalDbPdfUrl = finalMergedUrl;
+
                         const updateQuery = `UPDATE Bajaj_Travel_Proposal_main SET PolicypdfUrl = ?, Main_Bajaj_Policy_Url = IFNULL(?, Main_Bajaj_Policy_Url) WHERE PolicyNo = ?`;
                         const [updateResult] = await db.query(updateQuery, [pdfUrl, finalMergedUrl, certificateId]);
 
                         if (updateResult.affectedRows > 0) {
-                            logger.info(`Successfully updated proposal_main for certificate: ${certificateId}`);
+                            logger.info(`Successfully updated PolicypdfUrl in proposal_main for certificate: ${certificateId}`);
                         } else {
                             logger.warn(`No rows updated in proposal_main for certificate: ${certificateId}`);
                         }
@@ -881,7 +894,6 @@ class BajajController {
                 );
             }
 
-            // Execute procedure
             const [rows] = await db.query(
                 'CALL getSub_Main_AgentMIS_byAdmin_bajaj(?, ?, ?, ?)',
                 [startdate, enddate, empId || null, agentId || null]
@@ -914,7 +926,6 @@ class BajajController {
         try {
             const { empId, startdate, enddate } = req.body;
 
-            // Input validation
             if (!empId) {
                 return base.send_response(
                     "Employee ID is required",
@@ -924,17 +935,14 @@ class BajajController {
                 );
             }
 
-            // Call stored procedure
             const [rows] = await db.query(
                 'CALL getProposalDetailsByEmployee_bajaj(?,?,?)',
                 [empId, startdate, enddate]
             );
 
-            // Get the result rows
             const results = rows[0];
 
             if (results && results.length > 0) {
-                // Successful query
                 base.send_response(
                     "Proposal details retrieved successfully",
                     {
@@ -944,7 +952,6 @@ class BajajController {
                     res
                 );
             } else {
-                // No results found
                 base.send_response(
                     "No proposals found for the given criteria",
                     {
@@ -965,12 +972,10 @@ class BajajController {
         }
     }
 
-
     async getPolicyDetailsbyPolicyno_bajaj(req, res) {
         try {
             const { Policyno } = req.body;
 
-            // Input validation
             if (!Policyno) {
                 return base.send_response(
                     "Policy No is required",
@@ -980,17 +985,14 @@ class BajajController {
                 );
             }
 
-            // Call stored procedure
             const [rows] = await db.query(
                 'CALL getPolicyDetailsbyPolicyno_bajaj(?)',
                 [Policyno]
             );
 
-            // Get the result rows
             const results = rows[0];
 
             if (results && results.length > 0) {
-                // Successful query
                 base.send_response(
                     "Policy details retrieved successfully",
                     {
@@ -1000,7 +1002,6 @@ class BajajController {
                     res
                 );
             } else {
-                // No results found
                 base.send_response(
                     "No Policy found for the given criteria",
                     {
@@ -1032,7 +1033,6 @@ class BajajController {
                 Premium
             } = req.body;
 
-            // Validate inputs
             if (!policyNo || !UID || !Name || !AgentId || !proposal_id || !Premium) {
                 return base.send_response(
                     "Missing required fields: policyNo, UID, Name, AgentId, proposal_id, Premium",
@@ -1044,7 +1044,6 @@ class BajajController {
 
             logger.info(`Cancelling policy: ${policyNo}, proposal_id: ${proposal_id}`);
 
-            // Call stored procedure
             await db.query(
                 'CALL insert_cancel_policy_bajaj(?, ?, ?, ?, ?, ?)',
                 [policyNo, UID, Name, AgentId, proposal_id, Premium]
@@ -1079,7 +1078,6 @@ class BajajController {
                 );
             }
 
-            // Execute procedure
             const [rows] = await db.query(
                 'CALL getProposal_MIS_bajaj(?, ?, ?, ?)',
                 [startdate, enddate, empId || null, agentId || null]
@@ -1123,7 +1121,6 @@ class BajajController {
                 );
             }
 
-            // Execute procedure
             const [rows] = await db.query(
                 'CALL getProposal_TDS_bajaj(?, ?, ?, ?)',
                 [startdate, enddate, empId || null, agentId || null]
@@ -1165,7 +1162,6 @@ class BajajController {
                 );
             }
 
-            // Execute procedure
             const [rows] = await db.query(
                 'CALL getSubAgent_byAgent_MIS_bajaj(?, ?, ?, ?)',
                 [startdate, enddate, empId || null, agentId || null]
@@ -1207,7 +1203,6 @@ class BajajController {
                 );
             }
 
-            // Execute procedure
             const [rows] = await db.query(
                 'CALL getProposal_TDS_byAgent_MIS_bajaj(?, ?, ?, ?)',
                 [startdate, enddate, empId || null, agentId || null]
@@ -1237,8 +1232,267 @@ class BajajController {
     }
 
 
+    // ============================================================
+    // BAJAJ ALLIANZ — Fixed bajajlivepdf controller method
+    // 
+    // KEY FIXES based on Bajaj email + log analysis:
+    // 
+    // FIX 1 — Token: password was missing from --data-urlencode
+    //          Added: password: 'newpas1' to URLSearchParams body
+    //
+    // FIX 2 — PDF headers: Bajaj uses 'auth: Bearer <token>'
+    //          NOT 'Authorization: Bearer'
+    //          NOT 'Authorization: Basic Og=='
+    //
+    // FIX 3 — responseType: 'text' because Bajaj returns a
+    //          raw base64 string (not JSON, not binary buffer)
+    //          Log showed: dataType:"string", rawSnippet:"..."
+    //          The "..." means the string was empty/whitespace —
+    //          fixed by reading it as plain text first
+    // ============================================================
+
+    async bajajlivepdf(req, res) {
+        try {
+            const { policyNo } = req.body;
+            if (!policyNo) {
+                return base.send_response("Policy Number is required", null, res, 400);
+            }
+
+            logger.info(`[BAJAJ LIVE PDF] Initiating download for policy: ${policyNo}`);
+
+            // ─────────────────────────────────────────────────────
+            // STEP 1 — Get OAuth Token
+            // FIX: password must be in --data-urlencode body, NOT headers
+            // ─────────────────────────────────────────────────────
+            const tokenPayload = new URLSearchParams({
+                grant_type: 'password',
+                client_id: 'B2BService_Client',
+                client_secret: '0299dec1-fb95-45a8-8770-ca9537fc252c',
+                username: 'webservice@policyboss.com',
+                password: 'password',               // ← FIX 1: was missing from body
+            }).toString();
+
+            const tokenResponse = await axios.post(
+                'https://auth.prod.bajajgeneral.com/auth/realms/Bagic/protocol/openid-connect/token',
+                tokenPayload,
+                {
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    httpsAgent
+                }
+            );
+
+            const accessToken = tokenResponse.data.access_token;
+            if (!accessToken) {
+                throw new Error("No access token returned from Bajaj auth API");
+            }
+
+            logger.info(`[BAJAJ LIVE PDF] Token received: ${accessToken.substring(0, 20)}...[OK]`);
+            await logBajajApiActivity("BAJAJ_OAUTH_TOKEN", { grant_type: 'password', client_id: 'B2BService_Client', username: 'webservice@policyboss.com', password: '***' }, { success: true }, null);
+
+            // ─────────────────────────────────────────────────────
+            // STEP 2 — Download PDF
+            // FIX 2: Bajaj needs 'auth: Bearer <token>' header (their custom header)
+            // FIX 3: responseType: 'text' — Bajaj returns raw base64 string, not binary
+            // ─────────────────────────────────────────────────────
+            const pdfDownloadUrl = `https://pit.bajajallianz.com/bjazDownload/travel/downloadPdf/${policyNo}`;
+
+            logger.info(`[BAJAJ LIVE PDF] Calling PDF URL: ${pdfDownloadUrl}`);
+
+            const pdfResponse = await axios.get(pdfDownloadUrl, {
+                headers: {
+                    'auth': `Bearer ${accessToken}`,  // ← FIX 2: Bajaj custom header
+                    'Authorization': `Bearer ${accessToken}`,  // keep both just in case
+                },
+                responseType: 'text',                          // ← FIX 3: expect base64 string
+                httpsAgent
+            });
+
+            // ─────────────────────────────────────────────────────
+            // STEP 3 — Parse the response
+            // Bajaj can return:
+            //   a) Plain base64 string
+            //   b) JSON: { "file": "base64..." }
+            //   c) JSON: { "p_pdf_string": "base64..." }
+            //   d) Quoted string: "\"base64...\""
+            // ─────────────────────────────────────────────────────
+            let rawData = pdfResponse.data;
+
+            logger.info(`[BAJAJ LIVE PDF] Response type: ${typeof rawData}, length: ${rawData?.length}`);
+            await logBajajApiActivity("BAJAJ_PDF_RAW_RESPONSE", { url: pdfDownloadUrl }, {
+                dataType: typeof rawData,
+                length: rawData?.length,
+                rawSnippet: typeof rawData === 'string' ? rawData.substring(0, 200) : JSON.stringify(rawData).substring(0, 200)
+            }, null);
+
+            let pdfBase64 = rawData;
+
+            // Try parsing as JSON first
+            if (typeof pdfBase64 === 'string') {
+                const trimmed = pdfBase64.trim();
+                if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                    try {
+                        const parsed = JSON.parse(trimmed);
+                        pdfBase64 = parsed.downloadedPdf    // ← Bajaj confirmed key
+                            || parsed.file
+                            || parsed.p_pdf_string
+                            || parsed.data
+                            || parsed.pdf
+                            || parsed.base64
+                            || null;
+                        if (!pdfBase64) {
+                            throw new Error(`JSON response received but no known key found. Keys: ${Object.keys(parsed).join(', ')}`);
+                        }
+                    } catch (parseErr) {
+                        throw new Error(`Failed to parse JSON response: ${parseErr.message}`);
+                    }
+                }
+            }
+
+            // Handle object response (axios auto-parsed JSON despite responseType:'text')
+            if (typeof pdfBase64 === 'object' && pdfBase64 !== null) {
+                pdfBase64 = pdfBase64.downloadedPdf    // ← Bajaj confirmed key
+                    || pdfBase64.file
+                    || pdfBase64.p_pdf_string
+                    || pdfBase64.data
+                    || pdfBase64.pdf
+                    || null;
+            }
+
+            // Strip surrounding quotes  "base64string" → base64string
+            if (typeof pdfBase64 === 'string') {
+                pdfBase64 = pdfBase64.trim().replace(/^"|"$/g, '');
+            }
+
+            if (!pdfBase64 || pdfBase64.length < 100) {
+                throw new Error(`Invalid or empty base64 received. Length: ${pdfBase64?.length}. Raw: ${String(rawData).substring(0, 300)}`);
+            }
+
+            // ─────────────────────────────────────────────────────
+            // STEP 4 — Convert base64 → PDF buffer → Save to disk
+            // ─────────────────────────────────────────────────────
+            const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+
+            // Validate it's actually a PDF (starts with %PDF)
+            const pdfHeader = pdfBuffer.slice(0, 4).toString('ascii');
+            if (pdfHeader !== '%PDF') {
+                throw new Error(`Decoded data is not a valid PDF. Header bytes: "${pdfHeader}". Base64 length was: ${pdfBase64.length}`);
+            }
+
+            const bajajFolder = path.join(__dirname, '../public/policygivenbyBajaj');
+            if (!fs.existsSync(bajajFolder)) {
+                fs.mkdirSync(bajajFolder, { recursive: true });
+            }
+
+            const cleanPolicyNo = policyNo.replace(/[^a-zA-Z0-9]/g, '');
+            const bajajPdfFileName = `bajaj${cleanPolicyNo}.pdf`;
+            const physicalBajajPath = path.join(bajajFolder, bajajPdfFileName);
+            const dbUrl = `/policygivenbyBajaj/${bajajPdfFileName}`;
+
+            fs.writeFileSync(physicalBajajPath, pdfBuffer);
+            logger.info(`[BAJAJ LIVE PDF] Saved: ${physicalBajajPath} (${pdfBuffer.length} bytes)`);
+
+            // ─────────────────────────────────────────────────────
+            // STEP 5 — Update DB
+            // ─────────────────────────────────────────────────────
+            await db.query(
+                `UPDATE Bajaj_Travel_Proposal_main SET Main_Bajaj_Policy_Url = ? WHERE PolicyNo = ?`,
+                [dbUrl, policyNo]
+            );
+
+            await logBajajApiActivity("BAJAJ_PDF_DOWNLOAD_SUCCESS", { policyNo }, { savedPath: physicalBajajPath, dbUrl, sizeBytes: pdfBuffer.length }, null);
+
+            return base.send_response("Bajaj PDF Downloaded Successfully", { dbUrl }, res);
+
+        } catch (error) {
+            let errMsg = error.message;
+            if (error.response?.data) {
+                const errData = Buffer.isBuffer(error.response.data)
+                    ? error.response.data.toString()
+                    : JSON.stringify(error.response.data);
+                errMsg += ` | HTTP ${error.response.status} | Details: ${errData.substring(0, 500)}`;
+            }
+            logger.error(`[BAJAJ LIVE PDF ERROR]: ${errMsg}`);
+            await logBajajApiActivity("BAJAJ_PDF_DOWNLOAD_ERROR", { policyNo: req.body.policyNo }, null, errMsg);
+            return base.send_response(`Failed to download Bajaj PDF: ${errMsg}`, null, res, 500);
+        }
+    }
+
+    async getCityByPincode_bajaj(req, res) {
+        try {
+            const { pincode } = req.body;
+
+            if (!pincode) {
+                return base.send_response("Pincode is required", null, res);
+            }
+
+            const url = "https://pit.bajajgeneral.com/BjazTravelWebServices/getCitybyPincode";
+
+            logger.info(`Fetching Bajaj city details for pincode: ${pincode}`);
+
+            const response = await axios.post(url, { pincode: pincode }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                httpsAgent: httpsAgent // Uses the agent already defined at the top of your controller
+            });
+
+            return base.send_response("City details fetched successfully", response.data, res);
+
+        } catch (error) {
+            let errMsg = error.message;
+            if (error.response?.data) {
+                errMsg += ` | Details: ${JSON.stringify(error.response.data)}`;
+            }
+            logger.error(`[BAJAJ PINCODE ERROR]: ${errMsg}`);
+
+            return base.send_response(`Failed to fetch city details: ${error.message}`, null, res);
+        }
+    }
+
+
+    // Add this method inside BajajController class in BajajController.js
+    async UpdateBajajProposer_policy(req, res) {
+        try {
+            const {
+                PolicyNo, ProposerTitle, ProposerFirstName, ProposerMiddleName,
+                ProposerLastName, ProposerGender, ProposerPassport,
+                AddressLine1, PinCode, CityName, State
+            } = req.body;
+
+            if (!PolicyNo) {
+                return base.send_response("Policy Number is required", null, res, "Failure", 1);
+            }
+
+            // Call the Stored Procedure
+            const [result] = await db.query(
+                'CALL UpdateBajajProposerDetails(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    PolicyNo, ProposerTitle, ProposerFirstName, ProposerMiddleName,
+                    ProposerLastName, ProposerGender, ProposerPassport,
+                    AddressLine1, PinCode, CityName, State
+                ]
+            );
+
+            // result[0][0] contains the SELECT statement from the SP
+            const spResult = result[0][0];
+
+            if (spResult && spResult.Status && spResult.Status.trim() === 'Success') {
+               //base.send_response(spResult.Message, null, res);             
+                   base.send_response(
+                    spResult.Message,
+                    "Success",
+                    res
+                    
+                );
+            } else {
+                // If Status isn't 'Success', return the actual message provided by the DB
+                base.send_response(spResult.Message || "Update failed", null, res, "Failure", 1);
+            }
+        } catch (error) {
+            logger.error('UpdateBajajProposer_policy Error:', error);
+            base.send_response("Error updating proposer details", null, res, "Error", 1);
+        }
+    }
 }
-
-
 
 module.exports = new BajajController();

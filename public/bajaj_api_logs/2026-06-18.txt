@@ -1,0 +1,336 @@
+
+=========================================================
+Time: 2026-06-18T11:12:39.782Z
+Endpoint: MANUAL_BAJAJ_OAUTH_TOKEN
+Request Data: {
+  "grant_type": "password",
+  "client_id": "B2BService_Client",
+  "client_secret": "0299dec1-fb95-45a8-8770-ca9537fc252c",
+  "username": "webservice@policyboss.com",
+  "password": "***[MASKED]***"
+}
+Success Data: {
+  "success": true
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T11:13:31.181Z
+Endpoint: MANUAL_BAJAJ_PDF_DOWNLOAD
+Request Data: {
+  "policyNo": "12-9911-0010143484-00"
+}
+Success Data: N/A
+Fail Data: Request failed with status code 403 | Details: {"message":"User: anonymous is not authorized to perform: execute-api:Invoke on resource: arn:aws:execute-api:ap-south-1:********8050:4zc6uroiu3/b2b/GET/bjazDownload/travel/downloadPdf/12-9911-0010143484-00 with an explicit deny in a resource-based policy"}
+=========================================================
+
+=========================================================
+Time: 2026-06-18T11:14:08.422Z
+Endpoint: MANUAL_BAJAJ_OAUTH_TOKEN
+Request Data: {
+  "grant_type": "password",
+  "client_id": "B2BService_Client",
+  "client_secret": "0299dec1-fb95-45a8-8770-ca9537fc252c",
+  "username": "webservice@policyboss.com",
+  "password": "***[MASKED]***"
+}
+Success Data: {
+  "success": true
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T15:25:58.552Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143065-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143065-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143065-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T15:25:58.609Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010143065-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:19:29.872Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:19:29.906Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:24:47.722Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:24:47.765Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:27:29.944Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:27:56.205Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:40:08.195Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:41:02.350Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:45:42.560Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T16:46:19.901Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "welcomeLetterInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "bajajPolicyInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\policygivenbyBajaj\\bajaj129911001014345100.pdf"
+}
+Success Data: {
+  "message": "PDFs Merged Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/finalcombine_bajajpolicy/Combined_BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T17:23:53.111Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T17:25:19.413Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "welcomeLetterInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "bajajPolicyInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\policygivenbyBajaj\\bajaj129911001014345100.pdf"
+}
+Success Data: {
+  "message": "PDFs Merged Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/finalcombine_bajajpolicy/Combined_BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T18:14:39.773Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T18:17:52.145Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "welcomeLetterInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "bajajPolicyInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Success Data: {
+  "message": "PDFs Merged Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/finalcombine_bajajpolicy/Combined_BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T18:40:14.663Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T18:41:37.347Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "welcomeLetterInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "bajajPolicyInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\policygivenbyBajaj\\bajaj129911001014345100.pdf"
+}
+Success Data: {
+  "message": "PDFs Merged Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/finalcombine_bajajpolicy/Combined_BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T19:05:47.106Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143451-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T19:05:49.734Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "welcomeLetterInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143451-00.pdf",
+  "bajajPolicyInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\policygivenbyBajaj\\bajaj129911001014345100.pdf"
+}
+Success Data: {
+  "message": "PDFs Merged Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143451-00.pdf",
+  "dbUrl": "/finalcombine_bajajpolicy/Combined_BajajPolicy_12-9911-0010143451-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T19:11:34.062Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010143476-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143476-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010143476-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-18T19:11:40.207Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "welcomeLetterInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010143476-00.pdf",
+  "bajajPolicyInput": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\policygivenbyBajaj\\bajaj129911001014347600.pdf"
+}
+Success Data: {
+  "message": "PDFs Merged Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\finalcombine_bajajpolicy\\Combined_BajajPolicy_12-9911-0010143476-00.pdf",
+  "dbUrl": "/finalcombine_bajajpolicy/Combined_BajajPolicy_12-9911-0010143476-00.pdf"
+}
+Fail Data: N/A
+=========================================================

@@ -40,6 +40,10 @@ app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 var requestAccess = function (req, res, next) {
+  if (req.path === '/downloadFileOpen') {
+        return next(); // ← no token needed for this route
+    }
+
   token=req.header("token") ;
 
   //console.log(user + " "+pwd);

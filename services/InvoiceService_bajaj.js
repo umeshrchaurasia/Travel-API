@@ -221,7 +221,7 @@ class InvoiceService_bajaj {
                 fs.unlinkSync(pdfPath);
             }
 
-            const templateFileName = processed.Paymentmode === 'Upfront Commission'
+            const templateFileName = processed.Paymentmode === 'Upfront'
                 ? 'tax-invoice-inter_upfront_bajaj.ejs'
                 : 'tax-invoice-inter_bajaj.ejs';
 
@@ -301,7 +301,7 @@ class InvoiceService_bajaj {
 
             // Determine which template to use based on Paymentmode
             let templateFileName = 'tax-invoice-inter_bajaj.ejs'; // Default template
-            if (processed.Paymentmode === 'Upfront Commission') {
+            if (processed.Paymentmode === 'Upfront') {
                 templateFileName = 'tax-invoice-inter_upfront_bajaj.ejs';
             }
 
@@ -582,7 +582,7 @@ class InvoiceService_bajaj {
         let numSgst = 0;
         let numIgst = 0;
 
-        if (invoiceData.Paymentmode === 'Upfront Commission') {
+        if (invoiceData.Paymentmode === 'Upfront') {
             if (state === "GJ" || state === "GUJARAT") {
                 numCgst = Math.round(subTotalAmount_Upfront * 0.09);
                 numSgst = Math.round(subTotalAmount_Upfront * 0.09);
@@ -618,7 +618,7 @@ class InvoiceService_bajaj {
 
 
         // Conditionally calculate commission and TDS
-        if (invoiceData.Paymentmode === 'Upfront Commission') {
+        if (invoiceData.Paymentmode === 'Upfront') {
 
 
             lessCommission = Math.round((subTotalAmount_Upfront * payoutPercentage) / 100);

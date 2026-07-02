@@ -297,6 +297,57 @@ class AyushController {
             return base.send_response("An internal server error occurred while fetching premium details.", error.message, res, "Error", 500);
         }
     }
+
+
+
+    async getProposalByPassport_AyushPay(req, res) {
+        try {
+            const passportNo = req.query.passportpassportno || req.body.passportpassportno;
+
+            if (!passportNo) {
+                return base.send_response(
+                    "Passport number is required",
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            const [rows] = await db.query(
+                'CALL sp_GetProposalByagent_Ayushpay(?)',
+                [passportNo]
+            );
+
+            if (rows[0] && rows[0].length > 0) {
+                base.send_response(
+                    "Proposal retrieved successfully",
+                    rows[0],
+                    res,
+                    "Success",
+                    0
+                );
+            } else {
+                base.send_response(
+                    "No proposal found with this passport number",
+                    [],
+                    res,
+                    "Success",
+                    0
+                );
+            }
+
+        } catch (error) {
+            logger.error('Error in getProposalBypassportnumber:', error);
+            base.send_response(
+                "Error retrieving proposal",
+                null,
+                res,
+                "Error",
+                1
+            );
+        }
+    }
 }
 
 module.exports = new AyushController();

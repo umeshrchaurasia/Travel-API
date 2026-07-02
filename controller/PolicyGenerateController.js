@@ -11,6 +11,7 @@ class PolicyGenerateController {
         this.generatePolicyHTML = this.generatePolicyHTML.bind(this);
         this.generateSamplePolicy = this.generateSamplePolicy.bind(this);
         this.checkOrGenerateASNumber = this.checkOrGenerateASNumber.bind(this);
+       
     }
 
     // Method to check or generate AS number
@@ -30,13 +31,21 @@ class PolicyGenerateController {
                 // Create new record with new AS number
                 logger.info('No existing AS number found, creating new one');
 
-                // Get next AS number
+                // Get next AS number checking for 'IEU' prefix
+                // Note: SUBSTRING is 4 because 'IEU' is 3 characters long
                 const [numResults] = await db.query(
-                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber, 3) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter'
+                    "SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter WHERE Asnumber LIKE 'IEU%'"
                 );
 
-                const nextNum = numResults[0].nextNum || 1;
-                const asNumber = 'AS' + String(nextNum).padStart(8, '0');
+                let nextNum = numResults[0].nextNum || 1;
+                
+                // If no records exist, start the sequence at 10001
+                if (nextNum === 1) {
+                    nextNum = 10001;
+                }
+                
+                // Generates IEU00010001
+                const asNumber = 'IEU' + String(nextNum).padStart(8, '0');
 
                 // Format dates properly if they're Date objects
                 const formattedStartDate = policyStartDate instanceof Date ?
@@ -64,142 +73,142 @@ class PolicyGenerateController {
         }
     }
 
-   // Updated part of PolicyGenerateController.js
-async generatePolicybyPolicyno(req, res) {
-    try {
-        logger.info('API call received for generatePolicybyPolicyno');
-        const { Policyno } = req.body;
-        logger.info(`Policy number: ${Policyno}`);
+    // Updated part of PolicyGenerateController.js
+    async generatePolicybyPolicyno(req, res) {
+        try {
+            logger.info('API call received for generatePolicybyPolicyno');
+            const { Policyno } = req.body;
+            logger.info(`Policy number: ${Policyno}`);
 
-        if (!Policyno) {
-            logger.warn('Missing policy number in request');
-            return base.send_response("Policy No is required", null, res, 400);
-        }
-
-        // Get policy details
-        const [policyRows] = await db.query('CALL getPolicyDetailsbyPolicyno(?)', [Policyno]);
-        const results = policyRows[0];
-
-        logger.info(`Query results count: ${results ? results.length : 0}`);
-
-        if (results && results.length > 0) {
-            const policyData = results[0];
-            logger.info(`Found policy data for ${Policyno}, generating documents`);
-
-            // Get base amount from policy data - Add proper type handling
-            // Convert to number to ensure consistent comparison
-            const rawPlanAmount = policyData.PlanAmount;
-            const baseAmount = parseInt(String(rawPlanAmount).replace(/,/g, ''), 10);
-            
-            logger.info(`Raw plan amount: ${rawPlanAmount}, Converted base amount: ${baseAmount}`);
-
-            // Get coverage details from coverage_master table with better error handling
-            try {
-                // Try the query with the numeric base amount
-                const [coverageRows] = await db.query(
-                    'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?', 
-                    [baseAmount]
-                );
-                
-                logger.info(`Found ${coverageRows ? coverageRows.length : 0} coverage records for base amount ${baseAmount}`);
-                
-                // Add coverage details to policy data
-                policyData.coverageDetails = coverageRows || [];
-                
-                // Log first few coverage items for verification
-                if (coverageRows && coverageRows.length > 0) {
-                    logger.info(`First coverage item: ${JSON.stringify(coverageRows[0])}`);
-                }
-                
-                // If no coverage data found for this base amount, try a default
-                if (!coverageRows || coverageRows.length === 0) {
-                    logger.warn(`No coverage data found for base amount ${baseAmount}, using default 60000`);
-                    
-                    const [defaultCoverageRows] = await db.query(
-                        'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?', 
-                        [60000]
-                    );
-                    
-                    policyData.coverageDetails = defaultCoverageRows || [];
-                }
-            } catch (coverageError) {
-                logger.error(`Error fetching coverage details: ${coverageError.message}`);
-                policyData.coverageDetails = []; // Set to empty array if error occurs
+            if (!Policyno) {
+                logger.warn('Missing policy number in request');
+                return base.send_response("Policy No is required", null, res, 400);
             }
 
-            // Rest of the code remains the same...
-            try {
-                const fullName = [policyData.FirstName, policyData.MiddleName, policyData.LastName].filter(Boolean).join(' ');
-                const fullAddress = [policyData.AddressLine1, policyData.AddressLine2, policyData.CityName, policyData.State, policyData.PinCode].filter(Boolean).join(', ');
+            // Get policy details
+            const [policyRows] = await db.query('CALL getPolicyDetailsbyPolicyno(?)', [Policyno]);
+            const results = policyRows[0];
 
-                const asNumber = await this.checkOrGenerateASNumber(
-                    Policyno,
-                    policyData.PolicyStartDate,
-                    policyData.PolicyEndDate,                        
-                    fullName,
-                    fullAddress,
-                    policyData.PremiumAmount,
-                    policyData.EmailID,
-                    policyData.MobileNumber,
-                    policyData.day_of_difference 
-                );
-                policyData.Asnumber = asNumber;
-                logger.info(`Using AS Number: ${asNumber} for policy ${Policyno}`);
-            } catch (asError) {
-                logger.error(`Error getting AS number: ${asError.message}`);
-                policyData.Asnumber = ''; // Set to empty string if error occurs
-            }
+            logger.info(`Query results count: ${results ? results.length : 0}`);
 
-            // Store the original plan amount separately
-            policyData.originalPlanAmount = rawPlanAmount;
-            
-            // Generate PDF and related assets
-            policyService.generatePolicy(Policyno, policyData, async (err, result) => {
-                if (err) {
-                    logger.error('Policy generation error:', err);
-                    return base.send_response("Error generating policy documents: " + err.message, { count: results.length, proposals: results }, res, 500);
-                }
+            if (results && results.length > 0) {
+                const policyData = results[0];
+                logger.info(`Found policy data for ${Policyno}, generating documents`);
 
-                const pdfUrl = '/policy/' + path.basename(result.pdfPath);
-                const certificateId = Policyno;
+                // Get base amount from policy data - Add proper type handling
+                // Convert to number to ensure consistent comparison
+                const rawPlanAmount = policyData.PlanAmount;
+                const baseAmount = parseInt(String(rawPlanAmount).replace(/,/g, ''), 10);
 
-                // Update proposal_main with pdfUrl
+                logger.info(`Raw plan amount: ${rawPlanAmount}, Converted base amount: ${baseAmount}`);
+
+                // Get coverage details from coverage_master table with better error handling
                 try {
-                    const updateQuery = `UPDATE proposal_main SET PolicypdfUrl = ? WHERE Certificate_Number = ?`;
-                    const [updateResult] = await db.query(updateQuery, [pdfUrl, certificateId]);
+                    // Try the query with the numeric base amount
+                    const [coverageRows] = await db.query(
+                        'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?',
+                        [baseAmount]
+                    );
 
-                    if (updateResult.affectedRows > 0) {
-                        logger.info(`Successfully updated proposal_main for certificate: ${certificateId}`);
-                    } else {
-                        logger.warn(`No rows updated in proposal_main for certificate: ${certificateId}`);
+                    logger.info(`Found ${coverageRows ? coverageRows.length : 0} coverage records for base amount ${baseAmount}`);
+
+                    // Add coverage details to policy data
+                    policyData.coverageDetails = coverageRows || [];
+
+                    // Log first few coverage items for verification
+                    if (coverageRows && coverageRows.length > 0) {
+                        logger.info(`First coverage item: ${JSON.stringify(coverageRows[0])}`);
                     }
-                } catch (updateError) {
-                    logger.error(`Error updating PolicypdfUrl: ${updateError}`);
+
+                    // If no coverage data found for this base amount, try a default
+                    if (!coverageRows || coverageRows.length === 0) {
+                        logger.warn(`No coverage data found for base amount ${baseAmount}, using default 60000`);
+
+                        const [defaultCoverageRows] = await db.query(
+                            'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?',
+                            [60000]
+                        );
+
+                        policyData.coverageDetails = defaultCoverageRows || [];
+                    }
+                } catch (coverageError) {
+                    logger.error(`Error fetching coverage details: ${coverageError.message}`);
+                    policyData.coverageDetails = []; // Set to empty array if error occurs
                 }
 
-                // Final response
-                logger.info(`Successfully generated documents for policy ${Policyno}`);
-                base.send_response(
-                    "Policy documents generated successfully",
-                    {
-                        count: results.length,
-                        proposals: results,
-                        pdfUrl,
-                        qrCodeUrl: result.qrCodePath.replace('./public', ''),
-                        asNumber: result.processedData.Asnumber
-                    },
-                    res
-                );
-            });
-        } else {
-            logger.warn(`No policy found for ${Policyno}`);
-            base.send_response("No Policy found for the given criteria", { count: 0, proposals: [] }, res);
+                // Rest of the code remains the same...
+                try {
+                    const fullName = [policyData.FirstName, policyData.MiddleName, policyData.LastName].filter(Boolean).join(' ');
+                    const fullAddress = [policyData.AddressLine1, policyData.AddressLine2, policyData.CityName, policyData.State, policyData.PinCode].filter(Boolean).join(', ');
+
+                    const asNumber = await this.checkOrGenerateASNumber(
+                        Policyno,
+                        policyData.PolicyStartDate,
+                        policyData.PolicyEndDate,
+                        fullName,
+                        fullAddress,
+                        policyData.PremiumAmount,
+                        policyData.EmailID,
+                        policyData.MobileNumber,
+                        policyData.day_of_difference
+                    );
+                    policyData.Asnumber = asNumber;
+                    logger.info(`Using AS Number: ${asNumber} for policy ${Policyno}`);
+                } catch (asError) {
+                    logger.error(`Error getting AS number: ${asError.message}`);
+                    policyData.Asnumber = ''; // Set to empty string if error occurs
+                }
+
+                // Store the original plan amount separately
+                policyData.originalPlanAmount = rawPlanAmount;
+
+                // Generate PDF and related assets
+                policyService.generatePolicy(Policyno, policyData, async (err, result) => {
+                    if (err) {
+                        logger.error('Policy generation error:', err);
+                        return base.send_response("Error generating policy documents: " + err.message, { count: results.length, proposals: results }, res, 500);
+                    }
+
+                    const pdfUrl = '/policy/' + path.basename(result.pdfPath);
+                    const certificateId = Policyno;
+
+                    // Update proposal_main with pdfUrl
+                    try {
+                        const updateQuery = `UPDATE proposal_main SET PolicypdfUrl = ? WHERE Certificate_Number = ?`;
+                        const [updateResult] = await db.query(updateQuery, [pdfUrl, certificateId]);
+
+                        if (updateResult.affectedRows > 0) {
+                            logger.info(`Successfully updated proposal_main for certificate: ${certificateId}`);
+                        } else {
+                            logger.warn(`No rows updated in proposal_main for certificate: ${certificateId}`);
+                        }
+                    } catch (updateError) {
+                        logger.error(`Error updating PolicypdfUrl: ${updateError}`);
+                    }
+
+                    // Final response
+                    logger.info(`Successfully generated documents for policy ${Policyno}`);
+                    base.send_response(
+                        "Policy documents generated successfully",
+                        {
+                            count: results.length,
+                            proposals: results,
+                            pdfUrl,
+                            qrCodeUrl: result.qrCodePath.replace('./public', ''),
+                            asNumber: result.processedData.Asnumber
+                        },
+                        res
+                    );
+                });
+            } else {
+                logger.warn(`No policy found for ${Policyno}`);
+                base.send_response("No Policy found for the given criteria", { count: 0, proposals: [] }, res);
+            }
+        } catch (error) {
+            logger.error('generatePolicybyPolicyno error:', error);
+            base.send_response("Error retrieving policy details: " + (error.message || error), null, res, 500);
         }
-    } catch (error) {
-        logger.error('generatePolicybyPolicyno error:', error);
-        base.send_response("Error retrieving policy details: " + (error.message || error), null, res, 500);
     }
-}
 
     async generatePolicyHTML(req, res) {
         try {
@@ -229,12 +238,12 @@ async generatePolicybyPolicyno(req, res) {
                 // Get coverage details from coverage_master table
                 try {
                     const [coverageRows] = await db.query(
-                        'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?', 
+                        'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?',
                         [baseAmount]
                     );
-                    
+
                     logger.info(`Found ${coverageRows ? coverageRows.length : 0} coverage records for base amount ${baseAmount}`);
-                    
+
                     // Add coverage details to policy data
                     policyData.coverageDetails = coverageRows || [];
                 } catch (coverageError) {
@@ -250,13 +259,13 @@ async generatePolicybyPolicyno(req, res) {
                     const asNumber = await this.checkOrGenerateASNumber(
                         Policyno,
                         policyData.PolicyStartDate,
-                        policyData.PolicyEndDate,                        
+                        policyData.PolicyEndDate,
                         fullName,
                         fullAddress,
                         policyData.PremiumAmount,
                         policyData.EmailID,
                         policyData.MobileNumber,
-                        policyData.day_of_difference 
+                        policyData.day_of_difference
                     );
                     policyData.Asnumber = asNumber;
                     logger.info(`Using AS Number: ${asNumber} for policy ${Policyno}`);
@@ -302,16 +311,16 @@ async generatePolicybyPolicyno(req, res) {
 
         // Sample base amount to query coverage details
         const sampleBaseAmount = 60000;
-        
+
         try {
             // Get coverage details based on the sample base amount
             const [coverageRows] = await db.query(
-                'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?', 
+                'SELECT id, coverage, sum_insured FROM Traveldb.coverage_master WHERE base_amount = ?',
                 [sampleBaseAmount]
             );
-            
+
             logger.info(`Found ${coverageRows ? coverageRows.length : 0} sample coverage records`);
-            
+
             // Create a sample policy data with default values
             const samplePolicyData = {
                 Policy_No: 'SAMPLE' + Date.now(),
@@ -360,6 +369,7 @@ async generatePolicybyPolicyno(req, res) {
             base.send_response("Error generating sample policy: " + (error.message || error), null, res, 500);
         }
     }
+  
 }
 
 module.exports = new PolicyGenerateController();

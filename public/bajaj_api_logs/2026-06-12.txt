@@ -1,0 +1,73 @@
+
+=========================================================
+Time: 2026-06-12T05:26:14.123Z
+Endpoint: CALC_PREM
+Request Data: {
+  "pUserId": "webservice@policyboss.com",
+  "pPassword": "Bagic123",
+  "pServiceMode": "CALC_PREM",
+  "pPayMode": "AFLOAT",
+  "pQuoteNo": "",
+  "familyflag": "N",
+  "pTravelPlanDtlsList": {
+    "productCode": "56530082",
+    "Product": "GROUP TRAVEL",
+    "StartDate": "01/08/2026",
+    "EndDate": "09/08/2026",
+    "masterPolicyNumber": "12-9911-0009069439-00",
+    "Plan": "TPHGLD",
+    "geographicalCover": "Worldwide Including USA and Canada",
+    "countryName": "USA",
+    "pJourneryDtls": {
+      "fromDate": "01/08/2026",
+      "toDate": "09/08/2026",
+      "noOfDays": "9"
+    }
+  },
+  "pTravellerDtls": [
+    {
+      "beforeTitle": "Mr",
+      "gender": "M",
+      "firstName": "rahul",
+      "middleName": "rajendra",
+      "LastName": "chaurasia",
+      "dateOfBirth": "01/01/1990",
+      "relationWithProposer": "SELF",
+      "passportNumber": "R1234324",
+      "nomineeName": "pihu chaurasia",
+      "nomineeRelation": "DAUGHTER",
+      "trvEmailId": "umeshchaurasia@gmail.com",
+      "trvMobileNumber": "9224624999",
+      "anyPreExistingDisease": "No"
+    }
+  ],
+  "pProposerDtls": {
+    "beforeTitle": "Mr",
+    "firstName": "umesh",
+    "middleName": "rajendra",
+    "LastName": "chaurasia",
+    "dateOfBirth": "01/01/1990",
+    "GSTINNumber": "24AADCI7698J1Z0",
+    "PANNumber": "",
+    "Pincode": "400022",
+    "State": "MAHARASHTRA",
+    "City": "MUMBAI",
+    "Area": "",
+    "Address": "Mahadev building flat 1402",
+    "mobileNumber": "9224624999",
+    "emailId": "umeshchaurasia@gmail.com",
+    "passportNumber": "T1235435",
+    "gender": "M",
+    "nomineeName": "pihu chaurasia",
+    "nomineeRelation": "DAUGHTER"
+  },
+  "pTripDetails": {
+    "groupName": "No",
+    "natureOfGroup": "No",
+    "typeOfTour": "No",
+    "multipleCity": "No"
+  }
+}
+Success Data: N/A
+Fail Data: Request failed with status code 403
+=========================================================

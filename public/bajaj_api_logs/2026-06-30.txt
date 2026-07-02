@@ -1,0 +1,120 @@
+
+=========================================================
+Time: 2026-06-30T06:42:04.368Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010180994-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010180994-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010180994-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-30T06:42:25.413Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010180994-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:16:02.246Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:16:06.062Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:29:20.473Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:29:23.953Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:33:32.007Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:33:32.026Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:41:09.508Z
+Endpoint: WELCOME_LETTER_GEN
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: {
+  "message": "Welcome Letter Generated Successfully",
+  "savedPath": "F:\\Umesh\\Umesh-TravellInsurance\\travel-Api\\Fin-Mart-API\\public\\welcome-letters-bajaj\\Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf",
+  "dbUrl": "/welcome-letters-bajaj/Welcome-letters-BajajPolicy_12-9911-0010247198-00.pdf"
+}
+Fail Data: N/A
+=========================================================
+
+=========================================================
+Time: 2026-06-30T13:41:09.521Z
+Endpoint: PDF_MERGE
+Request Data: {
+  "policyNo": "12-9911-0010247198-00"
+}
+Success Data: N/A
+Fail Data: Missing input file(s) on disk. Skipping merge.
+=========================================================

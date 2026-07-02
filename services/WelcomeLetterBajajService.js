@@ -4,11 +4,13 @@ const fs = require('fs');
 const logger = require('../bin/Logger');
 const puppeteer = require('puppeteer');
 const db = require('../bin/dbconnection');
+const QRCode = require('qrcode');
 
 class WelcomeLetterBajajService {
   constructor() {
     this.pdfStorePath = path.join(__dirname, '../public/welcome-letters-bajaj/');
     this.templatesPath = path.join(__dirname, '../views/templates');
+    this.qrCodeStorePath = path.join(__dirname, '../public/qrcodes/');
     this.templateFile = 'welcome-letter-bajaj.ejs';
 
     this.viewportConfig = {
@@ -33,6 +35,12 @@ class WelcomeLetterBajajService {
         logger.info(`Created templates directory: ${this.templatesPath}`);
       }
 
+      // <-- ADD THIS BLOCK FOR QR CODES
+      if (!fs.existsSync(this.qrCodeStorePath)) {
+        fs.mkdirSync(this.qrCodeStorePath, { recursive: true });
+        logger.info(`Created qrcodes directory: ${this.qrCodeStorePath}`);
+      }
+
       const destTemplate = path.join(this.templatesPath, this.templateFile);
       const sourceTemplate = path.join(__dirname, '../views', this.templateFile);
 
@@ -51,11 +59,30 @@ class WelcomeLetterBajajService {
     try {
       fs.writeFileSync(
         templatePath,
-        fs.readFileSync(path.join(__dirname, '../views/welcome-letter.ejs'), 'utf8')
+        fs.readFileSync(path.join(__dirname, '../views/welcome-letter-bajaj.ejs'), 'utf8')
       );
       logger.info(`Created default welcome letter template at ${templatePath}`);
     } catch (error) {
       logger.error(`Error creating default template: ${error.message}`);
+    }
+  }
+
+  async imageToBase64(imagePath) {
+    try {
+      const img = await fs.promises.readFile(imagePath);
+      const ext = path.extname(imagePath).toLowerCase();
+
+      let mime = 'image/jpeg';
+      if (ext === '.png') {
+        mime = 'image/png';
+      } else if (ext === '.svg') {
+        mime = 'image/svg+xml';
+      }
+
+      return `data:${mime};base64,${img.toString('base64')}`;
+    } catch (error) {
+      logger.error(`Error converting image to base64 for ${imagePath}: ${error.message}`);
+      return null;
     }
   }
 
@@ -72,11 +99,44 @@ class WelcomeLetterBajajService {
    * @param {string} outputPath - Full path where the PDF should be saved
    * @returns {Promise<Object>} - Result object with paths and customer info
    */
-  async generateWelcomeLetterBajajPdf(policynumber, letterData, outputPath) {
+async generateWelcomeLetterBajajPdf(policynumber, letterData, outputPath) {
     let browser = null;
 
     try {
       logger.info(`Starting welcome letter PDF generation for policy ${policynumber}`);
+
+      // Fetch base64 images for the template
+      const imgDir = path.join(__dirname, '../public/svg');
+      const [wel_banner2, wel_credit, wel_footerbottom] = await Promise.all([
+        this.imageToBase64(path.join(imgDir, 'wel_banner2.svg')),
+        this.imageToBase64(path.join(imgDir, 'wel_credit.svg')),
+        this.imageToBase64(path.join(imgDir, 'wel_footerbottom.svg'))
+      ]);
+
+      // --- NEW QR CODE GENERATION LOGIC ---
+   //   const PDF_BASE_URL = 'http://localhost:3000/api'; // Update to your production URL if needed
+      const PDF_BASE_URL = 'http://zextratravelassist.interstellar.co.in/travel-api/api';
+
+      const pdfFileName = path.basename(outputPath);
+      const expectedPdfPath = `/welcome-letters-bajaj/${pdfFileName}`;
+
+      const encodedFilePath = Buffer.from(expectedPdfPath).toString('base64');
+      const downloadUrl = `${PDF_BASE_URL}/downloadFileOpen?filePath=${encodeURIComponent(encodedFilePath)}`;
+
+      const downloadQrPath = path.join(this.qrCodeStorePath, `${policynumber}-welcome-download.png`);
+      await QRCode.toFile(downloadQrPath, downloadUrl, { errorCorrectionLevel: 'M', width: 400, margin: 0 });
+      const downloadUrlQrCodeBase64 = await this.imageToBase64(downloadQrPath);
+
+      // Inject base64 images into the policy data object
+      if (letterData.policy) {
+        letterData.policy.wel_banner2Base64 = wel_banner2;
+        letterData.policy.wel_creditBase64 = wel_credit;
+        letterData.policy.wel_footerbottomBase64 = wel_footerbottom;
+        letterData.policy.downloadUrlQrCodeBase64 = downloadUrlQrCodeBase64;
+
+        // ADDED: Dynamic assist link for the button
+        letterData.policy.assistLink = `http://zextratravelassist.interstellar.co.in/travel-api/travel-euro/travel-euro-bajaj.html?policyNo=${policynumber}`;
+      }
 
       // Remove existing file to avoid lock issues
       if (fs.existsSync(outputPath)) {
@@ -97,22 +157,64 @@ class WelcomeLetterBajajService {
       logger.info(`Rendering EJS template for customer: ${letterData.customerName}`);
 
       const renderedHtml = await this.renderEjsTemplate(templatePath, letterData);
-      const enhancedHtml = this.enhanceHtmlForPdf(renderedHtml);
+   //   const enhancedHtml = this.enhanceHtmlForPdf(renderedHtml);
 
-      await this.generatePdf(enhancedHtml, outputPath);
+      // --- PUPPETEER LOGIC SOURCED FROM POLICYSERVICE.JS ---
+      browser = await puppeteer.launch({
+        headless: true,
+        executablePath: puppeteer.executablePath(),
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--single-process',
+          '--window-size=1920,1080',
+          '--hide-scrollbars'
+        ]
+      });
+
+      const page = await browser.newPage();
+
+      // Set longer timeout for content loading
+      await page.setDefaultNavigationTimeout(60000);
+
+      // Add error handler
+      page.on('error', err => {
+        logger.error(`Puppeteer page error: ${err}`);
+      });
+
+      // Add console logging from the page for debugging
+      page.on('console', msg => {
+        logger.info(`Page console: ${msg.text()}`);
+      });
+
+      await page.setContent(renderedHtml, {
+        waitUntil: 'networkidle0',
+        timeout: 60000
+      });
+
+      await page.pdf({
+        path: outputPath,
+        format: 'A4',
+        printBackground: true,
+        margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
+      });
+
+      await browser.close();
+      browser = null; // Clear browser reference so catch block doesn't try to close it again
 
       logger.info(`PDF generated at ${outputPath}`);
 
-      // FIX: Use path.basename so the URL is always correct regardless of OS path separators
-      const pdfFileName = path.basename(outputPath);
-      const pdfUrl = `/welcome-letters-bajaj/${pdfFileName}`;
+      const pdfUrl = expectedPdfPath;
 
       return {
         pdfPath: outputPath,
         pdfUrl,
-        policynumber: policynumber,                       // FIX: was `customerId` (undefined)
+        policynumber: policynumber,
         customerName: letterData.customerName
       };
+
     } catch (error) {
       if (browser) {
         try {

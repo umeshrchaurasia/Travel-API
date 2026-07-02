@@ -29,6 +29,9 @@ class PolicyService {
     this.phoneImageBase64 = base64Images.phoneImageBase64;
     this.whatsupImageBase64 = base64Images.whatsupImageBase64;
 
+
+    this.CompanyLogoImageBase64 = base64Images.CompanyLogoImageBase64;
+
     // You'd add scanner image base64 here too if needed
     this.ScannerImageBase64 = ""; // Add your base64 string here
   }
@@ -41,6 +44,12 @@ class PolicyService {
 
   async generatePolicy(policyNo, policyData, callback) {
     try {
+
+      //  const PDF_BASE_URL = 'http://localhost:3000/api';
+      const PDF_BASE_URL = 'http://zextratravelassist.interstellar.co.in/travel-api/api';// because we have to call controller downloadFileOpen which is in the same API, so we use the same base URL
+
+
+
       const processed = this.preparePolicyData(policyData);
       const timestamp = Date.now();
       const pdfPath = path.join(this.pdfStorePath, `${policyNo}_${timestamp}.pdf`);
@@ -48,24 +57,130 @@ class PolicyService {
       const qrPath = path.join(this.qrCodeStorePath, `${policyNo}-qr.png`);
 
       const qrCodeData = this.generateQRCodeData(processed);
-      await QRCode.toFile(qrPath, qrCodeData, { errorCorrectionLevel: 'H', width: 180 });
+      // UPDATE: Increased width to 300 and added margin: 1 for a crisp, high-res scan
+      await QRCode.toFile(qrPath, qrCodeData, { errorCorrectionLevel: 'M', width: 400, margin: 0 });
       const qrCodeBase64 = await this.imageToBase64(qrPath);
       processed.qrCodeBase64 = qrCodeBase64;
 
-      // Add base64 images directly instead of file URLs
-      processed.watermarkBase64 = this.WatermarkImageBase64;
+      // ADD THIS NEW BLOCK: SECOND QR CODE (DOWNLOAD URL)
+      const downloadQrPath = path.join(this.qrCodeStorePath, `${policyNo}-download.png`);
+      const pdfFileName = `${policyNo}_${timestamp}.pdf`;
+      const expectedPdfPath = `/policy/${pdfFileName}`;
+
+      // Encode or encrypt your path here so it matches your yIMhXVw%2BSD... format
+      const encodedFilePath = Buffer.from(expectedPdfPath).toString('base64');
+      const downloadUrl = `${PDF_BASE_URL}/downloadFileOpen?filePath=${encodeURIComponent(encodedFilePath)}`;
+
+      // UPDATE: Increased width to 300 and added margin: 1 for a crisp, high-res scan
+      await QRCode.toFile(downloadQrPath, downloadUrl, {
+        errorCorrectionLevel: 'M',
+        width: 400,
+        margin: 0
+      });
+      processed.downloadUrlQrCodeBase64 = await this.imageToBase64(downloadQrPath);
+
+      const imgDir = path.join(__dirname, '../public/svg');
+
+      const [
+        logoIndusind, arrowIcon, phoneIcon, whatsappIcon,
+        facebookIcon, metaIcon, linkedinIcon, instaIcon,
+        appleIcon, androidIcon, logoIndusindApp, mayfairLogo,
+        watermarkImg, bkgImg, contactImg, signImg, wel_banner2,
+        wel_credit, wel_footerbottom,
+      ] = await Promise.all([
+        this.imageToBase64(path.join(imgDir, 'logo-indusind.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-arrow.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-phone.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-whatsapp.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-facebook.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-meta.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-linkdin.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-insta.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-apple.svg')),
+        this.imageToBase64(path.join(imgDir, 'ico-android.svg')),
+        this.imageToBase64(path.join(imgDir, 'logo-indusind-app.svg')),
+        this.imageToBase64(path.join(imgDir, 'mayfair-logo.svg')),
+        this.imageToBase64(path.join(imgDir, 'watermark.svg')),
+        this.imageToBase64(path.join(imgDir, 'bkg.png')),
+        this.imageToBase64(path.join(imgDir, 'contact.jpg')),
+        this.imageToBase64(path.join(imgDir, 'sign.jpg')),
+        this.imageToBase64(path.join(imgDir, 'wel_banner2.svg')),
+        this.imageToBase64(path.join(imgDir, 'wel_credit.svg')),
+        this.imageToBase64(path.join(imgDir, 'wel_footerbottom.svg'))
+      ]);
+
+
+      processed.logoIndusindSvg = logoIndusind;
+      processed.arrowImageBase64 = arrowIcon;
+      processed.phoneImageBase64 = phoneIcon;
+      processed.whatsupImageBase64 = whatsappIcon;
+      processed.facebookImageBase64 = facebookIcon;
+      processed.metaImageBase64 = metaIcon;
+      processed.linkedinImageBase64 = linkedinIcon;
+      processed.instaImageBase64 = instaIcon;
+      processed.appleImageBase64 = appleIcon;
+      processed.androidImageBase64 = androidIcon;
+      processed.logoIndusindAppBase64 = logoIndusindApp;
+      processed.mayfairLogoBase64 = mayfairLogo;
+
+
+      // Override the old static base64s with the new dynamic ones
+      processed.watermarkBase64 = watermarkImg;
+      processed.bkgImageBase64 = bkgImg;
+      processed.contactBase64 = contactImg;
+      processed.signBase64 = signImg;
+
+      processed.wel_banner2Base64 = wel_banner2;
+      processed.wel_creditBase64 = wel_credit;
+      processed.wel_footerbottomBase64 = wel_footerbottom;
+
+
       processed.logoBase64 = this.LogoImageBase64;
       processed.scannerBase64 = this.ScannerImageBase64;
-      processed.contactBase64 = this.ContactImageBase64;
-      processed.signBase64 = this.SignImageBase64;
       processed.europBase64 = this.EuropImageBase64;
       processed.logotravelimageBase64 = this.LogotravelImageBase64;
       processed.travel_signImageBase64 = this.Travel_signImageBase64;
       processed.techtravelImageBase64 = this.techtravelImageBase64;
 
-      processed.arrowImageBase64 = this.arrowImageBase64;
-      processed.phoneImageBase64 = this.phoneImageBase64;
-      processed.whatsupImageBase64 = this.whatsupImageBase64;
+
+      processed.CompanyLogoImageBase64 = this.CompanyLogoImageBase64;
+
+      // --- NEW: Dynamic Master Policy Number Logic ---
+      const transitionDate = new Date(2026, 5, 3); // June 3, 2026 (Months are 0-indexed)
+      let issueDate = new Date(); // Default to today
+
+      if (policyData.PolicyStartDate) {
+        // Check if it's a string before using string methods like .includes()
+        if (typeof policyData.PolicyStartDate === 'string') {
+          if (policyData.PolicyStartDate.includes('-') || policyData.PolicyStartDate.includes('/')) {
+            const separator = policyData.PolicyStartDate.includes('-') ? '-' : '/';
+            const parts = policyData.PolicyStartDate.split(separator);
+
+            // If it starts with Day (DD-MM-YYYY)
+            if (parts[0].length <= 2) {
+              issueDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            } else {
+              issueDate = new Date(policyData.PolicyStartDate);
+            }
+          } else {
+            issueDate = new Date(policyData.PolicyStartDate);
+          }
+        } else {
+          // If it is already a Date object (like in your logs), just use it directly!
+          issueDate = new Date(policyData.PolicyStartDate);
+        }
+      }
+
+      // Your exact condition
+      if (issueDate >= transitionDate) {
+        // Valid from 03/06/2026 to 02/06/2027
+        processed.masterPolicyNo = '920292628220000041';
+      } else {
+        // Valid till 02/06/2026
+        processed.masterPolicyNo = '920292528220000141';
+      }
+
+
 
       // Process the coverage data if it exists in policyData.coverageDetails
       if (policyData.coverageDetails && Array.isArray(policyData.coverageDetails)) {
@@ -204,10 +319,18 @@ class PolicyService {
   async imageToBase64(imagePath) {
     try {
       const img = await fs.promises.readFile(imagePath);
-      const mime = path.extname(imagePath).toLowerCase() === '.png' ? 'image/png' : 'image/jpeg';
+      const ext = path.extname(imagePath).toLowerCase();
+
+      let mime = 'image/jpeg';
+      if (ext === '.png') {
+        mime = 'image/png';
+      } else if (ext === '.svg') {
+        mime = 'image/svg+xml'; // This is required for SVGs to render!
+      }
+
       return `data:${mime};base64,${img.toString('base64')}`;
     } catch (error) {
-      logger.error(`Error converting image to base64: ${error.message}`);
+      logger.error(`Error converting image to base64 for ${imagePath}: ${error.message}`);
       return null;
     }
   }
@@ -304,7 +427,9 @@ class PolicyService {
 
       formattedMonth_createdate: formatnewDate(policyData.CreateDate),
       formattedCurrentDate: formatDate(today),
-      currentDate: `${today.getFullYear()}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '0')} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}:${today.getSeconds().toString().padStart(2, '0')} IST`
+      currentDate: `${today.getFullYear()}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getDate().toString().padStart(2, '0')} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}:${today.getSeconds().toString().padStart(2, '0')} IST`,
+
+      assistLink: `http://zextratravelassist.interstellar.co.in/travel-api/travel-euro/travel-euro.html?policyNo=${policyData.Policy_No}`,
 
     };
   }

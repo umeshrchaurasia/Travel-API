@@ -54,6 +54,13 @@ class WelcomeLetterBajajController {
             // First, get or create AS number for the policy
             logger.info(`Getting AS number for policy: ${formData.policyNumber}`);
 
+            // Helper function to safely format dates to YYYY-MM-DD
+
+            // ✅ Read and format all incoming dates
+            const formattedStartDate = (formData.departureDate);
+            const formattedEndDate = (formData.arrivalDate);
+            const formattedIssueDate = (formData.issueDate);
+
             // Check existing record or create new
             const [existingRows] = await db.query('SELECT * FROM welcome_letter_bajaj WHERE Policy_Number = ?', [formData.policyNumber]);
 
@@ -62,39 +69,49 @@ class WelcomeLetterBajajController {
             if (existingRows && existingRows.length > 0) {
                 // Use existing record
                 asNumber = existingRows[0].Asnumber_bajaj;
-                logger.info(`Found existing record with AS number: ${asNumber}`);
+                logger.info(`Found existing record with AS number: ${asNumber}. Updating dates...`);
+
+                const updateQuery = `
+                    UPDATE welcome_letter_bajaj
+                    SET PolicyStartDate = ?, PolicyEndDate = ?, Issue_Date = ?
+                    WHERE Policy_Number = ?
+                `;
+                await db.query(updateQuery, [formattedStartDate, formattedEndDate, formattedIssueDate, formData.policyNumber]);
+
             } else {
                 // Create new record with new AS number
                 logger.info('No existing record found, creating new AS number');
 
-                // Get next AS number
+               // Get next AS number checking for 'WEU' prefix
                 const [numResults] = await db.query(
-                    'SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj'
+                    "SELECT IFNULL(MAX(CAST(SUBSTRING(Asnumber_bajaj, 4) AS SIGNED)), 0) + 1 AS nextNum FROM welcome_letter_bajaj WHERE Asnumber_bajaj LIKE 'WEU%'"
                 );
 
-                const nextNum = numResults[0].nextNum || 1;
-                asNumber = 'ASB' + String(nextNum).padStart(8, '0');
+                let nextNum = numResults[0].nextNum || 1;
+                
+               // If no records exist, start the sequence at 10001
+                if (nextNum === 1) {
+                    nextNum = 10001;
+                }
+                
+                // Generates WEU + 00010001
+                asNumber = 'WEU' + String(nextNum).padStart(8, '0');
 
-                // Insert new record
-                await db.query(
-                    `INSERT INTO welcome_letter_bajaj
-             (Policy_Number, Asnumber_bajaj, PolicyStartDate, PolicyEndDate,
-              fulladdress, fullname, PremiumAmount, cust_EmailID,
-              cust_MobileNumber, travelDuration, Created_Date)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-                    [
-                        formData.policyNumber,
-                        asNumber,
-                        formData.departureDate || '',
-                        formData.arrivalDate || '',
-                        formData.customerAddress || '',
-                        formData.customerName || '',
-                        formData.assistanceCharges || '',
-                        formData.customerEmail || '',
-                        formData.contactNo || '',
-                        formData.travelDuration || '',
-                    ]
-                );
+                const query = `CALL sp_insert_welcome_letter_bajaj(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+                await db.query(query, [
+                    formData.policyNumber,
+                    asNumber,
+                    formattedStartDate,
+                    formattedEndDate,
+                    formData.customerAddress || '',
+                    formData.customerName || '',
+                    formData.assistanceCharges || '',
+                    formData.customerEmail || '',
+                    formData.contactNo || '',
+                    formData.travelDuration || '',
+                    formattedIssueDate
+                ]);
 
 
                 logger.info(`Created new record with AS number: ${asNumber}`);
@@ -126,16 +143,20 @@ class WelcomeLetterBajajController {
                     fullAddress: formData.customerAddress || '',
                     fullName: formData.customerName,
                     EmailID: formData.customerEmail || '',
-                    formattedCreateDate: formData.customerDate || '',
-                    formattedStartDate: formData.departureDate || '',
-                    formattedEndDate: formData.arrivalDate || '',
+                    formattedCreateDate: formattedIssueDate || '',
+                    formattedStartDate: formattedStartDate || '',
+                    formattedEndDate: formattedEndDate || '',
                     day_of_difference: formData.travelDuration || '',
                     Policy_No: formData.policyNumber,
                     Asnumber: asNumber,
                     Actual_PremiumAmount: formData.assistanceCharges,
                     travel_signImageBase64: formData.travel_signImageBase64,
                     SupportEmail: formData.SupportEmail,
-                    SupportcontactNo: formData.SupportcontactNo
+                    SupportcontactNo: formData.SupportcontactNo,
+                    wel_banner2Base64: '',
+                    wel_creditBase64: '',
+                    wel_footerbottomBase64: '',
+                    downloadUrlQrCodeBase64: ''
                 }
             };
             // Generate PDF using the service
@@ -279,75 +300,19 @@ class WelcomeLetterBajajController {
                 return base.send_response("Start Date and End Date are required", null, res, 400);
             }
 
-            const query = `
-                SELECT *
-                FROM welcome_letter_bajaj
-                WHERE DATE(Created_Date) BETWEEN ? AND ?
-                ORDER BY Created_Date DESC
-            `;
+            const query = `CALL sp_search_welcome_letters_bajaj(?, ?)`;
 
-            const [rows] = await db.query(query, [startDate, endDate]);
+            const [results] = await db.query(query, [startDate, endDate]);
+
+            const rows = results[0];
+
             return base.send_response("Data fetched successfully", rows, res);
         } catch (error) {
             logger.error(`Error searching welcome letters: ${error.message}`);
             return base.send_response("Failed to fetch data: " + error.message, null, res, 500);
         }
     }
-    
-    async download_welcome_bajaj_zip(req, res) {
-        try {
-            const { policyNumbers } = req.body;
-            if (!policyNumbers || !Array.isArray(policyNumbers) || policyNumbers.length === 0) {
-                return base.send_response("No policy numbers provided", null, res, 400);
-            }
 
-            const zip = new JSZip();
-            const publicFolder = path.join(__dirname, '../public');
-            let fileCount = 0;
-
-            // Generate placeholders dynamically: "?, ?, ?"
-            const placeholders = policyNumbers.map(() => '?').join(',');
-            const query = `SELECT Policy_Number, pdfurl FROM welcome_letter_bajaj WHERE Policy_Number IN (${placeholders})`;
-
-            // Fetch exact file URLs from the database
-            const [rows] = await db.query(query, policyNumbers);
-
-            for (const row of rows) {
-                if (row.pdfurl) {
-                    // Extract the clean relative path by removing leading slash or '/public/'
-                    let cleanPath = row.pdfurl.replace(/^\/?(public\/)?/, '');
-                    const filePath = path.join(publicFolder, cleanPath);
-
-                    if (fs.existsSync(filePath)) {
-                        const fileData = fs.readFileSync(filePath);
-                        const fileName = path.basename(filePath);
-                        zip.file(fileName, fileData); // Add file to ZIP
-                        fileCount++;
-                    } else {
-                        logger.warn(`File not found on disk during ZIP generation: ${filePath}`);
-                    }
-                }
-            }
-
-            if (fileCount === 0) {
-                return base.send_response("No PDF files found for the given policies", null, res, 404);
-            }
-
-            // Generate ZIP buffer
-            const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
-
-            // Send binary ZIP file to frontend
-            res.setHeader('Content-Type', 'application/zip');
-            res.setHeader('Content-Disposition', `attachment; filename=Bajaj_Welcome_Letters.zip`);
-            res.setHeader('Content-Length', zipBuffer.length);
-
-            return res.send(zipBuffer);
-
-        } catch (error) {
-            logger.error(`Error generating ZIP: ${error.message}`);
-            return base.send_response("Failed to generate ZIP", null, res, 500);
-        }
-    }
 }
 
 module.exports = new WelcomeLetterBajajController();

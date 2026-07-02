@@ -57,7 +57,8 @@ class ProposalController {
                 Selected_PremiumAmount,
                 PlanAmount,
                 ReliancePremiumAmount,
-                Actual_PremiumAmount
+                Actual_PremiumAmount,
+                Ss_Id
             } = req.body;
 
             // Log the request data to help with debugging
@@ -76,7 +77,7 @@ class ProposalController {
 
             // Call the stored procedure with parameter names matching your procedure
             const [result] = await db.query(
-                'CALL sp_InsertProposal(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                'CALL sp_InsertProposal(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 [
                     AgentId,
                     Product_Code,
@@ -124,7 +125,8 @@ class ProposalController {
                     Selected_PremiumAmount || "",
                     PlanAmount || "",
                     ReliancePremiumAmount || "0",
-                    Actual_PremiumAmount || "0"
+                    Actual_PremiumAmount || "0",
+                    Ss_Id || "0"
                 ]
             );
 

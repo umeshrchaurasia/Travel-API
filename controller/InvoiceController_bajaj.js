@@ -78,7 +78,9 @@ class InvoiceController_bajaj {
      * Generate invoice by certificate ID using stored procedure
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
+     * Generat Invoice
      */
+
     async generateInvoiceBybajajCertificate(req, res) {
         try {
             const certificateId = req.params.certificateId || req.body.certificateId;

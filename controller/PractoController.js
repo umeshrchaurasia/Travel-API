@@ -218,6 +218,106 @@ class PractoController {
             return base.send_response("Error retrieving  applications", null, res);
         }
     }
+
+    async getProposalByPassport_AyushPay(req, res) {
+        try {
+            const passportNo = req.query.passportpassportno || req.body.passportpassportno;
+
+            if (!passportNo) {
+                return base.send_response(
+                    "Passport number is required",
+                    null,
+                    res,
+                    "Error",
+                    1
+                );
+            }
+
+            const [rows] = await db.query(
+                'CALL sp_GetProposalByagent_Ayushpay(?)',
+                [passportNo]
+            );
+
+            if (rows[0] && rows[0].length > 0) {
+                base.send_response(
+                    "Proposal retrieved successfully",
+                    rows[0],
+                    res,
+                    "Success",
+                    0
+                );
+            } else {
+                base.send_response(
+                    "No proposal found with this passport number",
+                    [],
+                    res,
+                    "Success",
+                    0
+                );
+            }
+
+        } catch (error) {
+            logger.error('Error in getProposalBypassportnumber:', error);
+            base.send_response(
+                "Error retrieving proposal",
+                null,
+                res,
+                "Error",
+                1
+            );
+        }
+    }
+
+    async getProposalByPassport_Practo(req, res) {
+        try {
+            // Check for agentId, AgentId, or fallback to the old passportpassportno
+            const agentId = req.query.agentId || req.body.agentId || req.query.AgentId || req.body.AgentId || req.query.passportpassportno || req.body.passportpassportno;
+
+            if (!agentId) {
+                return base.send_response(
+                    "Agent ID is required",
+                    null,
+                    res,
+                    "Error",
+                    400
+                );
+            }
+
+            const [rows] = await db.query(
+                'CALL sp_GetProposalByagent_Practo(?)',
+                [agentId]
+            );
+
+            if (rows[0] && rows[0].length > 0) {
+                base.send_response(
+                    "Proposal retrieved successfully",
+                    rows[0],
+                    res,
+                    "Success",
+                    0
+                );
+            } else {
+                base.send_response(
+                    "No proposal found for this agent",
+                    [],
+                    res,
+                    "Success",
+                    0
+                );
+            }
+
+        } catch (error) {
+            logger.error('Error in getProposalByPassport_Practo:', error);
+            base.send_response(
+                "Error retrieving proposal",
+                null,
+                res,
+                "Error",
+                500
+            );
+        }
+    }
+
 }
 
 module.exports = new PractoController();

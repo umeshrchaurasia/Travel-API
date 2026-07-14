@@ -313,6 +313,26 @@ class WelcomeLetterBajajController {
         }
     }
 
+    async ERP_search_welcome_letters_bajaj(req, res) {
+        try {
+            const { startDate, endDate } = req.body;
+            if (!startDate || !endDate) {
+                return base.send_response("Start Date and End Date are required", null, res, 400);
+            }
+
+            const query = `CALL sp_ERP_search_welcome_letters_bajaj(?, ?)`;
+
+            const [results] = await db.query(query, [startDate, endDate]);
+
+            const rows = results[0];
+
+            return base.send_response("Data fetched successfully", rows, res);
+        } catch (error) {
+            logger.error(`Error searching welcome letters: ${error.message}`);
+            return base.send_response("Failed to fetch data: " + error.message, null, res, 500);
+        }
+    }
+
 }
 
 module.exports = new WelcomeLetterBajajController();

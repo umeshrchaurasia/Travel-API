@@ -49,13 +49,32 @@ const buildBajajPayload = (serviceMode, quoteNo, body) => {
 
     const cleanPlan = (Plan && typeof Plan === 'string') ? Plan.trim() : "";
 
+    // --- NEW LOGIC: Check if Proposer firstName differs from Traveler firstName ---
+    let calculatedFamilyFlag = "N";
+    if (TravellerDetails && TravellerDetails.length > 0 && ProposerDetails) {
+        const proposerName = (ProposerDetails.firstName || "").trim().toLowerCase();
+
+        // Check if ANY traveler has a different first name than the proposer
+        const isDifferent = TravellerDetails.some(t =>
+            (t.firstName || "").trim().toLowerCase() !== proposerName
+        );
+
+        if (isDifferent) {
+            calculatedFamilyFlag = "Y";
+        }
+    }
+    // ------------------------------------------------------------------------------
+
     return {
         pUserId: BAJAJ_CONFIG.USERID,
         pPassword: BAJAJ_CONFIG.PASSWORD,
         pServiceMode: serviceMode,
         pPayMode: "AFLOAT",
         pQuoteNo: quoteNo || "",
-        familyflag: "N",
+
+        // --- UPDATED FLAG ---
+        familyflag: calculatedFamilyFlag,
+
         pTravelPlanDtlsList: {
             productCode: BAJAJ_CONFIG.PRODUCT_CODE,
             Product: "GROUP TRAVEL",
@@ -154,6 +173,9 @@ class BajajController {
         this.generatePolicybyPolicyno_bajaj = this.generatePolicybyPolicyno_bajaj.bind(this);
         this.checkOrGenerateASNumber_Bajaj = this.checkOrGenerateASNumber_Bajaj.bind(this);
         this.bajajlivepdf = this.bajajlivepdf.bind(this);
+
+        this.Excel_InsertBajajTravelProposal = this.Excel_InsertBajajTravelProposal.bind(this);
+        this.uploadBajajManualPdf = this.uploadBajajManualPdf.bind(this);
     }
 
     saveMasterPlan_calc = async (req, res) => {
@@ -1477,12 +1499,12 @@ class BajajController {
             const spResult = result[0][0];
 
             if (spResult && spResult.Status && spResult.Status.trim() === 'Success') {
-               //base.send_response(spResult.Message, null, res);             
-                   base.send_response(
+                //base.send_response(spResult.Message, null, res);             
+                base.send_response(
                     spResult.Message,
                     "Success",
                     res
-                    
+
                 );
             } else {
                 // If Status isn't 'Success', return the actual message provided by the DB
@@ -1491,6 +1513,145 @@ class BajajController {
         } catch (error) {
             logger.error('UpdateBajajProposer_policy Error:', error);
             base.send_response("Error updating proposer details", null, res, "Error", 1);
+        }
+    }
+
+    async Excel_InsertBajajTravelProposal(req, res) {
+        try {
+            const data = req.body;
+
+            // Validate critical fields
+            if (!data.PolicyNo || !data.AgentId) {
+                return base.send_response("Policy Number and Agent ID are required", null, res, "Failure", 1);
+            }
+
+            const formattedStartDate = (data.StartDate);
+            const formattedEndDate = (data.EndDate);
+            const formattedTrv_DOB = (data.Trv_DOB);
+
+            // Map data to the Stored Procedure Parameters (Must match the 37 SP parameters exactly)
+            const params = [
+                data.AgentId || '',
+                data.UId || '',
+                data.Asnumber_bajaj || '',
+                data.PolicyNo,
+                data.GeographicalCover || '',
+                data.CountryName || '',
+                formattedStartDate,
+                formattedEndDate,
+                data.JourneyFromDate || null,
+                data.JourneyToDate || null,
+                data.NoOfDays || 0,
+                data.FinalPremium || 0,
+                data.Selected_PremiumAmount || '0',
+                data.Actual_PremiumAmount || '0',
+                data.gstamount || '0',
+                data.commission_agentamount || '0',
+                data.Premium_without_gst || '0',
+                data.Payout_Bajaj || '0',
+                data.Selected_Payment_Mode || '',
+                data.Prop_Pincode || '',
+                data.Prop_State || '',
+                data.Prop_City || '',
+                data.Prop_Address || '',
+                data.Prop_Email || '',
+                data.Prop_Mobile || '',
+                data.Trv_Title || '',
+                data.Trv_Gender || '',
+                data.Trv_FirstName || '',
+                data.Trv_MiddleName || '',
+                data.Trv_LastName || '',
+                formattedTrv_DOB,
+                data.Trv_Passport || '',
+                data.Trv_RelationWithProposer || '',
+                data.Trv_NomineeName || '',
+                data.Trv_NomineeRelation || '',
+                data.Trv_Email || '',
+                data.Trv_Mobile || '',
+                data.Trv_PreExistingDisease || 'No'
+            ];
+
+            // Execute the Stored Procedure (37 parameters)
+            const [result] = await db.query(
+                `CALL sp_Excel_InsertBajajTravelProposal(
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+                    ?, ?, ?, ?, ?, ?, ?,?
+                )`,
+                params
+            );
+
+            let currentErpStatus = 'Pending';
+            if (result && result[0] && result[0][0] && result[0][0].ERP_Status) {
+                currentErpStatus = result[0][0].ERP_Status;
+            }
+
+            // Reflected UPSERT logic in response message
+            base.send_response(
+                "Proposal inserted/updated successfully",
+                { policyNo: data.PolicyNo, erpStatus: currentErpStatus },
+                res,
+                "Success",
+                0
+            );
+
+        } catch (error) {
+            logger.error('Excel_InsertBajajTravelProposal Error:', error);
+
+            // Adjust error handling since native duplicate constraint is now handled by SP logic
+            let errorMsg = error.message || "Error processing proposal";
+            if (error.code === 'ER_DUP_ENTRY') {
+                errorMsg = `Duplicate entry constraint failed for Policy No: ${req.body.PolicyNo}`;
+            }
+
+            base.send_response(errorMsg, null, res, "Error", 1);
+        }
+    }
+
+    // Add this new method inside BajajController class
+    async uploadBajajManualPdf(req, res) {
+        try {
+            const { policyNo, pdfBase64 } = req.body;
+
+            if (!policyNo || !pdfBase64) {
+                return base.send_response("Policy Number and PDF file are required", null, res, "Failure", 1);
+            }
+
+            // 1. Strip the base64 prefix sent by React (e.g., "data:application/pdf;base64,")
+            const base64Data = pdfBase64.replace(/^data:application\/pdf;base64,/, "");
+            const pdfBuffer = Buffer.from(base64Data, 'base64');
+
+            // 2. Exact folder path and naming convention you requested
+            const bajajFolder = path.join(__dirname, '../public/policygivenbyBajaj');
+
+            // Create folder if it doesn't exist
+            if (!fs.existsSync(bajajFolder)) {
+                fs.mkdirSync(bajajFolder, { recursive: true });
+            }
+
+            const cleanPolicyNo = policyNo.replace(/[^a-zA-Z0-9]/g, '');
+            const bajajPdfFileName = `bajaj${cleanPolicyNo}.pdf`;
+            const physicalBajajPath = path.join(bajajFolder, bajajPdfFileName);
+            const dbUrl = `/policygivenbyBajaj/${bajajPdfFileName}`;
+
+            // 3. Write file to disk
+            fs.writeFileSync(physicalBajajPath, pdfBuffer);
+            logger.info(`[BAJAJ MANUAL PDF] Saved: ${physicalBajajPath} (${pdfBuffer.length} bytes)`);
+
+            // 4. Update the Database with the URL and set ERP_Status to 'Success'
+            const updateQuery = `
+                UPDATE Bajaj_Travel_Proposal_main 
+                SET BajajgivenpolicyUrl = ?, ERP_Status = 'Success' 
+                WHERE PolicyNo = ?
+            `;
+            await db.query(updateQuery, [dbUrl, policyNo]);
+
+            return base.send_response("PDF Uploaded and ERP Status Updated to Success", { dbUrl }, res, "Success", 0);
+
+        } catch (error) {
+            logger.error(`[BAJAJ MANUAL PDF ERROR]: ${error.message}`);
+            return base.send_response("Error uploading PDF", null, res, "Error", 1);
         }
     }
 }

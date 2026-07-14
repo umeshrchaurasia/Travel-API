@@ -337,6 +337,8 @@ router.post('/getWelcomeLetterBajaj', wrapper.asyncHandler(WelcomeLetterBajajCon
 
 router.post('/search_welcome_letters_bajaj', wrapper.asyncHandler(WelcomeLetterBajajController.search_welcome_letters_bajaj));
 
+router.post('/ERP_search_welcome_letters_bajaj', wrapper.asyncHandler(WelcomeLetterBajajController.ERP_search_welcome_letters_bajaj));
+
 
 router.post('/getSub_Main_AgentMIS_byAdmin_bajaj', wrapper.asyncHandler(BajajController.getSub_Main_AgentMIS_byAdmin_bajaj));
 
@@ -367,5 +369,11 @@ router.post('/bajajlivepdf', wrapper.asyncHandler(BajajController.bajajlivepdf))
 router.post('/bajajpincode', wrapper.asyncHandler(BajajController.getCityByPincode_bajaj));
 
 router.post('/UpdateBajajProposer_policy', wrapper.asyncHandler(BajajController.UpdateBajajProposer_policy));
+
+router.post('/excel-insert-bajaj-proposal', wrapper.asyncHandler(BajajController.Excel_InsertBajajTravelProposal));
+
+router.post('/uploadBajajManualPdf', wrapper.asyncHandler(BajajController.uploadBajajManualPdf));
+
+
 
 module.exports = router;
